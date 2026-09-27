@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card">
+    <h1>Criar conta</h1>
+    <form id="form-cadastro" novalidate>
+      <label for="usuario">Usuário</label>
+      <input type="text" id="usuario" name="usuario" autocomplete="username" required>
+
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" autocomplete="new-password" required minlength="6">
+
+      <button type="submit">Cadastrar</button>
+      <p class="msg" id="msg"></p>
+    </form>
+    <p class="switch">Já tem conta? <a href="login.html">Entrar</a></p>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
