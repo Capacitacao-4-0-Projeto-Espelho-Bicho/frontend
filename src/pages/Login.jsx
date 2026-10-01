@@ -9,7 +9,9 @@ export default function Login() {
   const { entrar } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const cadastroOk = location.state?.cadastroOk;
+  // Aviso de "conta criada" some na primeira tentativa de login,
+  // para não aparecer junto com uma mensagem de erro.
+  const [cadastroOk, setCadastroOk] = useState(Boolean(location.state?.cadastroOk));
 
   const [form, setForm] = useState({ email: location.state?.email ?? "", senha: "" });
   const [erros, setErros] = useState({});
@@ -31,6 +33,7 @@ export default function Login() {
   async function enviar(e) {
     e.preventDefault();
     setErroGeral("");
+    setCadastroOk(false);
     if (!validar()) return;
 
     setEnviando(true);
