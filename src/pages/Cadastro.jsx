@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registrar } from "../services/auth";
-import { Campo, Selecao } from "../components/Campo";
-import {
-  OPCOES_AMBIENTE,
-  OPCOES_TEMPO,
-  OPCOES_RECURSOS,
-  OPCOES_INTERLOCUTORES,
-} from "../constants/perfil";
+import { Campo, GrupoRadio } from "../components/Campo";
+import { LayoutAuth } from "../components/LayoutAuth";
+import { PERGUNTAS_ETAPA_1, PERGUNTAS_ETAPA_2 } from "../constants/perfil";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SENHA_MIN = 6;
+const SENHA_MIN = 8; // conforme o Figma ("pelo menos 8 caracteres")
 
 const INICIAL = {
   nome: "",
@@ -23,8 +19,16 @@ const INICIAL = {
   interlocutores: "",
 };
 
+// Cadastro em 2 etapas, como no Figma.
+// Etapa 1: dados de acesso + ambiente, interlocutores e tempo.
+// Etapa 2: recursos materiais.
+// O Figma não tem campos de e-mail e senha no cadastro, mas o backend exige,
+// então eles entram na etapa 1.
+// A autoavaliação de soft skills (níveis 1 a 4) do Figma ficou de fora:
+// o backend ainda não recebe esses dados no registro.
 export default function Cadastro() {
   const navigate = useNavigate();
+  const [etapa, setEtapa] = useState(1);
   const [form, setForm] = useState(INICIAL);
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
@@ -34,25 +38,37 @@ export default function Cadastro() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function validar() {
+  function validarEtapa1() {
     const n = {};
-    if (!form.nome.trim()) n.nome = "Informe seu nome.";
+    if (!form.nome.trim()) n.nome = "Informe como você quer ser chamado.";
     if (!EMAIL_REGEX.test(form.email.trim())) n.email = "Informe um e-mail válido.";
     if (form.senha.length < SENHA_MIN) n.senha = `A senha deve ter pelo menos ${SENHA_MIN} caracteres.`;
     if (!form.confirmarSenha) n.confirmarSenha = "Confirme a senha.";
     else if (form.confirmarSenha !== form.senha) n.confirmarSenha = "As senhas não conferem.";
-    if (!form.ambiente) n.ambiente = "Selecione uma opção.";
-    if (!form.tempo) n.tempo = "Selecione uma opção.";
-    if (!form.recursos) n.recursos = "Selecione uma opção.";
-    if (!form.interlocutores) n.interlocutores = "Selecione uma opção.";
+    for (const p of PERGUNTAS_ETAPA_1) if (!form[p.campo]) n[p.campo] = "Selecione uma opção.";
     setErros(n);
     return Object.keys(n).length === 0;
+  }
+
+  function validarEtapa2() {
+    const n = {};
+    for (const p of PERGUNTAS_ETAPA_2) if (!form[p.campo]) n[p.campo] = "Selecione uma opção.";
+    setErros(n);
+    return Object.keys(n).length === 0;
+  }
+
+  function avancar(e) {
+    e.preventDefault();
+    if (validarEtapa1()) {
+      setEtapa(2);
+      window.scrollTo(0, 0);
+    }
   }
 
   async function enviar(e) {
     e.preventDefault();
     setErroGeral("");
-    if (!validar()) return;
+    if (!validarEtapa2()) return;
 
     setEnviando(true);
     try {
@@ -60,58 +76,72 @@ export default function Cadastro() {
       await registrar({ ...dados, nome: dados.nome.trim(), email: dados.email.trim() });
       navigate("/login", { state: { cadastroOk: true, email: dados.email.trim() } });
     } catch (err) {
-      if (err.status === 409) setErros((prev) => ({ ...prev, email: err.message }));
-      else setErroGeral(err.message);
+      if (err.status === 409) {
+        // e-mail duplicado: volta para a etapa 1 e mostra no campo
+        setErros({ email: err.message });
+        setEtapa(1);
+      } else {
+        setErroGeral(err.message);
+      }
     } finally {
       setEnviando(false);
     }
   }
 
+  const perguntas = etapa === 1 ? PERGUNTAS_ETAPA_1 : PERGUNTAS_ETAPA_2;
+
   return (
-    <main className="pagina-auth">
-      <section className="card">
-        <h1>Criar conta</h1>
+    <LayoutAuth variante="frase">
+      <h1 className="titulo-menor">Criar conta</h1>
+      <p className="etapa">Etapa {etapa} de 2</p>
 
-        <form onSubmit={enviar} noValidate>
-          <Campo id="nome" rotulo="Nome" erro={erros.nome}>
-            <input id="nome" name="nome" autoComplete="name" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
-          </Campo>
+      <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>
+        {etapa === 1 && (
+          <>
+            <Campo id="nome" rotulo="Nome de usuário" erro={erros.nome}>
+              <input id="nome" name="nome" autoComplete="name" placeholder="Como você quer ser chamado?" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
+            </Campo>
+            <Campo id="email" rotulo="E-mail" erro={erros.email}>
+              <input id="email" name="email" type="email" autoComplete="email" placeholder="exemplo@email.com" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
+            </Campo>
+            <Campo id="senha" rotulo="Senha" erro={erros.senha}>
+              <input id="senha" name="senha" type="password" autoComplete="new-password" placeholder={`Pelo menos ${SENHA_MIN} caracteres`} value={form.senha} onChange={atualizar} aria-invalid={Boolean(erros.senha)} />
+            </Campo>
+            <Campo id="confirmarSenha" rotulo="Confirmar senha" erro={erros.confirmarSenha}>
+              <input id="confirmarSenha" name="confirmarSenha" type="password" autoComplete="new-password" value={form.confirmarSenha} onChange={atualizar} aria-invalid={Boolean(erros.confirmarSenha)} />
+            </Campo>
+          </>
+        )}
 
-          <Campo id="email" rotulo="E-mail" erro={erros.email}>
-            <input id="email" name="email" type="email" autoComplete="email" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
-          </Campo>
+        {perguntas.map((p) => (
+          <GrupoRadio key={p.campo} {...p} valor={form[p.campo]} onChange={atualizar} erro={erros[p.campo]} />
+        ))}
 
-          <Campo id="senha" rotulo="Senha" erro={erros.senha}>
-            <input id="senha" name="senha" type="password" autoComplete="new-password" value={form.senha} onChange={atualizar} aria-invalid={Boolean(erros.senha)} />
-          </Campo>
+        {erroGeral && (
+          <p className="aviso aviso-erro" role="alert">
+            {erroGeral}
+          </p>
+        )}
 
-          <Campo id="confirmarSenha" rotulo="Confirmar senha" erro={erros.confirmarSenha}>
-            <input id="confirmarSenha" name="confirmarSenha" type="password" autoComplete="new-password" value={form.confirmarSenha} onChange={atualizar} aria-invalid={Boolean(erros.confirmarSenha)} />
-          </Campo>
-
-          <fieldset className="grupo">
-            <legend>Sobre sua rotina de estudo</legend>
-            <Selecao id="ambiente" rotulo="Ambiente" opcoes={OPCOES_AMBIENTE} value={form.ambiente} onChange={atualizar} erro={erros.ambiente} />
-            <Selecao id="tempo" rotulo="Tempo disponível" opcoes={OPCOES_TEMPO} value={form.tempo} onChange={atualizar} erro={erros.tempo} />
-            <Selecao id="recursos" rotulo="Recursos" opcoes={OPCOES_RECURSOS} value={form.recursos} onChange={atualizar} erro={erros.recursos} />
-            <Selecao id="interlocutores" rotulo="Com quem" opcoes={OPCOES_INTERLOCUTORES} value={form.interlocutores} onChange={atualizar} erro={erros.interlocutores} />
-          </fieldset>
-
-          {erroGeral && (
-            <p className="aviso aviso-erro" role="alert">
-              {erroGeral}
-            </p>
+        <div className="acoes-etapa">
+          {etapa === 1 ? (
+            <Link to="/login" className="botao-secundario">
+              Cancelar
+            </Link>
+          ) : (
+            <button type="button" className="botao-secundario" onClick={() => { setErros({}); setEtapa(1); }}>
+              Voltar
+            </button>
           )}
-
-          <button type="submit" disabled={enviando}>
-            {enviando ? "Cadastrando..." : "Cadastrar"}
+          <button type="submit" className="botao-azul" disabled={enviando}>
+            {etapa === 1 ? "Próximo" : enviando ? "Cadastrando..." : "Cadastrar"}
           </button>
-        </form>
+        </div>
+      </form>
 
-        <p className="troca">
-          Já tem conta? <Link to="/login">Entrar</Link>
-        </p>
-      </section>
-    </main>
+      <p className="troca">
+        Já tem conta? <Link to="/login">Entrar</Link>
+      </p>
+    </LayoutAuth>
   );
 }

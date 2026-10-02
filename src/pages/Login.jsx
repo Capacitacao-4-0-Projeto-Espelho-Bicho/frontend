@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Campo } from "../components/Campo";
+import { LayoutAuth } from "../components/LayoutAuth";
+import { IconeGoogle, IconeFacebook } from "../components/IconesSociais";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,59 +43,89 @@ export default function Login() {
       await entrar({ email: form.email.trim(), senha: form.senha });
       navigate("/", { replace: true });
     } catch (err) {
-      setErroGeral(err.message);
+      // 401 = e-mail ou senha errados: mostra no campo de senha, como no Figma.
+      if (err.status === 401) setErros({ senha: "E-mail ou senha incorretos." });
+      else setErroGeral(err.message);
     } finally {
       setEnviando(false);
     }
   }
 
   return (
-    <main className="pagina-auth">
-      <section className="card">
-        <h1>Entrar</h1>
+    <LayoutAuth>
+      <h1>
+        Bem vindo <span aria-hidden="true">👋</span>
+      </h1>
+      <p className="subtitulo">Pronto para continuar desenvolvendo suas habilidades socioemocionais?</p>
+      <p className="subtitulo">
+        Faça login para acessar seus diagnósticos, acompanhar suas atividades e evoluir suas
+        competências.
+      </p>
 
-        {cadastroOk && <p className="aviso aviso-ok">Conta criada. Faça login para continuar.</p>}
+      {cadastroOk && <p className="aviso aviso-ok">Conta criada. Faça login para continuar.</p>}
 
-        <form onSubmit={enviar} noValidate>
-          <Campo id="email" rotulo="E-mail" erro={erros.email}>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={form.email}
-              onChange={atualizar}
-              aria-invalid={Boolean(erros.email)}
-            />
-          </Campo>
+      <form onSubmit={enviar} noValidate>
+        <Campo id="email" rotulo="E-mail" erro={erros.email}>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="exemplo@email.com"
+            value={form.email}
+            onChange={atualizar}
+            aria-invalid={Boolean(erros.email)}
+          />
+        </Campo>
 
-          <Campo id="senha" rotulo="Senha" erro={erros.senha}>
-            <input
-              id="senha"
-              name="senha"
-              type="password"
-              autoComplete="current-password"
-              value={form.senha}
-              onChange={atualizar}
-              aria-invalid={Boolean(erros.senha)}
-            />
-          </Campo>
+        <Campo id="senha" rotulo="Senha" erro={erros.senha}>
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            autoComplete="current-password"
+            placeholder="Sua senha"
+            value={form.senha}
+            onChange={atualizar}
+            aria-invalid={Boolean(erros.senha)}
+          />
+        </Campo>
 
-          {erroGeral && (
-            <p className="aviso aviso-erro" role="alert">
-              {erroGeral}
-            </p>
-          )}
-
-          <button type="submit" disabled={enviando}>
-            {enviando ? "Entrando..." : "Entrar"}
+        {/* Recuperação de senha ainda não tem rota no backend. */}
+        <div className="linha-direita">
+          <button type="button" className="link" disabled title="Em breve">
+            Esqueceu a senha?
           </button>
-        </form>
+        </div>
 
-        <p className="troca">
-          Não tem conta? <Link to="/cadastro">Cadastre-se</Link>
-        </p>
-      </section>
-    </main>
+        {erroGeral && (
+          <p className="aviso aviso-erro" role="alert">
+            {erroGeral}
+          </p>
+        )}
+
+        <button type="submit" className="botao-primario" disabled={enviando}>
+          {enviando ? "Entrando..." : "Entrar"}
+        </button>
+      </form>
+
+      <div className="divisor">
+        <span>Ou entre com</span>
+      </div>
+
+      {/* Login social ainda não tem suporte no backend. */}
+      <div className="sociais">
+        <button type="button" className="botao-social" disabled title="Em breve">
+          <IconeGoogle /> Google
+        </button>
+        <button type="button" className="botao-social" disabled title="Em breve">
+          <IconeFacebook /> Facebook
+        </button>
+      </div>
+
+      <p className="troca">
+        Não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
+      </p>
+    </LayoutAuth>
   );
 }
