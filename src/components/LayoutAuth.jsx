@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import painel from "../assets/painel-login.jpg";
+import { PainelCeu } from "./PainelCeu";
 
 // Moldura das telas de autenticação (Figma "Página de login"):
 // cartão com o formulário à esquerda e o painel verde à direita.
@@ -14,7 +14,8 @@ export function LayoutAuth() {
   const { pathname } = useLocation();
   const variante = pathname.startsWith("/cadastro") ? "frase" : "ilustracao";
   // A revelação do painel acontece uma única vez, ao abrir a página.
-  // Depois a classe sai, para que nada (resize, troca de rota) a reinicie.
+  // Depois a classe sai (ao fim da entrada do cérebro, a última), para que
+  // nada (resize, troca de rota) a reinicie.
   const [revelando, setRevelando] = useState(true);
 
   return (
@@ -31,12 +32,9 @@ export function LayoutAuth() {
         <aside
           className={`lado-painel${revelando ? " revelando" : ""}`}
           aria-hidden="true"
-          onAnimationEnd={(e) => e.animationName === "painel-revela" && setRevelando(false)}
+          onAnimationEnd={(e) => e.animationName === "cerebro-entra" && setRevelando(false)}
         >
-          <div
-            className={`painel-camada painel-ilustracao${variante === "ilustracao" ? " ativo" : ""}`}
-            style={{ "--img-painel": `url(${painel})`, backgroundImage: `url(${painel})` }}
-          />
+          <PainelCeu ativo={variante === "ilustracao"} />
           <div className={`painel-camada painel-frase${variante === "frase" ? " ativo" : ""}`}>
             <span className="aspas">“</span>
             <p>

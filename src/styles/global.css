@@ -96,10 +96,36 @@ body {
   opacity: 1;
 }
 
+/* Céu: degradê com as cores medidas do PNG do Figma
+   (verde no canto superior direito, azul-petróleo no inferior esquerdo) */
 .painel-ilustracao {
-  background-size: cover;
-  background-position: center 50%;
-  background-repeat: no-repeat;
+  background: linear-gradient(to bottom left, #2c7854 0%, #1a5c52 45%, #0b4650 75%, #02354a 100%);
+}
+
+.ceu-estrelas {
+  position: absolute;
+  inset: 0;
+}
+
+.estrela {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: var(--brilho);
+  box-shadow: 0 0 3px 0.5px rgba(255, 255, 255, 0.55);
+}
+
+.estrela.grande {
+  box-shadow: 0 0 6px 1.5px rgba(255, 255, 255, 0.6);
+}
+
+.cerebro {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  width: 42%;
+  height: auto;
+  transform: translate(-50%, -50%);
 }
 
 .painel-frase {
@@ -421,14 +447,16 @@ button:disabled {
     border-radius: var(--raio-moldura) var(--raio-moldura) 0 0;
   }
 
-  .painel-ilustracao {
-    /* a ilustração ocupa ~23% da altura da imagem: 370% faz o cérebro caber no banner */
-    /* as laterais que sobram recebem um degradê com as cores das bordas da imagem */
-    background-position: center 49%, center;
-    background-size: auto 370%, 100% 100%;
-    background-repeat: no-repeat;
-    background-color: #134a4c;
-    background-image: var(--img-painel), linear-gradient(90deg, #104a4d 0%, #1a5a52 50%, #236a54 100%) !important;
+  /* no banner, o cérebro ocupa a altura e as estrelas se espalham pelo céu todo */
+  .cerebro {
+    top: 50%;
+    width: auto;
+    height: 84%;
+  }
+
+  .ceu-estrelas {
+    transform: scaleY(1.35);
+    transform-origin: top;
   }
 
   /* no celular o banner é sempre a ilustração */
@@ -481,6 +509,27 @@ button:disabled {
 
 .painel-frase.ativo p {
   transition-delay: 120ms;
+}
+
+/* Estrelas: só ~30% cintilam, devagar e fora de fase entre si.
+   Movimento contínuo, mas discreto: varia só a intensidade, nada se desloca. */
+@keyframes cintilar {
+  0%, 100% { opacity: var(--brilho); transform: scale(1); }
+  50%      { opacity: calc(var(--brilho) * 0.25); transform: scale(0.7); }
+}
+
+.estrela.cintila {
+  animation: cintilar var(--duracao) ease-in-out var(--atraso) infinite;
+}
+
+/* Na abertura, o cérebro sobe e aparece depois que o céu clareia. */
+@keyframes cerebro-entra {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 18px)) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.lado-painel.revelando .cerebro {
+  animation: cerebro-entra 1200ms var(--ease-saida) 250ms both;
 }
 
 /* Troca de tela (login <-> cadastro): só o formulário entra de novo. */
