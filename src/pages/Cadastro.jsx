@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registrar } from "../services/auth";
 import { Campo, GrupoRadio } from "../components/Campo";
-import { LayoutAuth } from "../components/LayoutAuth";
 import { PERGUNTAS_ETAPA_1, PERGUNTAS_ETAPA_2 } from "../constants/perfil";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +28,9 @@ const INICIAL = {
 export default function Cadastro() {
   const navigate = useNavigate();
   const [etapa, setEtapa] = useState(1);
+  // direção da última troca de etapa: define de que lado o conteúdo entra.
+  // "inicial" não anima, porque a troca de tela já anima a primeira etapa.
+  const [direcao, setDirecao] = useState("inicial");
   const [form, setForm] = useState(INICIAL);
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
@@ -57,12 +59,15 @@ export default function Cadastro() {
     return Object.keys(n).length === 0;
   }
 
+  function irPara(nova) {
+    setDirecao(nova > etapa ? "avancar" : "voltar");
+    setEtapa(nova);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function avancar(e) {
     e.preventDefault();
-    if (validarEtapa1()) {
-      setEtapa(2);
-      window.scrollTo(0, 0);
-    }
+    if (validarEtapa1()) irPara(2);
   }
 
   async function enviar(e) {
@@ -79,7 +84,7 @@ export default function Cadastro() {
       if (err.status === 409) {
         // e-mail duplicado: volta para a etapa 1 e mostra no campo
         setErros({ email: err.message });
-        setEtapa(1);
+        irPara(1);
       } else {
         setErroGeral(err.message);
       }
@@ -91,11 +96,18 @@ export default function Cadastro() {
   const perguntas = etapa === 1 ? PERGUNTAS_ETAPA_1 : PERGUNTAS_ETAPA_2;
 
   return (
-    <LayoutAuth variante="frase">
+    <>
       <h1 className="titulo-menor">Criar conta</h1>
-      <p className="etapa">Etapa {etapa} de 2</p>
+      <div className="progresso">
+        <span className="progresso-trilho" aria-hidden="true">
+          <span className="progresso-barra" style={{ transform: `scaleX(${etapa / 2})` }} />
+        </span>
+        <span className="etapa">Etapa {etapa} de 2</span>
+      </div>
 
       <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>
+        {/* key = etapa: o bloco remonta e desliza a partir do lado da navegação */}
+        <div key={etapa} className={`etapa-conteudo entra-${direcao}`}>
         {etapa === 1 && (
           <>
             <Campo id="nome" rotulo="Nome de usuário" erro={erros.nome}>
@@ -116,6 +128,7 @@ export default function Cadastro() {
         {perguntas.map((p) => (
           <GrupoRadio key={p.campo} {...p} valor={form[p.campo]} onChange={atualizar} erro={erros[p.campo]} />
         ))}
+        </div>
 
         {erroGeral && (
           <p className="aviso aviso-erro" role="alert">
@@ -129,11 +142,12 @@ export default function Cadastro() {
               Cancelar
             </Link>
           ) : (
-            <button type="button" className="botao-secundario" onClick={() => { setErros({}); setEtapa(1); }}>
+            <button type="button" className="botao-secundario" onClick={() => { setErros({}); irPara(1); }}>
               Voltar
             </button>
           )}
-          <button type="submit" className="botao-azul" disabled={enviando}>
+          <button type="submit" className="botao-azul" disabled={enviando} aria-busy={enviando}>
+            {enviando && <span className="spinner" aria-hidden="true" />}
             {etapa === 1 ? "Próximo" : enviando ? "Cadastrando..." : "Cadastrar"}
           </button>
         </div>
@@ -142,6 +156,6 @@ export default function Cadastro() {
       <p className="troca">
         Já tem conta? <Link to="/login">Entrar</Link>
       </p>
-    </LayoutAuth>
+    </>
   );
 }

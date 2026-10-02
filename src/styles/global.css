@@ -20,6 +20,12 @@
   --cor-roxo: #7b61ff;
   --raio-moldura: 25px;
   --raio-input: 12px;
+
+  /* Movimento */
+  --ease-saida: cubic-bezier(0.22, 1, 0.36, 1); /* desacelera no fim: entradas */
+  --ease-padrao: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-rapida: 140ms;
+  --dur-media: 280ms;
 }
 
 * {
@@ -73,6 +79,21 @@ body {
 
 .lado-painel {
   flex: 0 0 37%;
+  position: relative;
+  overflow: hidden;
+  background: #134a4c;
+}
+
+/* As duas versões do painel ficam empilhadas; a ativa aparece por crossfade. */
+.painel-camada {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-saida);
+}
+
+.painel-camada.ativo {
+  opacity: 1;
 }
 
 .painel-ilustracao {
@@ -410,6 +431,11 @@ button:disabled {
     background-image: var(--img-painel), linear-gradient(90deg, #104a4d 0%, #1a5a52 50%, #236a54 100%) !important;
   }
 
+  /* no celular o banner é sempre a ilustração */
+  .painel-ilustracao {
+    opacity: 1;
+  }
+
   .painel-frase {
     display: none;
   }
@@ -420,5 +446,270 @@ button:disabled {
 
   h1 {
     font-size: 34px;
+  }
+}
+
+/* =========================================================
+   Movimento
+   Um único momento de entrada (o painel se revela ao abrir a página).
+   Todo o resto responde a uma ação da pessoa.
+   ========================================================= */
+
+/* Entrada da página: a ilustração "assenta" e clareia, uma vez só.
+   Como o layout persiste entre rotas, isso não se repete ao navegar. */
+@keyframes painel-revela {
+  from { transform: scale(1.08); filter: brightness(0.6) saturate(0.8); }
+  to   { transform: scale(1);    filter: brightness(1) saturate(1); }
+}
+
+.lado-painel.revelando .painel-camada {
+  animation: painel-revela 1400ms var(--ease-saida) both;
+}
+
+.painel-frase .aspas,
+.painel-frase p {
+  transition: transform 700ms var(--ease-saida), opacity 700ms var(--ease-saida);
+  transform: translateY(12px);
+  opacity: 0;
+}
+
+.painel-frase.ativo .aspas,
+.painel-frase.ativo p {
+  transform: none;
+  opacity: 1;
+}
+
+.painel-frase.ativo p {
+  transition-delay: 120ms;
+}
+
+/* Troca de tela (login <-> cadastro): só o formulário entra de novo. */
+@keyframes conteudo-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.troca-tela {
+  animation: conteudo-entra 420ms var(--ease-saida) both;
+}
+
+/* Etapas do cadastro: desliza do lado para onde a pessoa está indo. */
+@keyframes entra-da-direita {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes entra-da-esquerda {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.etapa-conteudo.entra-avancar { animation: entra-da-direita 360ms var(--ease-saida) both; }
+.etapa-conteudo.entra-voltar  { animation: entra-da-esquerda 360ms var(--ease-saida) both; }
+
+
+/* Barra de progresso das etapas */
+.progresso {
+  margin: 4px 0 24px;
+}
+
+.progresso .etapa {
+  display: block;
+  margin: 8px 0 0;
+}
+
+.progresso-trilho {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: #e6ebf2;
+  overflow: hidden;
+}
+
+.progresso-barra {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cor-azul);
+  transform-origin: left center;
+  transition: transform 520ms var(--ease-saida);
+}
+
+/* Campos: o rótulo acompanha o foco */
+.campo label {
+  transition: color var(--dur-rapida) var(--ease-padrao);
+}
+
+.campo:focus-within label {
+  color: var(--cor-link);
+}
+
+/* Erro: a mensagem desce e o campo dá um tremor curto, uma vez. */
+@keyframes erro-aparece {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes campo-treme {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+.campo-erro {
+  animation: erro-aparece 220ms var(--ease-saida) both;
+}
+
+/* só campos de texto tremem; radios mostram o erro pela mensagem */
+.campo.campo-com-erro input {
+  animation: campo-treme 320ms var(--ease-padrao);
+}
+
+/* Avisos (conta criada, erro geral) */
+.aviso {
+  animation: erro-aparece 320ms var(--ease-saida) both;
+}
+
+/* Botões: resposta ao toque */
+.botao-primario,
+.botao-azul,
+.botao-secundario,
+.botao-social {
+  transition:
+    background-color var(--dur-media) var(--ease-padrao),
+    color var(--dur-media) var(--ease-padrao),
+    box-shadow var(--dur-media) var(--ease-padrao),
+    transform var(--dur-rapida) var(--ease-padrao);
+}
+
+.botao-primario:hover:not(:disabled),
+.botao-azul:hover:not(:disabled) {
+  box-shadow: 0 6px 18px rgba(22, 45, 58, 0.18);
+}
+
+.botao-azul:hover:not(:disabled) {
+  background: #0077e6;
+}
+
+.botao-secundario:hover {
+  background: #f4f1ff;
+}
+
+.botao-primario:active:not(:disabled),
+.botao-azul:active:not(:disabled),
+.botao-secundario:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/* Carregando: indicador dentro do próprio botão */
+@keyframes gira {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+  vertical-align: -3px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: gira 700ms linear infinite;
+}
+
+.botao-primario,
+.botao-azul {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Links */
+.troca a,
+.link:not(:disabled) {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-media) var(--ease-padrao);
+}
+
+.troca a:hover,
+.link:not(:disabled):hover {
+  text-decoration-color: currentColor;
+}
+
+/* Radios: marcador próprio, com o ponto central crescendo ao marcar */
+.opcao {
+  margin: 0 -10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  transition: background-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.opcao:hover {
+  background: #f6f4ff;
+}
+
+.opcao input {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  place-content: center;
+  border: 1.5px solid #c9ccd6;
+  border-radius: 50%;
+  background: #fff;
+  transition: border-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.opcao input::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cor-roxo);
+  transform: scale(0);
+  transition: transform 220ms var(--ease-saida);
+}
+
+.opcao input:checked {
+  border-color: var(--cor-roxo);
+}
+
+.opcao input:checked::before {
+  transform: scale(1);
+}
+
+.opcao:has(input:checked) span {
+  color: var(--cor-titulo);
+}
+
+.opcao input:focus-visible {
+  outline: 2px solid var(--cor-roxo);
+  outline-offset: 2px;
+}
+
+/* Foco visível para teclado em todos os controles */
+.botao-primario:focus-visible,
+.botao-azul:focus-visible,
+.botao-secundario:focus-visible,
+.link:focus-visible,
+.troca a:focus-visible {
+  outline: 2px solid var(--cor-link);
+  outline-offset: 3px;
+}
+
+/* Quem pediu menos movimento no sistema não vê nenhuma animação. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Campo } from "../components/Campo";
-import { LayoutAuth } from "../components/LayoutAuth";
 import { IconeGoogle, IconeFacebook } from "../components/IconesSociais";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,7 +51,7 @@ export default function Login() {
   }
 
   return (
-    <LayoutAuth>
+    <>
       <h1>
         Bem vindo <span aria-hidden="true">👋</span>
       </h1>
@@ -104,7 +103,8 @@ export default function Login() {
           </p>
         )}
 
-        <button type="submit" className="botao-primario" disabled={enviando}>
+        <button type="submit" className="botao-primario" disabled={enviando} aria-busy={enviando}>
+          {enviando && <span className="spinner" aria-hidden="true" />}
           {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>
@@ -126,6 +126,6 @@ export default function Login() {
       <p className="troca">
         Não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
       </p>
-    </LayoutAuth>
+    </>
   );
 }
