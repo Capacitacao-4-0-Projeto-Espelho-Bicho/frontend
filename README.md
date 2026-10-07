@@ -25,7 +25,8 @@ src/
   constants/perfil.js    opções dos campos de perfil do cadastro
   pages/                 Login, Cadastro, Home
   styles/home.css        estilo da Home (Figma "HOME PAGE", SCRUM-78)
-  assets/home/           trilha e ícones exportados do Figma da Home
+  components/Trilha.jsx  trilha da Home (caminho em SVG, nós e troféu clicáveis)
+  assets/home/           nós, troféu e ícones recortados do Figma da Home
   styles/global.css      tokens de cor e estilo
 ```
 
