@@ -22,6 +22,14 @@ export function LayoutAuth() {
     <main className="pagina-auth">
       <div className="moldura">
         <section className="lado-form">
+          {/* Cabeçalho do layout web (some no celular, onde o banner faz esse papel) */}
+          <header className="topo-web">
+            <span className="marca">
+              <span className="marca-simbolo" aria-hidden="true" />
+              Capacitação 4.0
+            </span>
+            <span className="topo-ajuda">Projeto Espelho · FURG</span>
+          </header>
           {/* key = rota: o conteúdo remonta e anima só quando a tela muda */}
           <div className="conteudo-form troca-tela" key={pathname}>
             <Outlet />

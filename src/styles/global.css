@@ -762,3 +762,144 @@ button:disabled {
     scroll-behavior: auto !important;
   }
 }
+
+/* =========================================================
+   Layout web (telas de 861px para cima)
+   Em vez do cartão centralizado, a página ocupa a janela toda:
+   formulário à esquerda com cabeçalho e rodapé, painel à direita
+   fixo na altura da tela. No celular nada muda.
+   ========================================================= */
+.topo-web {
+  display: none;
+}
+
+@media (min-width: 861px) {
+  body {
+    background: #fff;
+  }
+
+  .pagina-auth {
+    display: block;
+    padding: 0;
+  }
+
+  .moldura {
+    max-width: none;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .lado-form {
+    flex: 1 1 54%;
+    padding: 28px clamp(32px, 5vw, 80px) 24px;
+  }
+
+  /* o painel acompanha a rolagem do cadastro, sempre na altura da janela */
+  .lado-painel {
+    flex: 0 0 46%;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
+  }
+
+  .topo-web {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--cor-titulo);
+    letter-spacing: -0.01em;
+  }
+
+  .marca-simbolo {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(to bottom left, #2c7854, #02354a);
+  }
+
+  .topo-ajuda {
+    font-size: 13px;
+    color: var(--cor-rodape);
+  }
+
+  .conteudo-form {
+    max-width: 440px;
+    padding: 48px 0;
+  }
+
+  .rodape {
+    text-align: left;
+    margin-top: 0;
+  }
+
+  .cerebro {
+    width: min(48%, 380px);
+  }
+
+  .painel-frase {
+    padding: 64px clamp(40px, 5vw, 88px);
+  }
+
+  .painel-frase p {
+    max-width: 520px;
+    font-size: clamp(22px, 2vw, 30px);
+  }
+
+  /* Cadastro: mais largo, campos de acesso em duas colunas */
+  .conteudo-form:has(.etapa-conteudo) {
+    max-width: 600px;
+  }
+
+  .etapa-conteudo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+  }
+
+  .etapa-conteudo .grupo-radio {
+    grid-column: 1 / -1;
+  }
+
+  /* opções viram cartões clicáveis em duas colunas */
+  .grupo-radio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .grupo-radio legend {
+    width: 100%;
+  }
+
+  .opcao {
+    flex: 1 1 calc(50% - 5px);
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--cor-input-borda);
+    background: #fff;
+    transition:
+      background-color var(--dur-rapida) var(--ease-padrao),
+      border-color var(--dur-rapida) var(--ease-padrao);
+  }
+
+  .opcao:has(input:checked) {
+    border-color: var(--cor-roxo);
+    background: #f6f4ff;
+  }
+
+  .grupo-radio .campo-erro {
+    width: 100%;
+  }
+}
