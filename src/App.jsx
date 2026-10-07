@@ -8,19 +8,20 @@ import { LayoutAuth } from "./components/LayoutAuth";
 export default function App() {
   return (
     <Routes>
-      {/* Layout compartilhado: o painel lateral persiste entre as telas */}
+      {/* Layout compartilhado: o painel lateral persiste entre login e cadastro */}
       <Route element={<LayoutAuth />}>
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
-        <Route
-          path="/"
-          element={
-            <RotaProtegida>
-              <Home />
-            </RotaProtegida>
-          }
-        />
       </Route>
+      {/* Home tem layout próprio (Figma "HOME PAGE", SCRUM-78) */}
+      <Route
+        path="/"
+        element={
+          <RotaProtegida>
+            <Home />
+          </RotaProtegida>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
