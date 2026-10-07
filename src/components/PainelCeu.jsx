@@ -61,7 +61,7 @@ export function PainelCeu({ ativo }) {
           />
         ))}
       </div>
-      <img className="cerebro" src={cerebro} alt="" width="343" height="324" />
+      <img className="cerebro" src={cerebro} alt="" width="867" height="816" />
     </div>
   );
 }

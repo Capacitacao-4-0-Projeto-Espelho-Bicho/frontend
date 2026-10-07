@@ -35,7 +35,7 @@ function ItemMenu({ item, onEmBreve }) {
       type="button"
       className={`home-menu-item${item.atual ? " atual" : ""}${item.soDesktop ? " so-desktop" : ""}`}
       aria-current={item.atual ? "page" : undefined}
-      onClick={item.atual ? undefined : () => onEmBreve(item.rotulo)}
+      onClick={() => onEmBreve(item.atual ? null : item.rotulo)}
     >
       <item.Icone className="home-menu-icone" />
       <span>{item.rotulo}</span>
@@ -47,7 +47,16 @@ export default function Home() {
   const { nome, sair } = useAuth();
   const [aviso, setAviso] = useState("");
   const [rolou, setRolou] = useState(false);
+  const [menuAberto, setMenuAberto] = useState(false);
   const timer = useRef();
+
+  // menu do celular fecha com Esc
+  useEffect(() => {
+    if (!menuAberto) return;
+    const aoTeclar = (e) => e.key === "Escape" && setMenuAberto(false);
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, [menuAberto]);
 
   useEffect(() => {
     const aoRolar = () => setRolou(window.scrollY > 8);
@@ -65,7 +74,10 @@ export default function Home() {
     timer.current = setTimeout(() => setAviso(""), 2800);
   }
 
-  const emBreve = (rotulo) => avisar(`${rotulo}: em breve.`);
+  const emBreve = (rotulo) => {
+    setMenuAberto(false);
+    if (rotulo) avisar(`${rotulo}: em breve.`);
+  };
 
   function aoClicarEtapa(etapa, estado) {
     if (estado === "atual") avisar("A primeira atividade ainda não está disponível.");
@@ -80,6 +92,18 @@ export default function Home() {
       <div className={`home-cabecalho${rolou ? " rolou" : ""}`}>
         <header className="home-topo">
           <div className="home-usuario">
+            <button
+              type="button"
+              className={`home-hamburguer so-mobile${menuAberto ? " aberto" : ""}`}
+              aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={menuAberto}
+              aria-controls="menu-celular"
+              onClick={() => setMenuAberto((v) => !v)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
             <IconeUsuario className="home-avatar" />
             <div className="home-usuario-texto">
               <span className="home-ola">Olá,</span>
@@ -120,7 +144,35 @@ export default function Home() {
             <ItemMenu key={item.id} item={item} onEmBreve={emBreve} />
           ))}
         </nav>
+
+        {/* Celular: menu hambúrguer que desce do topo */}
+        <div
+          id="menu-celular"
+          className={`home-gaveta${menuAberto ? " aberta" : ""}`}
+          inert={menuAberto ? undefined : ""}
+        >
+          <div className="gaveta-usuario">
+            <IconeUsuario className="gaveta-avatar" />
+            <div>
+              <span className="home-ola">Olá,</span>
+              <strong className="gaveta-nome">{nome}</strong>
+            </div>
+          </div>
+          <nav className="gaveta-itens" aria-label="Principal (celular)">
+            {MENU.map((item) => (
+              <ItemMenu key={item.id} item={{ ...item, soDesktop: false }} onEmBreve={emBreve} />
+            ))}
+          </nav>
+          <button type="button" className="gaveta-sair" onClick={sair}>
+            Sair da conta
+          </button>
+        </div>
       </div>
+      <div
+        className={`home-veu${menuAberto ? " visivel" : ""}`}
+        onClick={() => setMenuAberto(false)}
+        aria-hidden="true"
+      />
 
       <main className="home-conteudo">
         <section className="home-intro">
@@ -165,14 +217,6 @@ export default function Home() {
 
         <footer className="home-rodape">© 2026 Capacitação 4.0</footer>
       </main>
-
-      <nav className="home-barra-inferior" aria-label="Principal (celular)">
-        {MENU.filter((i) => !i.soDesktop)
-          .sort((a, b) => (a.atual ? -1 : b.atual ? 1 : 0))
-          .map((item) => (
-            <ItemMenu key={item.id} item={item} onEmBreve={emBreve} />
-          ))}
-      </nav>
 
       <p className={`home-aviso${aviso ? " visivel" : ""}`} role="status" aria-live="polite">
         {aviso}

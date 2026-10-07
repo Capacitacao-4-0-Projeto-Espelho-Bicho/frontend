@@ -599,10 +599,11 @@
 
 .etapa-pulso {
   position: absolute;
+  /* centro do disco (topo + lateral) no viewBox 120x96: y ~ 49 */
   left: 50%;
-  top: 40%;
+  top: 51%;
   width: 100%;
-  aspect-ratio: 105 / 62;
+  aspect-ratio: 120 / 78;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   animation: no-pulsa 2.2s ease-out 1.6s infinite;
@@ -795,7 +796,8 @@
   color: var(--cor-rodape);
 }
 
-.home-barra-inferior {
+.home-gaveta,
+.home-veu {
   display: none;
 }
 
@@ -837,7 +839,6 @@
 
   .home {
     --home-largura: calc(100% - 40px);
-    padding-bottom: 92px; /* espaço para a barra inferior */
   }
 
   .home-topo {
@@ -846,32 +847,14 @@
     gap: 8px;
   }
 
-  .home-avatar {
-    width: 42px;
-  }
-
   .home-usuario {
-    position: relative;
-    gap: 8px;
+    gap: 4px;
   }
 
-  /* no celular, só o avatar e um "Sair" pequeno embaixo dele */
+  /* no celular, avatar, nome e "Sair" ficam dentro do menu hambúrguer */
+  .home-avatar,
   .home-usuario-texto {
-    position: absolute;
-    left: 0;
-    top: 100%;
-    width: 42px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .home-ola,
-  .home-nome {
     display: none;
-  }
-
-  .home-sair {
-    font-size: 11px;
   }
 
   .home-sino {
@@ -956,44 +939,173 @@
     font-size: 11px;
   }
 
-  .home-barra-inferior {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 6;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid var(--home-linha);
+  .home-aviso {
+    bottom: 20px;
   }
 
-  .home-barra-inferior .home-menu-item {
-    flex-direction: column;
-    gap: 5px;
-    padding: 6px 8px;
+  /* ---- botão hambúrguer: três barras que viram um X ---- */
+  .home-hamburguer {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 0;
     border-radius: 12px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    background: none;
+    cursor: pointer;
+    transition: background-color var(--dur-media) var(--ease-padrao);
+  }
+
+  .home-hamburguer:hover,
+  .home-hamburguer.aberto {
+    background: #f1f5f4;
+  }
+
+  .home-hamburguer:focus-visible {
+    outline: 2px solid var(--cor-link);
+    outline-offset: 2px;
+  }
+
+  .home-hamburguer span {
+    position: absolute;
+    left: 11px;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--home-tinta);
+    transition: transform 320ms var(--ease-saida), opacity 200ms var(--ease-padrao), top 320ms var(--ease-saida);
+  }
+
+  .home-hamburguer span:nth-child(1) { top: 14px; }
+  .home-hamburguer span:nth-child(2) { top: 20px; }
+  .home-hamburguer span:nth-child(3) { top: 26px; }
+
+  .home-hamburguer.aberto span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .home-hamburguer.aberto span:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
+  .home-hamburguer.aberto span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+
+  /* ---- menu que desce do topo ---- */
+  .home-gaveta {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px 18px;
+    background: #fff;
+    border-radius: 0 0 22px 22px;
+    box-shadow: 0 18px 40px rgba(12, 20, 33, 0.16);
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 220ms var(--ease-padrao), transform 360ms var(--ease-saida);
+  }
+
+  .home-gaveta.aberta {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .gaveta-usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 6px 14px;
+    border-bottom: 1px solid var(--home-linha);
+    margin-bottom: 4px;
+  }
+
+  .gaveta-avatar {
+    width: 40px;
+    height: 40px;
     color: var(--home-tinta);
   }
 
-  .home-barra-inferior .home-menu-icone {
-    width: 26px;
-    height: 26px;
+  .gaveta-usuario .home-ola {
+    display: block;
+    font-size: 12px;
+    color: var(--home-suave);
   }
 
-  .home-barra-inferior .home-menu-item.atual {
+  .gaveta-nome {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .gaveta-itens {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .gaveta-itens .home-menu-item {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 12px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--home-tinta);
+  }
+
+  .gaveta-itens .home-menu-icone {
+    width: 24px;
+    height: 24px;
+  }
+
+  .gaveta-itens .home-menu-item.atual {
     background: rgba(31, 107, 87, 0.1);
     color: var(--home-verde-escuro);
   }
 
-  .home-aviso {
-    bottom: 92px;
+  /* itens entram um a um quando o menu abre */
+  .home-gaveta.aberta .gaveta-itens .home-menu-item {
+    animation: gaveta-item 360ms var(--ease-saida) both;
+  }
+
+  .home-gaveta.aberta .gaveta-itens .home-menu-item:nth-child(2) { animation-delay: 40ms; }
+  .home-gaveta.aberta .gaveta-itens .home-menu-item:nth-child(3) { animation-delay: 80ms; }
+  .home-gaveta.aberta .gaveta-itens .home-menu-item:nth-child(4) { animation-delay: 120ms; }
+  .home-gaveta.aberta .gaveta-itens .home-menu-item:nth-child(5) { animation-delay: 160ms; }
+
+  @keyframes gaveta-item {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .gaveta-sair {
+    margin-top: 6px;
+    padding: 12px;
+    border: 1px solid var(--home-linha);
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #b42318;
+    cursor: pointer;
+  }
+
+  .home-veu {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    background: rgba(12, 20, 33, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms var(--ease-padrao);
+  }
+
+  .home-veu.visivel {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
