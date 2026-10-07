@@ -20,7 +20,8 @@ src/
   services/api.js        cliente HTTP (fetch, token JWT, tratamento de erro)
   services/auth.js       rotas /api/auth/register e /api/auth/login
   context/AuthContext.jsx estado de login compartilhado (useAuth)
-  components/            Campo, Selecao, RotaProtegida
+  components/            LayoutAuth, PainelCeu, Campo, IconesSociais, RotaProtegida
+  assets/                imagens (cérebro do painel)
   constants/perfil.js    opções dos campos de perfil do cadastro
   pages/                 Login, Cadastro, Home (placeholder)
   styles/global.css      tokens de cor e estilo
@@ -28,7 +29,5 @@ src/
 
 ## Pendências
 
-- **Visual:** cores e layout em `styles/global.css` são provisórios. Ajustar conforme o Figma.
-- **Opções do cadastro:** `constants/perfil.js` tem só os valores que aparecem nos testes do backend. Completar com a documentação das rotas (SCRUM-80).
+- **Opções do cadastro:** os valores enviados em `constants/perfil.js` seguem o Figma. Confirmar com a documentação das rotas (SCRUM-80).
 - **Home:** placeholder até o layout ser aprovado (SCRUM-78).
-- O front HTML anterior foi movido para `legacy/`.
