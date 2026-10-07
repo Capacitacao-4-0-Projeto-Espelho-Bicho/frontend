@@ -845,7 +845,7 @@ button:disabled {
   }
 
   .cerebro {
-    width: min(48%, 380px);
+    width: min(48%, 340px); /* teto = resolução do PNG do cérebro */
   }
 
   .painel-frase {

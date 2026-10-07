@@ -71,7 +71,8 @@
 
 .home-avatar {
   width: clamp(42px, 3.2vw, 54px);
-  height: auto;
+  height: clamp(42px, 3.2vw, 54px);
+  color: var(--home-tinta);
   border-radius: 50%;
   transition: transform var(--dur-media) var(--ease-saida);
 }
@@ -170,11 +171,16 @@
   box-shadow: 0 0 0 4px rgba(31, 107, 87, 0.14);
 }
 
-.home-busca img {
+.home-busca-icone {
   width: 20px;
-  height: auto;
+  height: 20px;
   flex: 0 0 auto;
-  opacity: 0.8;
+  color: var(--home-suave);
+  transition: color var(--dur-media) var(--ease-padrao);
+}
+
+.home-busca:focus-within .home-busca-icone {
+  color: var(--home-verde);
 }
 
 .home-busca input {
@@ -223,16 +229,13 @@
   transition: color var(--dur-media) var(--ease-padrao), background-color var(--dur-media) var(--ease-padrao);
 }
 
-.home-menu-item img {
+.home-menu-icone {
   width: clamp(20px, 1.5vw, 26px);
-  height: auto;
-  opacity: 0.75;
+  height: clamp(20px, 1.5vw, 26px);
+  opacity: 0.8;
   transition: transform var(--dur-media) var(--ease-saida), opacity var(--dur-media) var(--ease-padrao);
 }
 
-.home-menu .home-menu-item:first-child img {
-  width: clamp(24px, 1.9vw, 32px); /* o ícone de atividades é maior no Figma */
-}
 
 /* barrinha que cresce do centro: hover e item atual */
 .home-menu .home-menu-item::after {
@@ -253,7 +256,7 @@
   background: #f4f7f6;
 }
 
-.home-menu-item:hover img {
+.home-menu-item:hover .home-menu-icone {
   opacity: 1;
   transform: translateY(-2px);
 }
@@ -268,7 +271,7 @@
   cursor: default;
 }
 
-.home-menu-item.atual img {
+.home-menu-item.atual .home-menu-icone {
   opacity: 1;
 }
 
@@ -494,11 +497,12 @@
   transition: transform 260ms var(--ease-saida), filter 260ms var(--ease-saida);
 }
 
-.etapa-botao img {
+.disco {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.22));
+  overflow: visible;
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
 }
 
 .etapa-botao:hover {
@@ -517,38 +521,80 @@
   filter: saturate(1) brightness(1);
 }
 
-/* balão "COMEÇAR" acima do nó atual, flutuando */
+/* balão "Começar" acima do nó atual: pílula clara que flutua */
 .etapa-balao {
   position: absolute;
   left: 50%;
   bottom: 100%;
-  margin-bottom: 14px;
-  padding: 0.55em 0.9em;
-  border-radius: 6px;
-  background: #283046;
-  color: #fff;
-  font-size: clamp(10px, 0.95vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  margin-bottom: clamp(10px, 1vw, 16px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.6em 1.05em 0.6em 0.6em;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff 0%, #eef7f0 100%);
+  color: var(--home-verde-escuro);
+  font: inherit;
+  font-size: clamp(11px, 0.95vw, 16px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 0 4px rgba(143, 209, 106, 0.35);
   transform: translateX(-50%);
   animation: balao-flutua 2.4s ease-in-out 1.6s infinite;
+  transition: box-shadow var(--dur-media) var(--ease-padrao);
 }
 
+.etapa-balao:hover {
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.32),
+    0 0 0 6px rgba(143, 209, 106, 0.5);
+}
+
+/* rabinho centralizado, apontando para o nó */
 .etapa-balao::after {
   content: "";
   position: absolute;
-  left: 22%;
-  top: 100%;
-  border: 7px solid transparent;
-  border-top-color: #283046;
-  border-left-width: 0;
+  left: 50%;
+  top: calc(100% - 1px);
+  width: 14px;
+  height: 9px;
+  background: #eef7f0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateX(-50%);
+}
+
+/* bolinha verde com o "play" */
+.balao-play {
+  position: relative;
+  width: 1.75em;
+  height: 1.75em;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--home-verde-claro), var(--home-verde));
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.balao-play::before {
+  content: "";
+  position: absolute;
+  left: 54%;
+  top: 50%;
+  width: 0.62em;
+  height: 0.72em;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform: translate(-50%, -50%);
 }
 
 @keyframes balao-flutua {
   0%, 100% { transform: translate(-50%, 0); }
-  50%      { transform: translate(-50%, -5px); }
+  50%      { transform: translate(-50%, -6px); }
 }
 
 .etapa-pulso {
@@ -573,8 +619,8 @@
 .etapa-dica {
   position: absolute;
   left: 50%;
-  top: 100%;
-  margin-top: 10px;
+  bottom: 100%;
+  margin-bottom: 8px;
   padding: 6px 10px;
   border-radius: 8px;
   background: rgba(12, 20, 33, 0.88);
@@ -585,7 +631,7 @@
   text-align: center;
   white-space: nowrap;
   opacity: 0;
-  transform: translate(-50%, -4px);
+  transform: translate(-50%, 4px);
   transition: opacity 180ms var(--ease-padrao), transform 220ms var(--ease-saida);
   pointer-events: none;
   z-index: 2;
@@ -596,6 +642,15 @@
   font-size: 11px;
   font-weight: 500;
   opacity: 0.75;
+}
+
+.etapa:hover,
+.etapa:focus-within {
+  z-index: 3; /* a dica fica por cima dos nós vizinhos */
+}
+
+.etapa-atual .etapa-dica {
+  display: none; /* o balão "Começar" já faz esse papel */
 }
 
 .etapa:hover .etapa-dica,
@@ -658,30 +713,23 @@
   50%      { transform: translateY(-7%); }
 }
 
-.trofeu-corpo img {
+.trofeu-svg {
   display: block;
   width: 100%;
   height: auto;
+  overflow: visible;
   filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.28)) drop-shadow(0 0 12px rgba(255, 200, 61, 0.45));
 }
 
-/* reflexo de luz que passa pelo troféu (recortado no formato dele) */
-.trofeu-brilho {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.85) 48%, transparent 60%);
-  background-size: 260% 100%;
-  background-position: 130% 0;
-  -webkit-mask: var(--mascara) center / contain no-repeat;
-  mask: var(--mascara) center / contain no-repeat;
-  mix-blend-mode: soft-light;
+/* faixa de luz que atravessa o troféu (recortada no SVG) */
+.trofeu-reflexo {
+  transform: skewX(-18deg);
   animation: trofeu-reflexo 4.5s ease-in-out 2.6s infinite;
-  pointer-events: none;
 }
 
 @keyframes trofeu-reflexo {
-  0%, 55%  { background-position: 130% 0; }
-  85%, 100% { background-position: -30% 0; }
+  0%, 55%   { transform: translateX(0) skewX(-18deg); }
+  85%, 100% { transform: translateX(300px) skewX(-18deg); }
 }
 
 .trofeu-botao:hover .trofeu-corpo {
@@ -834,8 +882,10 @@
     border-radius: 8px;
   }
 
-  .home-sino img {
+  .home-sino-icone {
     width: 26px;
+    height: 26px;
+    color: var(--home-tinta);
   }
 
   .home-logo {
@@ -851,8 +901,9 @@
     padding: 0 12px;
   }
 
-  .home-busca img {
+  .home-busca-icone {
     width: 16px;
+    height: 16px;
   }
 
   .home-busca input {
@@ -898,7 +949,7 @@
 
   .etapa-balao {
     font-size: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 9px;
   }
 
   .etapa-dica {
@@ -931,8 +982,9 @@
     color: var(--home-tinta);
   }
 
-  .home-barra-inferior .home-menu-item img {
-    width: 28px;
+  .home-barra-inferior .home-menu-icone {
+    width: 26px;
+    height: 26px;
   }
 
   .home-barra-inferior .home-menu-item.atual {

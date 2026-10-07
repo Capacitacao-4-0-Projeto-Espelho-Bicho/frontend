@@ -26,7 +26,7 @@ src/
   pages/                 Login, Cadastro, Home
   styles/home.css        estilo da Home (Figma "HOME PAGE", SCRUM-78)
   components/Trilha.jsx  trilha da Home (caminho em SVG, nós e troféu clicáveis)
-  assets/home/           nós, troféu e ícones recortados do Figma da Home
+  components/IconesHome.jsx  ícones, nós e troféu da Home em SVG
   styles/global.css      tokens de cor e estilo
 ```
 

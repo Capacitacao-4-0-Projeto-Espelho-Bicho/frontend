@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Trilha, ETAPAS } from "../components/Trilha";
 import cerebro from "../assets/cerebro.webp";
-import avatar from "../assets/home/avatar.png";
-import iconeAtividades from "../assets/home/icone-atividades.png";
-import iconeNotificacoes from "../assets/home/icone-notificacoes.png";
-import iconeHome from "../assets/home/icone-home.png";
-import iconeHistorico from "../assets/home/icone-historico.png";
-import iconeConfiguracoes from "../assets/home/icone-configuracoes.png";
-import iconeBusca from "../assets/home/icone-busca.png";
+import {
+  IconeAtividades,
+  IconeNotificacoes,
+  IconeHome,
+  IconeHistorico,
+  IconeConfiguracoes,
+  IconeBusca,
+  IconeUsuario,
+} from "../components/IconesHome";
 import "../styles/home.css";
 
 // Home conforme o Figma "HOME PAGE" (SCRUM-78).
@@ -17,11 +19,11 @@ import "../styles/home.css";
 // trilha começa sempre na primeira etapa.
 
 const MENU = [
-  { id: "atividades", rotulo: "Atividades", icone: iconeAtividades },
-  { id: "notificacoes", rotulo: "Notificações", icone: iconeNotificacoes, soDesktop: true },
-  { id: "home", rotulo: "Home", icone: iconeHome, atual: true },
-  { id: "historico", rotulo: "Histórico", icone: iconeHistorico },
-  { id: "configuracoes", rotulo: "Configurações", icone: iconeConfiguracoes },
+  { id: "atividades", rotulo: "Atividades", Icone: IconeAtividades },
+  { id: "notificacoes", rotulo: "Notificações", Icone: IconeNotificacoes, soDesktop: true },
+  { id: "home", rotulo: "Home", Icone: IconeHome, atual: true },
+  { id: "historico", rotulo: "Histórico", Icone: IconeHistorico },
+  { id: "configuracoes", rotulo: "Configurações", Icone: IconeConfiguracoes },
 ];
 
 const ETAPA_ATUAL = 0; // sem rota de progresso ainda
@@ -35,7 +37,7 @@ function ItemMenu({ item, onEmBreve }) {
       aria-current={item.atual ? "page" : undefined}
       onClick={item.atual ? undefined : () => onEmBreve(item.rotulo)}
     >
-      <img src={item.icone} alt="" />
+      <item.Icone className="home-menu-icone" />
       <span>{item.rotulo}</span>
     </button>
   );
@@ -78,7 +80,7 @@ export default function Home() {
       <div className={`home-cabecalho${rolou ? " rolou" : ""}`}>
         <header className="home-topo">
           <div className="home-usuario">
-            <img className="home-avatar" src={avatar} alt="" />
+            <IconeUsuario className="home-avatar" />
             <div className="home-usuario-texto">
               <span className="home-ola">Olá,</span>
               <span className="home-nome">{nome}</span>
@@ -92,7 +94,7 @@ export default function Home() {
               aria-label="Notificações"
               onClick={() => emBreve("Notificações")}
             >
-              <img src={iconeNotificacoes} alt="" />
+              <IconeNotificacoes className="home-sino-icone" />
             </button>
           </div>
 
@@ -108,7 +110,7 @@ export default function Home() {
               emBreve("Busca");
             }}
           >
-            <img src={iconeBusca} alt="" />
+            <IconeBusca className="home-busca-icone" />
             <input type="search" placeholder="BUSCAR" aria-label="Buscar" />
           </form>
         </header>

@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
-import noInicio from "../assets/home/trilha/no-inicio.png";
-import noComunicacao from "../assets/home/trilha/no-comunicacao.png";
-import noEquipe from "../assets/home/trilha/no-equipe.png";
-import noCriatividade from "../assets/home/trilha/no-criatividade.png";
-import noProblemas from "../assets/home/trilha/no-problemas.png";
-import noColaboracao from "../assets/home/trilha/no-colaboracao.png";
-import noOrganizacao from "../assets/home/trilha/no-organizacao.png";
-import trofeu from "../assets/home/trilha/trofeu.png";
+import {
+  DiscoNo,
+  Trofeu,
+  IlustraComunicacao,
+  IlustraEquipe,
+  IlustraCriatividade,
+  IlustraProblemas,
+  IlustraColaboracao,
+  IlustraOrganizacao,
+} from "./IconesHome";
 
-// Trilha de soft skills da Home. Os nós e o troféu são recortes da
-// ilustração do Figma (SCRUM-78); o caminho é desenhado em SVG para que
-// cada etapa seja um botão de verdade. Os nomes das etapas foram tirados
+// Trilha de soft skills da Home (Figma SCRUM-78). Caminho, nós e troféu
+// são desenhados em SVG: nítidos em qualquer tela e cada etapa é um botão
+// de verdade. Os nomes das etapas foram tirados
 // dos ícones e precisam ser confirmados com o João / com o conteúdo.
 export const ETAPAS = [
-  { id: "inicio", rotulo: "Primeiros passos", img: noInicio },
-  { id: "comunicacao", rotulo: "Comunicação", img: noComunicacao },
-  { id: "equipe", rotulo: "Trabalho em equipe", img: noEquipe },
-  { id: "criatividade", rotulo: "Criatividade", img: noCriatividade },
-  { id: "problemas", rotulo: "Resolução de problemas", img: noProblemas },
-  { id: "colaboracao", rotulo: "Colaboração", img: noColaboracao },
-  { id: "organizacao", rotulo: "Organização", img: noOrganizacao },
+  { id: "inicio", rotulo: "Primeiros passos", Ilustracao: null },
+  { id: "comunicacao", rotulo: "Comunicação", Ilustracao: IlustraComunicacao },
+  { id: "equipe", rotulo: "Trabalho em equipe", Ilustracao: IlustraEquipe },
+  { id: "criatividade", rotulo: "Criatividade", Ilustracao: IlustraCriatividade },
+  { id: "problemas", rotulo: "Resolução de problemas", Ilustracao: IlustraProblemas },
+  { id: "colaboracao", rotulo: "Colaboração", Ilustracao: IlustraColaboracao },
+  { id: "organizacao", rotulo: "Organização", Ilustracao: IlustraOrganizacao },
 ];
 
 // Posições (centro de cada nó) no sistema de coordenadas de cada layout.
@@ -123,9 +125,16 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
               }}
             >
               {estado === "atual" && (
-                <span className="etapa-balao" aria-hidden="true">
-                  COMEÇAR
-                </span>
+                <button
+                  type="button"
+                  className="etapa-balao"
+                  onClick={() => onEtapa?.(etapa, estado)}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  <span className="balao-play" />
+                  Começar
+                </button>
               )}
               <button
                 type="button"
@@ -134,7 +143,7 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
                 aria-label={`${etapa.rotulo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (etapa atual)" : ""}`}
               >
                 {estado === "atual" && <span className="etapa-pulso" aria-hidden="true" />}
-                <img src={etapa.img} alt="" draggable="false" />
+                <DiscoNo id={etapa.id} Ilustracao={etapa.Ilustracao} atual={estado === "atual"} />
               </button>
               <span className="etapa-dica" aria-hidden="true">
                 {etapa.rotulo}
@@ -151,15 +160,13 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
           left: pct(L.trofeu.x, L.w),
           top: pct(L.trofeu.y, L.h),
           width: pct(L.trofeu.w, L.w),
-          "--mascara": `url(${trofeu})`,
         }}
         onAnimationEnd={(e) => e.animationName === "trofeu-estouro" && setEstourou(false)}
       >
         <span className="trofeu-aura" aria-hidden="true" />
         <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu da trilha">
           <span className="trofeu-corpo">
-            <img src={trofeu} alt="" draggable="false" />
-            <span className="trofeu-brilho" aria-hidden="true" />
+            <Trofeu />
           </span>
         </button>
         {[0, 1, 2, 3, 4, 5].map((n) => (
