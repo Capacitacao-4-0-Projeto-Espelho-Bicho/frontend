@@ -102,7 +102,7 @@ export default function Cadastro() {
         <span className="progresso-trilho" aria-hidden="true">
           <span className="progresso-barra" style={{ transform: `scaleX(${etapa / 2})` }} />
         </span>
-        <span className="etapa">Etapa {etapa} de 2</span>
+        <span className="etapa-rotulo">Etapa {etapa} de 2</span>
       </div>
 
       <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>

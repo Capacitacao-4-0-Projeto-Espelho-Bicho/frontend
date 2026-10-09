@@ -61,21 +61,94 @@ function CampoEstrelas({ lista }) {
   ));
 }
 
-/* A. Céu noturno: a Home inteira vira o céu do painel do login */
-function FundoCeu() {
-  const lista = useMemo(() => estrelas(170, 11), []);
+/* A. Céu noturno: o mesmo céu na Home e no login.
+   Movimento: estrelas cintilando, aurora que respira devagar, uma estrela
+   cadente de vez em quando e, no computador, as estrelas acompanham o mouse
+   de leve (duas camadas em profundidades diferentes). */
+function useEstrelasCadentes(ativo) {
+  const [cadentes, setCadentes] = useState([]);
+  useEffect(() => {
+    if (!ativo || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let vivo = true;
+    let timer;
+    let id = 0;
+    const agendar = () => {
+      timer = setTimeout(() => {
+        if (!vivo) return;
+        const nova = {
+          id: id++,
+          x: 15 + Math.random() * 70,
+          y: Math.random() * 35,
+          ang: 18 + Math.random() * 20,
+          comp: 90 + Math.random() * 90,
+        };
+        setCadentes((l) => [...l.slice(-2), nova]);
+        setTimeout(() => vivo && setCadentes((l) => l.filter((c) => c.id !== nova.id)), 1600);
+        agendar();
+      }, 5000 + Math.random() * 7000);
+    };
+    agendar();
+    return () => {
+      vivo = false;
+      clearTimeout(timer);
+    };
+  }, [ativo]);
+  return cadentes;
+}
+
+export function FundoCeu({ constelacoes = true }) {
+  const longe = useMemo(() => estrelas(130, 11), []);
+  const perto = useMemo(() => estrelas(45, 37), []);
+  const cadentes = useEstrelasCadentes(true);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    const fino = window.matchMedia("(pointer: fine)").matches;
+    const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || !fino || reduzir) return;
+    let quadro;
+    const mover = (e) => {
+      cancelAnimationFrame(quadro);
+      quadro = requestAnimationFrame(() => {
+        const dx = e.clientX / window.innerWidth - 0.5;
+        const dy = e.clientY / window.innerHeight - 0.5;
+        el.style.setProperty("--mx", dx.toFixed(3));
+        el.style.setProperty("--my", dy.toFixed(3));
+      });
+    };
+    window.addEventListener("pointermove", mover, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", mover);
+      cancelAnimationFrame(quadro);
+    };
+  }, []);
+
   return (
-    <div className="fundo fundo-ceu" aria-hidden="true">
+    <div className="fundo fundo-ceu" aria-hidden="true" ref={ref}>
       <div className="ceu-brilho" />
-      <CampoEstrelas lista={lista} />
-      {/* duas constelações discretas, como pontos de uma trilha no céu */}
-      <svg className="constelacao" viewBox="0 0 100 60" preserveAspectRatio="none">
-        <polyline points="66,16 72,22 79,19 85,27 93,24" />
-        <polyline points="70,40 76,35 82,38 88,33" />
-        {[[66, 16], [72, 22], [79, 19], [85, 27], [93, 24], [70, 40], [76, 35], [82, 38], [88, 33]].map(([x, y]) => (
-          <circle key={`${x}-${y}`} cx={x} cy={y} r="0.35" />
-        ))}
-      </svg>
+      <div className="ceu-camada ceu-longe">
+        <CampoEstrelas lista={longe} />
+      </div>
+      <div className="ceu-camada ceu-perto">
+        <CampoEstrelas lista={perto} />
+      </div>
+      {cadentes.map((c) => (
+        <span
+          key={c.id}
+          className="estrela-cadente"
+          style={{ left: `${c.x}%`, top: `${c.y}%`, "--ang": `${c.ang}deg`, "--comp": `${c.comp}px` }}
+        />
+      ))}
+      {constelacoes && (
+        <svg className="constelacao" viewBox="0 0 100 60" preserveAspectRatio="none">
+          <polyline points="66,16 72,22 79,19 85,27 93,24" />
+          <polyline points="70,40 76,35 82,38 88,33" />
+          {[[66, 16], [72, 22], [79, 19], [85, 27], [93, 24], [70, 40], [76, 35], [82, 38], [88, 33]].map(([x, y]) => (
+            <line key={`${x}-${y}`} x1={x} y1={y} x2={x} y2={y} />
+          ))}
+        </svg>
+      )}
     </div>
   );
 }

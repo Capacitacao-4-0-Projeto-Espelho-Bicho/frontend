@@ -204,7 +204,7 @@ h1.titulo-menor {
   margin-bottom: 24px;
 }
 
-.etapa {
+.etapa-rotulo {
   margin: 0 0 24px;
   font-size: 13px;
   color: var(--cor-rodape);
@@ -580,7 +580,7 @@ button:disabled {
   margin: 4px 0 24px;
 }
 
-.progresso .etapa {
+.progresso .etapa-rotulo {
   display: block;
   margin: 8px 0 0;
 }

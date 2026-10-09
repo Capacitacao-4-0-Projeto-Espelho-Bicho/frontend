@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PainelCeu } from "./PainelCeu";
 import cerebro from "../assets/cerebro.webp";
+import { FundoCeu, useTema } from "./FundoHome";
+import "../styles/fundos.css";
 
 // Moldura das telas de autenticação (Figma "Página de login"):
 // cartão com o formulário à esquerda e o painel verde à direita.
@@ -18,9 +20,11 @@ export function LayoutAuth() {
   // Depois a classe sai (ao fim da entrada do cérebro, a última), para que
   // nada (resize, troca de rota) a reinicie.
   const [revelando, setRevelando] = useState(true);
+  const tema = useTema();
 
   return (
     <main className="pagina-auth">
+      {tema === "ceu" && <FundoCeu constelacoes={false} />}
       <div className="moldura">
         <section className="lado-form">
           {/* Cabeçalho do layout web (some no celular, onde o banner faz esse papel) */}
