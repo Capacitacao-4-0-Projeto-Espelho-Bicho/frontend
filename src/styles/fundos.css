@@ -1,0 +1,238 @@
+/* Propostas de fundo da Home (data-tema no <html>). */
+
+.fundo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fundo-estrela {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: var(--brilho);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+}
+
+.fundo-estrela.cintila {
+  animation: fundo-cintila var(--dur) ease-in-out var(--atraso) infinite;
+}
+
+@keyframes fundo-cintila {
+  0%, 100% { opacity: var(--brilho); }
+  50%      { opacity: calc(var(--brilho) * 0.2); }
+}
+
+/* =========================================================
+   A. Céu noturno
+   ========================================================= */
+:root[data-tema="ceu"] .home {
+  --home-fundo: #0b2a2f;
+  --home-tinta: #eef5f2;
+  --home-suave: #a3bcb5;
+  --home-texto: #c7d8d3;
+  --home-linha: rgba(255, 255, 255, 0.12);
+  --home-cabecalho: rgba(9, 34, 38, 0.72);
+  --home-campo: rgba(255, 255, 255, 0.06);
+  --home-borda-campo: rgba(255, 255, 255, 0.22);
+  --home-borda-campo-hover: rgba(255, 255, 255, 0.4);
+  --home-hover: rgba(255, 255, 255, 0.07);
+  --home-trilho: rgba(255, 255, 255, 0.14);
+  --home-gaveta: #0f3438;
+  --home-verde-escuro: var(--cor-broto);
+  --home-verde: var(--cor-broto);
+  --cor-link: var(--cor-broto);
+}
+
+.fundo-ceu {
+  position: fixed;
+  background: linear-gradient(180deg, #0c2f34 0%, #0a262b 55%, #071d21 100%);
+}
+
+/* brilho de aurora bem fraco, verde e azul */
+.ceu-brilho {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(40% 35% at 82% 8%, rgba(143, 209, 106, 0.16), transparent 70%),
+    radial-gradient(45% 40% at 8% 55%, rgba(47, 86, 217, 0.16), transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, rgba(31, 107, 87, 0.35), transparent 70%);
+}
+
+.constelacao {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: 60vh;
+}
+
+.constelacao polyline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 3 4;
+}
+
+.constelacao circle {
+  fill: #fff;
+  opacity: 0.8;
+}
+
+/* a faixa vira parte do céu: sem bloco verde, só um chão de luz */
+:root[data-tema="ceu"] .home-trilha {
+  background: radial-gradient(70% 90% at 50% 60%, rgba(31, 107, 87, 0.45), transparent 75%);
+}
+
+:root[data-tema="ceu"] .caminho-base {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+
+:root[data-tema="ceu"] .home-logo {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--cor-broto);
+  box-shadow: 0 0 0 6px rgba(143, 209, 106, 0.12), 0 0 40px rgba(143, 209, 106, 0.18);
+}
+
+:root[data-tema="ceu"] .gaveta-sair {
+  background: transparent;
+  color: #ff9d8f;
+}
+
+/* =========================================================
+   B. Paisagem ao amanhecer
+   ========================================================= */
+:root[data-tema="paisagem"] .home {
+  --home-fundo: #fbfaf6;
+  --home-cabecalho: rgba(255, 255, 255, 0.75);
+  --home-campo: rgba(255, 255, 255, 0.8);
+}
+
+.paisagem-ceu {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(var(--topo-trilha, 600px) + 20px);
+  background: linear-gradient(180deg, #e6f3ec 0%, #f1f6ee 45%, #fcefd9 100%);
+}
+
+.paisagem-sol {
+  position: absolute;
+  right: 14%;
+  top: calc(var(--topo-trilha, 600px) - clamp(130px, 12vw, 190px));
+  width: clamp(120px, 12vw, 190px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe2a3 0%, #ffd27a 45%, rgba(255, 210, 122, 0) 70%);
+  transform: translateY(calc(var(--rolagem, 0px) * 0.25));
+}
+
+.morros {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(90px, 11vw, 170px);
+  top: calc(var(--topo-trilha, 600px) - clamp(90px, 11vw, 170px) + 2px);
+}
+
+.morro-1 {
+  fill: #b9dcab;
+  transform: translateY(calc(var(--rolagem, 0px) * 0.12));
+}
+
+.morro-2 {
+  fill: #6fb27c;
+  transform: translateY(calc(var(--rolagem, 0px) * 0.06));
+}
+
+.morro-3 {
+  fill: #2c7a59;
+}
+
+/* a faixa continua o morro da frente */
+:root[data-tema="paisagem"] .home-trilha {
+  margin-top: clamp(70px, 8vw, 130px);
+  background: linear-gradient(180deg, #2c7a59 0%, #22695a 55%, #1b5c55 100%);
+}
+
+/* =========================================================
+   C. Mapa topográfico
+   ========================================================= */
+.mapa-curvas {
+  position: absolute;
+  inset: 0;
+  background: url("../assets/home/topografico.svg") center top / 1600px auto repeat;
+  opacity: 0.16;
+}
+
+/* deixa o texto legível: as curvas somem perto do conteúdo principal */
+.mapa-esmaecer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 45% at 28% 30%, rgba(255, 255, 255, 0.9), transparent 75%);
+}
+
+:root[data-tema="mapa"] .home {
+  --home-cabecalho: rgba(255, 255, 255, 0.82);
+}
+
+/* curvas claras também dentro da faixa verde */
+:root[data-tema="mapa"] .home-trilha::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.13);
+  -webkit-mask: url("../assets/home/topografico.svg") center / 1600px auto repeat;
+  mask: url("../assets/home/topografico.svg") center / 1600px auto repeat;
+  pointer-events: none;
+}
+
+:root[data-tema="mapa"] .home-trilha > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 860px) {
+  .constelacao {
+    height: 40vh;
+  }
+
+  .paisagem-sol {
+    right: 8%;
+  }
+
+  /* no celular a faixa vira chão de ponta a ponta, sem cartão */
+  :root[data-tema="paisagem"] .home-trilha {
+    width: 100%;
+    max-width: none;
+    margin-top: 80px;
+    border-radius: 0;
+  }
+
+  .constelacao {
+    inset: auto 0 0 0;
+    top: 34vh;
+  }
+
+  .mapa-curvas {
+    background-size: 1100px auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundo-estrela.cintila {
+    animation: none;
+  }
+}
+
+/* paisagem: a trilha começa logo depois do morro da frente */
+@media (min-width: 861px) {
+  :root[data-tema="paisagem"] .home-trilha {
+    padding-top: 0;
+  }
+
+  :root[data-tema="paisagem"] .home-trilha .trilha {
+    margin-top: -2.5vw;
+  }
+}

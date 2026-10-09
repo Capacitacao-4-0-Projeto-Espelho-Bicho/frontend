@@ -11,9 +11,21 @@
   --home-tinta: var(--cor-tinta);
   --home-suave: #5d6b76;
   --home-linha: rgba(20, 32, 43, 0.12);
+  /* superfícies (os temas de fundo trocam estas) */
+  --home-fundo: #fff;
+  --home-cabecalho: rgba(255, 255, 255, 0.92);
+  --home-campo: #fff;
+  --home-borda-campo: rgba(12, 20, 33, 0.25);
+  --home-borda-campo-hover: rgba(12, 20, 33, 0.45);
+  --home-hover: #f4f7f6;
+  --home-texto: #3d4a56;
+  --home-trilho: #e8efec;
+  --home-gaveta: #fff;
   --home-largura: min(1360px, calc(100% - 2 * clamp(16px, 7vw, 148px)));
+  position: relative;
   min-height: 100vh;
-  background: #fff;
+  background: var(--home-fundo);
+  isolation: isolate;
   color: var(--home-tinta);
 }
 
@@ -39,7 +51,7 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--home-cabecalho);
   backdrop-filter: saturate(1.4) blur(10px);
   -webkit-backdrop-filter: saturate(1.4) blur(10px);
   transition: box-shadow var(--dur-media) var(--ease-padrao);
@@ -151,9 +163,9 @@
   flex-direction: row; /* o global.css deixa todo form em coluna */
   align-items: center;
   gap: 10px;
-  border: 1px solid rgba(12, 20, 33, 0.25);
+  border: 1px solid var(--home-borda-campo);
   border-radius: 999px;
-  background: #fff;
+  background: var(--home-campo);
   transition:
     width 400ms var(--ease-saida),
     border-color var(--dur-media) var(--ease-padrao),
@@ -161,7 +173,7 @@
 }
 
 .home-busca:hover {
-  border-color: rgba(12, 20, 33, 0.45);
+  border-color: var(--home-borda-campo-hover);
 }
 
 .home-busca:focus-within {
@@ -249,7 +261,7 @@
 
 .home-menu-item:hover {
   color: var(--home-tinta);
-  background: #f4f7f6;
+  background: var(--home-hover);
 }
 
 .home-menu-item:hover .home-menu-icone {
@@ -317,7 +329,7 @@
   max-width: 60ch;
   font-size: clamp(15px, 1.15vw, 19px);
   line-height: 1.6;
-  color: #313957;
+  color: var(--home-texto);
 }
 
 .home-progresso {
@@ -344,7 +356,7 @@
   width: 160px;
   height: 8px;
   border-radius: 8px;
-  background: #e8efec;
+  background: var(--home-trilho);
   overflow: hidden;
 }
 
@@ -915,7 +927,7 @@
 
   .home-hamburguer:hover,
   .home-hamburguer.aberto {
-    background: #f1f5f4;
+    background: var(--home-hover);
   }
 
   .home-hamburguer:focus-visible {
@@ -951,7 +963,7 @@
     flex-direction: column;
     gap: 6px;
     padding: 14px 16px 18px;
-    background: #fff;
+    background: var(--home-gaveta);
     border-radius: 0 0 22px 22px;
     box-shadow: 0 18px 40px rgba(12, 20, 33, 0.16);
     opacity: 0;

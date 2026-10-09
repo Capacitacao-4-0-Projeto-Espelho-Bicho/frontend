@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Trilha, ETAPAS } from "../components/Trilha";
+import { FundoHome, useTema } from "../components/FundoHome";
 import cerebro from "../assets/cerebro.webp";
 import {
   IconeAtividades,
@@ -12,6 +13,7 @@ import {
   IconeUsuario,
 } from "../components/IconesHome";
 import "../styles/home.css";
+import "../styles/fundos.css";
 
 // Home conforme o Figma "HOME PAGE" (SCRUM-78).
 // O backend ainda não tem rotas de atividades, notificações, histórico,
@@ -45,6 +47,7 @@ function ItemMenu({ item, onEmBreve }) {
 
 export default function Home() {
   const { nome, sair } = useAuth();
+  const tema = useTema();
   const [aviso, setAviso] = useState("");
   const [rolou, setRolou] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
@@ -89,6 +92,7 @@ export default function Home() {
 
   return (
     <div className="home">
+      <FundoHome tema={tema} />
       <div className={`home-cabecalho${rolou ? " rolou" : ""}`}>
         <header className="home-topo">
           <div className="home-usuario">
