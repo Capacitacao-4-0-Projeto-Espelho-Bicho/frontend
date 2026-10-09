@@ -53,7 +53,7 @@ export default function Login() {
   return (
     <>
       <h1>
-        Bem vindo <span aria-hidden="true">👋</span>
+        Bem-vindo
       </h1>
       <p className="subtitulo">Pronto para continuar desenvolvendo suas habilidades socioemocionais?</p>
       <p className="subtitulo">

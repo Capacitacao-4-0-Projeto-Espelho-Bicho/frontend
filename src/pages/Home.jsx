@@ -106,12 +106,30 @@ export default function Home() {
             </button>
             <IconeUsuario className="home-avatar" />
             <div className="home-usuario-texto">
-              <span className="home-ola">Olá,</span>
               <span className="home-nome">{nome}</span>
               <button type="button" className="home-sair" onClick={sair}>
                 Sair
               </button>
             </div>
+          </div>
+
+          <div className="home-logo">
+            <img src={cerebro} alt="Capacitação 4.0" />
+          </div>
+
+          <div className="home-direita">
+            <form
+            className="home-busca so-desktop-flex"
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              emBreve("Busca");
+            }}
+          >
+            <IconeBusca className="home-busca-icone" />
+            <input type="search" placeholder="Buscar" aria-label="Buscar" />
+          </form>
+            {/* no celular, o sino fica à direita e a busca vai para o menu */}
             <button
               type="button"
               className="home-sino so-mobile"
@@ -121,22 +139,6 @@ export default function Home() {
               <IconeNotificacoes className="home-sino-icone" />
             </button>
           </div>
-
-          <div className="home-logo">
-            <img src={cerebro} alt="Capacitação 4.0" />
-          </div>
-
-          <form
-            className="home-busca"
-            role="search"
-            onSubmit={(e) => {
-              e.preventDefault();
-              emBreve("Busca");
-            }}
-          >
-            <IconeBusca className="home-busca-icone" />
-            <input type="search" placeholder="BUSCAR" aria-label="Buscar" />
-          </form>
         </header>
 
         <nav className="home-menu" aria-label="Principal">
@@ -153,11 +155,19 @@ export default function Home() {
         >
           <div className="gaveta-usuario">
             <IconeUsuario className="gaveta-avatar" />
-            <div>
-              <span className="home-ola">Olá,</span>
-              <strong className="gaveta-nome">{nome}</strong>
-            </div>
+            <strong className="gaveta-nome">{nome}</strong>
           </div>
+          <form
+          className="home-busca gaveta-busca"
+          role="search"
+          onSubmit={(e) => {
+            e.preventDefault();
+            emBreve("Busca");
+          }}
+          >
+          <IconeBusca className="home-busca-icone" />
+          <input type="search" placeholder="Buscar" aria-label="Buscar" />
+          </form>
           <nav className="gaveta-itens" aria-label="Principal (celular)">
             {MENU.map((item) => (
               <ItemMenu key={item.id} item={{ ...item, soDesktop: false }} onEmBreve={emBreve} />
@@ -193,19 +203,17 @@ export default function Home() {
             </p>
           </div>
 
-          <aside className="home-progresso" aria-label="Seu progresso">
-            <span className="progresso-rotulo">Seu progresso</span>
-            <strong className="progresso-numero">
-              {ETAPA_ATUAL} <span>de {TOTAL} etapas</span>
-            </strong>
-            <span className="progresso-trilho-home" aria-hidden="true">
-              <span style={{ transform: `scaleX(${Math.max(progresso, 0.02)})` }} />
-            </span>
-            <span className="progresso-proxima">
-              Próxima etapa: <b>{proxima.rotulo}</b>
-            </span>
-          </aside>
         </section>
+
+        {/* progresso em uma linha, logo acima da trilha */}
+        <div className="home-progresso" aria-label="Seu progresso">
+          <span className="progresso-trilho-home" aria-hidden="true">
+            <span style={{ transform: `scaleX(${Math.max(progresso, 0.02)})` }} />
+          </span>
+          <span className="progresso-texto">
+            <b>{ETAPA_ATUAL} de {TOTAL}</b> etapas concluídas. Próxima: {proxima.rotulo}
+          </span>
+        </div>
 
         <section className="home-trilha" aria-label="Trilha de soft skills">
           <Trilha

@@ -4,13 +4,13 @@
 
 .home {
   --home-borda-logo: #114c4d;
-  --home-verde: #1f6b57;
-  --home-verde-escuro: #114c4d;
-  --home-verde-claro: #8fd16a;
+  --home-verde: var(--cor-trilha);
+  --home-verde-escuro: var(--cor-floresta);
+  --home-verde-claro: var(--cor-broto);
   --home-ouro: #ffc83d;
-  --home-tinta: #0c1421;
-  --home-suave: #5b6478;
-  --home-linha: rgba(12, 20, 33, 0.12);
+  --home-tinta: var(--cor-tinta);
+  --home-suave: #5d6b76;
+  --home-linha: rgba(20, 32, 43, 0.12);
   --home-largura: min(1360px, calc(100% - 2 * clamp(16px, 7vw, 148px)));
   min-height: 100vh;
   background: #fff;
@@ -32,11 +32,7 @@
   to   { opacity: 1; transform: none; }
 }
 
-.home-topo { animation: home-desce 600ms var(--ease-saida) both; }
-.home-menu { animation: home-desce 600ms var(--ease-saida) 80ms both; }
-.home-intro-texto { animation: home-sobe 700ms var(--ease-saida) 160ms both; }
-.home-progresso { animation: home-sobe 700ms var(--ease-saida) 260ms both; }
-.home-trilha { animation: home-sobe 800ms var(--ease-saida) 320ms both; }
+
 
 /* ---------- Cabeçalho fixo ---------- */
 .home-cabecalho {
@@ -82,11 +78,10 @@
 }
 
 .home-usuario-texto {
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: baseline;
-  column-gap: 6px;
-  row-gap: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .home-ola {
@@ -98,8 +93,6 @@
 .home-nome {
   font-size: clamp(15px, 1.2vw, 20px);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .home-sair {
@@ -143,8 +136,14 @@
   height: auto;
 }
 
-.home-busca {
+.home-direita {
   justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-busca {
   width: clamp(180px, 15vw, 260px);
   height: clamp(40px, 2.8vw, 48px);
   padding: 0 16px;
@@ -191,7 +190,6 @@
   background: none;
   font: inherit;
   font-size: clamp(14px, 1vw, 16px);
-  letter-spacing: 0.06em;
   color: var(--home-tinta);
 }
 
@@ -219,10 +217,8 @@
   border: 0;
   background: none;
   font: inherit;
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: clamp(14px, 1.05vw, 16px);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--home-suave);
   cursor: pointer;
   border-radius: 10px 10px 0 0;
@@ -300,14 +296,14 @@
   width: var(--home-largura);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
 }
 
 .home-intro h1 {
   margin: 0 0 clamp(14px, 1.4vw, 24px);
-  font-family: "Montserrat Subrayada", "Inter", system-ui, sans-serif;
+  font-family: "Montserrat Subrayada", "Figtree", system-ui, sans-serif;
   font-weight: 700;
   font-size: clamp(22px, 2vw, 35px);
   letter-spacing: 0.01em;
@@ -325,48 +321,27 @@
 }
 
 .home-progresso {
+  width: var(--home-largura);
+  margin: clamp(8px, 1vw, 16px) auto 0;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px 24px;
-  border: 1px solid var(--home-linha);
-  border-radius: 18px;
-  background:
-    radial-gradient(120% 140% at 100% 0%, rgba(143, 209, 106, 0.18), transparent 55%),
-    #fff;
-  box-shadow: 0 12px 32px rgba(12, 20, 33, 0.06);
-  transition: transform var(--dur-media) var(--ease-saida), box-shadow var(--dur-media) var(--ease-saida);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
 }
 
-.home-progresso:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(12, 20, 33, 0.09);
-}
-
-.progresso-rotulo {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.progresso-texto {
+  font-size: var(--tipo-sm);
   color: var(--home-suave);
 }
 
-.progresso-numero {
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1;
+.progresso-texto b {
   color: var(--home-verde-escuro);
   font-variant-numeric: tabular-nums;
 }
 
-.progresso-numero span {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--home-suave);
-}
-
 .progresso-trilho-home {
   display: block;
+  width: 160px;
   height: 8px;
   border-radius: 8px;
   background: #e8efec;
@@ -379,20 +354,10 @@
   border-radius: inherit;
   background: linear-gradient(90deg, var(--home-verde-claro), var(--home-verde));
   transform-origin: left;
-  animation: progresso-enche 1200ms var(--ease-saida) 700ms both;
 }
 
 @keyframes progresso-enche {
   from { transform: scaleX(0); }
-}
-
-.progresso-proxima {
-  font-size: 14px;
-  color: var(--home-suave);
-}
-
-.progresso-proxima b {
-  color: var(--home-tinta);
 }
 
 /* ---------- Faixa da trilha ---------- */
@@ -414,7 +379,7 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(40% 80% at 50% 50%, rgba(255, 255, 255, 0.06), transparent 70%);
-  animation: faixa-luz 14s ease-in-out infinite alternate;
+  display: none;
   pointer-events: none;
 }
 
@@ -538,15 +503,12 @@
   font: inherit;
   font-size: clamp(11px, 0.95vw, 16px);
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
   box-shadow:
     0 10px 22px rgba(0, 0, 0, 0.28),
     0 0 0 4px rgba(143, 209, 106, 0.35);
   transform: translateX(-50%);
-  animation: balao-flutua 2.4s ease-in-out 1.6s infinite;
   transition: box-shadow var(--dur-media) var(--ease-padrao);
 }
 
@@ -682,7 +644,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 210, 80, 0.55) 0%, rgba(255, 210, 80, 0.18) 40%, transparent 68%);
   transform: translate(-50%, -50%);
-  animation: aura-pulsa 3.2s ease-in-out 2.4s infinite;
+  opacity: 0.7;
   pointer-events: none;
 }
 
@@ -706,7 +668,7 @@
 .trofeu-corpo {
   position: relative;
   display: block;
-  animation: trofeu-flutua 3.6s ease-in-out 2.4s infinite;
+
 }
 
 @keyframes trofeu-flutua {
@@ -725,12 +687,17 @@
 /* faixa de luz que atravessa o troféu (recortada no SVG) */
 .trofeu-reflexo {
   transform: skewX(-18deg);
-  animation: trofeu-reflexo 4.5s ease-in-out 2.6s infinite;
+
 }
 
 @keyframes trofeu-reflexo {
-  0%, 55%   { transform: translateX(0) skewX(-18deg); }
-  85%, 100% { transform: translateX(300px) skewX(-18deg); }
+  from { transform: translateX(0) skewX(-18deg); }
+  to   { transform: translateX(300px) skewX(-18deg); }
+}
+
+.trofeu-botao:hover .trofeu-reflexo,
+.trofeu-botao:focus-visible .trofeu-reflexo {
+  animation: trofeu-reflexo 1100ms ease-in-out;
 }
 
 .trofeu-botao:hover .trofeu-corpo {
@@ -752,7 +719,7 @@
   background: #fff6c8;
   clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
   opacity: 0;
-  animation: faisca-pisca 2.8s ease-in-out infinite;
+
   pointer-events: none;
   filter: drop-shadow(0 0 4px rgba(255, 220, 120, 0.9));
 }
@@ -792,7 +759,6 @@
   padding: 28px 16px 36px;
   text-align: center;
   font-size: 13px;
-  letter-spacing: 0.04em;
   color: var(--cor-rodape);
 }
 
@@ -914,15 +880,6 @@
     font-size: 15px;
   }
 
-  .home-progresso {
-    padding: 16px 18px;
-    border-radius: 16px;
-  }
-
-  .progresso-numero {
-    font-size: 26px;
-  }
-
   .home-trilha {
     width: calc(100% - 32px);
     max-width: 440px;
@@ -1031,10 +988,31 @@
   }
 
   .gaveta-nome {
-    font-size: 16px;
+    font-size: var(--tipo-md);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+  }
+
+  /* no celular a busca do topo some e aparece dentro do menu */
+  .home-direita .home-busca {
+    display: none;
+  }
+
+  .home-busca.gaveta-busca,
+  .home-busca.gaveta-busca:focus-within {
+    width: 100%;
+    max-width: none;
+    height: 44px;
+    margin: 4px 0 6px;
+  }
+
+  .gaveta-busca input {
+    font-size: var(--tipo-sm);
+    text-align: left;
+  }
+
+  .gaveta-busca .home-busca-icone {
+    width: 18px;
+    height: 18px;
   }
 
   .gaveta-itens {
@@ -1050,7 +1028,6 @@
     padding: 12px 12px;
     border-radius: 12px;
     font-size: 14px;
-    letter-spacing: 0.04em;
     color: var(--home-tinta);
   }
 

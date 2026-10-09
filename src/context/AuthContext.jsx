@@ -39,7 +39,8 @@ function nomeParaExibir(token, email) {
   const p = lerPayload(token || "");
   const sub = typeof p.sub === "string" ? p.sub : "";
   const candidato = p.nome || p.name || p.email || (sub.includes("@") ? sub : "") || email || "";
-  return candidato.split("@")[0] || "Usuário";
+  const base = candidato.split("@")[0] || "Usuário";
+  return base.charAt(0).toUpperCase() + base.slice(1);
 }
 
 export function AuthProvider({ children }) {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PainelCeu } from "./PainelCeu";
+import cerebro from "../assets/cerebro.webp";
 
 // Moldura das telas de autenticação (Figma "Página de login"):
 // cartão com o formulário à esquerda e o painel verde à direita.
@@ -25,16 +26,17 @@ export function LayoutAuth() {
           {/* Cabeçalho do layout web (some no celular, onde o banner faz esse papel) */}
           <header className="topo-web">
             <span className="marca">
-              <span className="marca-simbolo" aria-hidden="true" />
+              <span className="marca-simbolo" aria-hidden="true">
+                <img src={cerebro} alt="" />
+              </span>
               Capacitação 4.0
             </span>
-            <span className="topo-ajuda">Projeto Espelho · FURG</span>
           </header>
           {/* key = rota: o conteúdo remonta e anima só quando a tela muda */}
           <div className="conteudo-form troca-tela" key={pathname}>
             <Outlet />
           </div>
-          <footer className="rodape">© 2026 ALL RIGHTS RESERVED</footer>
+          <footer className="rodape">© 2026 Capacitação 4.0</footer>
         </section>
 
         <aside

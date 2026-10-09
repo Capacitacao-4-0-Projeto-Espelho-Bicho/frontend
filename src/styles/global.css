@@ -1,25 +1,43 @@
-/* Tokens tirados do Figma "Página de login" */
+/* Sistema visual único (login, cadastro e Home).
+   Paleta: verdes do Figma + azul dos nós da trilha. */
 :root {
-  --cor-fundo: #f4f6f8;
-  --cor-titulo: #0c1421;
-  --cor-texto: #313957;
-  --cor-rotulo: #0c1421;
-  --cor-placeholder: #8897ad;
-  --cor-input-fundo: #f7fbff;
-  --cor-input-borda: #d4d7e3;
-  --cor-botao: #162d3a;
-  --cor-botao-hover: #0f2029;
-  --cor-link: #1e4ae9;
-  --cor-social-fundo: #f3f9fa;
-  --cor-divisor: #cfdfe2;
-  --cor-rodape: #959cb6;
-  --cor-erro: #e5484d;
-  --cor-ok-fundo: #81ff99;
-  --cor-ok-texto: #134a1f;
-  --cor-azul: #0088ff;
-  --cor-roxo: #7b61ff;
-  --raio-moldura: 25px;
-  --raio-input: 12px;
+  --cor-floresta: #114c4d; /* marca, botões, item ativo */
+  --cor-trilha: #1f6b57;   /* links, faixa e painel */
+  --cor-broto: #8fd16a;    /* só progresso e etapa atual */
+  --cor-no: #2f56d9;       /* nós da trilha */
+  --cor-tinta: #14202b;    /* texto */
+  --cor-nevoa: #f2f5f4;    /* fundo de campos e hover */
+
+  --cor-fundo: #f2f5f4;
+  --cor-titulo: var(--cor-tinta);
+  --cor-texto: #3d4a56;
+  --cor-rotulo: var(--cor-tinta);
+  --cor-placeholder: #8a96a0;
+  --cor-input-fundo: var(--cor-nevoa);
+  --cor-input-borda: #d3ddda;
+  --cor-botao: var(--cor-floresta);
+  --cor-botao-hover: #0c3a3b;
+  --cor-link: var(--cor-trilha);
+  --cor-social-fundo: var(--cor-nevoa);
+  --cor-divisor: #d3ddda;
+  --cor-rodape: #7a8792;
+  --cor-erro: #c8372d;
+  --cor-ok-fundo: #e1f2d6;
+  --cor-ok-texto: #1d5a2c;
+  --cor-azul: var(--cor-trilha);
+  --cor-roxo: var(--cor-trilha);
+
+  /* Bordas por hierarquia: campos 10, cartões 16, botões em pílula */
+  --raio-moldura: 16px;
+  --raio-input: 10px;
+  --raio-botao: 999px;
+
+  /* Escala de tipos */
+  --tipo-xs: 13px;
+  --tipo-sm: 15px;
+  --tipo-md: 18px;
+  --tipo-lg: 24px;
+  --tipo-xl: 34px;
 
   /* Movimento */
   --ease-saida: cubic-bezier(0.22, 1, 0.36, 1); /* desacelera no fim: entradas */
@@ -34,7 +52,7 @@
 
 body {
   margin: 0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--cor-fundo);
   color: var(--cor-texto);
   -webkit-font-smoothing: antialiased;
@@ -823,10 +841,18 @@ button:disabled {
   }
 
   .marca-simbolo {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: linear-gradient(to bottom left, #2c7854, #02354a);
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--cor-floresta);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff;
+  }
+
+  .marca-simbolo img {
+    width: 78%;
+    height: auto;
   }
 
   .topo-ajuda {
@@ -902,4 +928,43 @@ button:disabled {
   .grupo-radio .campo-erro {
     width: 100%;
   }
+}
+
+/* ---------- Sistema visual: botões em pílula e texto sem caixa alta ---------- */
+.botao-primario,
+.botao-azul,
+.botao-secundario,
+.botao-social {
+  border-radius: var(--raio-botao);
+  font-weight: 600;
+}
+
+.botao-azul:hover:not(:disabled) {
+  background: var(--cor-floresta);
+}
+
+.botao-secundario {
+  border-color: var(--cor-input-borda);
+  color: var(--cor-tinta);
+}
+
+.botao-secundario:hover {
+  border-color: var(--cor-trilha);
+  color: var(--cor-trilha);
+}
+
+.painel-frase p {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.rodape {
+  letter-spacing: 0;
+}
+
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
