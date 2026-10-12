@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTransicao } from "../hooks/useTransicao";
 import { Trilha, ETAPAS } from "../components/Trilha";
 import { FundoHome, useTema } from "../components/FundoHome";
 import cerebro from "../assets/cerebro.webp";
@@ -14,6 +16,7 @@ import {
 } from "../components/IconesHome";
 import "../styles/home.css";
 import "../styles/fundos.css";
+import "../styles/moderno.css";
 
 // Home conforme o Figma "HOME PAGE" (SCRUM-78).
 // O backend ainda não tem rotas de atividades, notificações, histórico,
@@ -46,7 +49,15 @@ function ItemMenu({ item, onEmBreve }) {
 }
 
 export default function Home() {
-  const { nome, sair } = useAuth();
+  const { nome, sair: encerrar } = useAuth();
+  const navigate = useNavigate();
+  const transicao = useTransicao();
+  // sair com a transição de volta: o logo encolhe de volta para o painel do login
+  const sair = () =>
+    transicao(() => {
+      encerrar();
+      navigate("/login", { replace: true });
+    }, "sair");
   const tema = useTema();
   const [aviso, setAviso] = useState("");
   const [rolou, setRolou] = useState(false);

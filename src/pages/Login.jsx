@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTransicao } from "../hooks/useTransicao";
 import { Campo } from "../components/Campo";
 import { IconeGoogle, IconeFacebook } from "../components/IconesSociais";
 
@@ -9,6 +10,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function Login() {
   const { entrar } = useAuth();
   const navigate = useNavigate();
+  const transicao = useTransicao();
   const location = useLocation();
   // Aviso de "conta criada" some na primeira tentativa de login,
   // para não aparecer junto com uma mensagem de erro.
@@ -40,7 +42,8 @@ export default function Login() {
     setEnviando(true);
     try {
       await entrar({ email: form.email.trim(), senha: form.senha });
-      navigate("/", { replace: true });
+      // o cérebro do painel voa até o logo da Home
+      transicao(() => navigate("/", { replace: true }), "entrar");
     } catch (err) {
       // 401 = e-mail ou senha errados: mostra no campo de senha, como no Figma.
       if (err.status === 401) setErros({ senha: "E-mail ou senha incorretos." });

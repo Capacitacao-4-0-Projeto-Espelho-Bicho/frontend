@@ -4,6 +4,7 @@ import { PainelCeu } from "./PainelCeu";
 import cerebro from "../assets/cerebro.webp";
 import { FundoCeu, useTema } from "./FundoHome";
 import "../styles/fundos.css";
+import "../styles/moderno.css";
 
 // Moldura das telas de autenticação (Figma "Página de login"):
 // cartão com o formulário à esquerda e o painel verde à direita.

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AuroraGL } from "./AuroraGL";
 
 // Propostas de fundo da Home. O tema vem do atributo data-tema no <html>
 // ("ceu", "paisagem" ou "mapa"); sem atributo, a Home fica como está.
@@ -101,6 +102,7 @@ export function FundoCeu({ constelacoes = true }) {
   const perto = useMemo(() => estrelas(45, 37), []);
   const cadentes = useEstrelasCadentes(true);
   const ref = useRef(null);
+  const [comGl, setComGl] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -125,8 +127,9 @@ export function FundoCeu({ constelacoes = true }) {
   }, []);
 
   return (
-    <div className="fundo fundo-ceu" aria-hidden="true" ref={ref}>
+    <div className={`fundo fundo-ceu${comGl ? " com-gl" : ""}`} aria-hidden="true" ref={ref}>
       <div className="ceu-brilho" />
+      <AuroraGL onAtiva={setComGl} />
       <div className="ceu-camada ceu-longe">
         <CampoEstrelas lista={longe} />
       </div>
