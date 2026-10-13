@@ -303,7 +303,7 @@
 
 .home-intro h1 {
   margin: 0 0 clamp(var(--esp-3), 1.4vw, var(--esp-5));
-  font-family: "Montserrat Subrayada", "Figtree", system-ui, sans-serif;
+  font-family: "Montserrat", "Figtree", system-ui, sans-serif;
   font-weight: var(--peso-forte);
   font-size: clamp(var(--tipo-md), 2vw, var(--tipo-2xl));
   letter-spacing: 0.01em;
