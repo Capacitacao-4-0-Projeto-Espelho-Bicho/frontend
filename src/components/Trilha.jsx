@@ -50,9 +50,12 @@ const LAYOUTS = {
 };
 
 // Curva suave passando pelos pontos (Catmull-Rom convertida em Bézier).
-function curva(pts) {
+// `trechos` desenha só os primeiros trechos, mas usando os pontos vizinhos
+// da trilha inteira: assim o trecho verde (feito) cai exatamente em cima
+// da linha escura. Cortar a lista de pontos mudava a curvatura do último trecho.
+function curva(pts, trechos = pts.length - 1) {
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
-  for (let i = 0; i < pts.length - 1; i++) {
+  for (let i = 0; i < trechos; i++) {
     const p0 = pts[i - 1] || pts[i];
     const p1 = pts[i];
     const p2 = pts[i + 1];
@@ -88,7 +91,7 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
     [L, desloc]
   );
   const caminho = useMemo(() => curva(pts), [pts]);
-  const feito = useMemo(() => curva(pts.slice(0, etapaAtual + 2)), [pts, etapaAtual]);
+  const feito = useMemo(() => curva(pts, etapaAtual + 1), [pts, etapaAtual]);
   const [estourou, setEstourou] = useState(false);
 
   function clicarTrofeu() {
