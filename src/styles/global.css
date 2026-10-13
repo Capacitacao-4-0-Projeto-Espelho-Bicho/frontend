@@ -27,23 +27,56 @@
   --cor-azul: var(--cor-trilha);
   --cor-roxo: var(--cor-trilha);
 
-  /* Bordas por hierarquia: campos 10, cartões 16, botões em pílula */
-  --raio-moldura: 16px;
-  --raio-input: 10px;
-  --raio-botao: 999px;
+  /* Espaçamento: escala de 4/8 px. Use só estes valores. */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  --esp-7: 48px;
+  --esp-8: 64px;
+  --esp-9: 96px;
 
-  /* Escala de tipos */
-  --tipo-xs: 13px;
-  --tipo-sm: 15px;
-  --tipo-md: 18px;
-  --tipo-lg: 24px;
-  --tipo-xl: 34px;
+  /* Tipografia: escala modular de razão 1.25 */
+  --tipo-xs: 14px;
+  --tipo-sm: 16px;   /* corpo */
+  --tipo-md: 20px;
+  --tipo-lg: 25px;
+  --tipo-xl: 31px;
+  --tipo-2xl: 39px;
+  --tipo-3xl: 49px;
+  --peso-normal: 400;
+  --peso-medio: 600;
+  --peso-forte: 700;
+  --altura-corpo: 1.6;
+  --altura-titulo: 1.2;
+
+  /* Raios: 3 níveis, mais pílula e círculo como formas */
+  --raio-1: 10px;  /* campos, itens de menu, chips */
+  --raio-2: 16px;  /* cartões e moldura */
+  --raio-3: 24px;  /* ilhas: cabeçalho, menu do celular */
+  --raio-pilula: 999px;
+  --raio-moldura: var(--raio-2);
+  --raio-input: var(--raio-1);
+  --raio-botao: var(--raio-pilula);
+
+  /* Sombras de elevação: 3 níveis (brilhos e anéis de foco são efeitos, à parte) */
+  --sombra-1: 0 4px 16px rgba(8, 20, 24, 0.14);
+  --sombra-2: 0 12px 32px rgba(8, 20, 24, 0.22);
+  --sombra-3: 0 20px 48px rgba(8, 20, 24, 0.32);
+
+  /* Foco e estados */
+  --cor-foco: var(--cor-floresta);
+  --opacidade-desabilitado: 0.6;
 
   /* Movimento */
-  --ease-saida: cubic-bezier(0.22, 1, 0.36, 1); /* desacelera no fim: entradas */
-  --ease-padrao: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-rapida: 140ms;
-  --dur-media: 280ms;
+  --ease-saida: cubic-bezier(0.16, 1, 0.3, 1); /* ease-out: entradas */
+  --ease-entrada: cubic-bezier(0.4, 0, 1, 1);  /* ease-in: saídas */
+  --ease-padrao: cubic-bezier(0.4, 0, 0.2, 1); /* mudanças de estado */
+  --dur-rapida: 150ms;  /* micro-interações: 100 a 200 ms */
+  --dur-media: 250ms;   /* entrar e sair: 200 a 300 ms */
+  --dur-pagina: 400ms;  /* troca de tela: até 400 ms */
 }
 
 * {
@@ -52,6 +85,7 @@
 
 body {
   margin: 0;
+  line-height: var(--altura-corpo);
   font-family: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--cor-fundo);
   color: var(--cor-texto);
@@ -64,7 +98,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
+  padding: var(--esp-6) var(--esp-4);
 }
 
 .moldura {
@@ -75,14 +109,14 @@ body {
   background: #fff;
   border-radius: var(--raio-moldura);
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(12, 20, 33, 0.08);
+  box-shadow: var(--sombra-2);
 }
 
 .lado-form {
   flex: 1 1 63%;
   display: flex;
   flex-direction: column;
-  padding: 56px 72px 28px;
+  padding: var(--esp-7) var(--esp-8) var(--esp-5);
 }
 
 .conteudo-form {
@@ -107,7 +141,7 @@ body {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 600ms var(--ease-saida);
+  transition: opacity var(--dur-pagina) var(--ease-saida);
 }
 
 .painel-camada.ativo {
@@ -152,20 +186,20 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 40px;
+  padding: var(--esp-7) var(--esp-6);
 }
 
 .painel-frase .aspas {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 140px;
   line-height: 0.8;
-  font-weight: 700;
+  font-weight: var(--peso-forte);
 }
 
 .painel-frase p {
-  margin: 24px 0 0;
-  font-size: 22px;
-  font-weight: 800;
+  margin: var(--esp-5) 0 0;
+  font-size: var(--tipo-md);
+  font-weight: var(--peso-forte);
   line-height: 1.35;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -173,40 +207,40 @@ body {
 
 .rodape {
   text-align: center;
-  font-size: 13px;
+  font-size: var(--tipo-xs);
   color: var(--cor-rodape);
   letter-spacing: 0.02em;
-  margin-top: 32px;
+  margin-top: var(--esp-6);
 }
 
 /* ---------- Tipografia ---------- */
 h1 {
-  margin: 0 0 20px;
-  font-size: 30px;
-  font-weight: 600;
+  margin: 0 0 var(--esp-4);
+  font-size: var(--tipo-xl);
+  font-weight: var(--peso-medio);
   color: var(--cor-titulo);
   letter-spacing: -0.01em;
 }
 
 h1.titulo-menor {
-  margin-bottom: 4px;
-  font-size: 26px;
+  margin-bottom: var(--esp-1);
+  font-size: var(--tipo-lg);
 }
 
 .subtitulo {
-  margin: 0 0 16px;
-  font-size: 15px;
+  margin: 0 0 var(--esp-4);
+  font-size: var(--tipo-sm);
   line-height: 1.6;
   color: var(--cor-texto);
 }
 
 .subtitulo + .subtitulo {
-  margin-bottom: 24px;
+  margin-bottom: var(--esp-5);
 }
 
 .etapa-rotulo {
-  margin: 0 0 24px;
-  font-size: 13px;
+  margin: 0 0 var(--esp-5);
+  font-size: var(--tipo-xs);
   color: var(--cor-rodape);
 }
 
@@ -219,26 +253,26 @@ form {
 .campo {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  margin-bottom: var(--esp-4);
 }
 
 .campo label {
-  font-size: 14px;
+  font-size: var(--tipo-xs);
   color: var(--cor-rotulo);
-  margin-bottom: 8px;
+  margin-bottom: var(--esp-2);
 }
 
 .campo input {
   height: 48px;
-  padding: 0 16px;
+  padding: 0 var(--esp-4);
   font: inherit;
-  font-size: 15px;
+  font-size: var(--tipo-sm);
   color: var(--cor-titulo);
   background: var(--cor-input-fundo);
   border: 1px solid var(--cor-input-borda);
   border-radius: var(--raio-input);
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color var(--dur-rapida) var(--ease-padrao);
 }
 
 .campo input::placeholder {
@@ -255,8 +289,8 @@ form {
 }
 
 .campo-erro {
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: var(--esp-1);
+  font-size: var(--tipo-xs);
   color: var(--cor-erro);
 }
 
@@ -264,19 +298,19 @@ form {
 .grupo-radio {
   border: 0;
   padding: 0;
-  margin: 8px 0 24px;
+  margin: var(--esp-2) 0 var(--esp-5);
 }
 
 .grupo-radio legend {
   padding: 0;
-  margin-bottom: 14px;
+  margin-bottom: var(--esp-3);
 }
 
 .grupo-titulo,
 .grupo-pergunta {
   display: block;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--tipo-xs);
+  font-weight: var(--peso-medio);
   color: #4a4a4a;
   line-height: 1.5;
 }
@@ -288,9 +322,9 @@ form {
 .opcao {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 9px 0;
-  font-size: 15px;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  font-size: var(--tipo-sm);
   color: #4a4a4a;
   cursor: pointer;
 }
@@ -315,9 +349,9 @@ button {
   border-radius: var(--raio-input);
   background: var(--cor-botao);
   color: #fff;
-  font-size: 17px;
+  font-size: var(--tipo-sm);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color var(--dur-rapida) var(--ease-padrao);
 }
 
 .botao-primario:hover:not(:disabled) {
@@ -328,9 +362,9 @@ button {
 .botao-secundario {
   min-width: 150px;
   height: 50px;
-  padding: 0 24px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 0 var(--esp-5);
+  border-radius: var(--raio-1);
+  font-size: var(--tipo-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -352,14 +386,14 @@ button {
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: var(--opacidade-desabilitado);
 }
 
 .acoes-etapa {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  margin-top: 8px;
+  gap: var(--esp-4);
+  margin-top: var(--esp-2);
 }
 
 .link {
@@ -367,22 +401,22 @@ button:disabled {
   border: 0;
   padding: 0;
   color: var(--cor-link);
-  font-size: 14px;
+  font-size: var(--tipo-xs);
   cursor: pointer;
 }
 
 .linha-direita {
   display: flex;
   justify-content: flex-end;
-  margin: -4px 0 20px;
+  margin: calc(-1 * var(--esp-1)) 0 var(--esp-4);
 }
 
 .divisor {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin: 32px 0 20px;
-  font-size: 14px;
+  gap: var(--esp-4);
+  margin: var(--esp-6) 0 var(--esp-4);
+  font-size: var(--tipo-xs);
   color: #294957;
 }
 
@@ -397,7 +431,7 @@ button:disabled {
 .sociais {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--esp-4);
 }
 
 .botao-social {
@@ -406,17 +440,17 @@ button:disabled {
   border-radius: var(--raio-input);
   background: var(--cor-social-fundo);
   color: var(--cor-texto);
-  font-size: 15px;
+  font-size: var(--tipo-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--esp-3);
 }
 
 .troca {
-  margin: 28px 0 0;
+  margin: var(--esp-5) 0 0;
   text-align: center;
-  font-size: 15px;
+  font-size: var(--tipo-sm);
   color: var(--cor-texto);
 }
 
@@ -427,10 +461,10 @@ button:disabled {
 
 /* ---------- Avisos ---------- */
 .aviso {
-  margin: 0 0 16px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 14px;
+  margin: 0 0 var(--esp-4);
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--raio-1);
+  font-size: var(--tipo-xs);
 }
 
 .aviso-ok {
@@ -447,7 +481,7 @@ button:disabled {
 @media (max-width: 860px) {
   .pagina-auth {
     align-items: flex-start;
-    padding: 24px 16px;
+    padding: var(--esp-5) var(--esp-4);
     background: #fff;
   }
 
@@ -487,11 +521,11 @@ button:disabled {
   }
 
   .lado-form {
-    padding: 32px 8px 16px;
+    padding: var(--esp-6) var(--esp-2) var(--esp-4);
   }
 
   h1 {
-    font-size: 34px;
+    font-size: var(--tipo-xl);
   }
 }
 
@@ -509,12 +543,12 @@ button:disabled {
 }
 
 .lado-painel.revelando .painel-camada {
-  animation: painel-revela 1400ms var(--ease-saida) both;
+  animation: painel-revela var(--dur-pagina) var(--ease-saida) both;
 }
 
 .painel-frase .aspas,
 .painel-frase p {
-  transition: transform 700ms var(--ease-saida), opacity 700ms var(--ease-saida);
+  transition: transform var(--dur-pagina) var(--ease-saida), opacity var(--dur-pagina) var(--ease-saida);
   transform: translateY(12px);
   opacity: 0;
 }
@@ -547,7 +581,7 @@ button:disabled {
 }
 
 .lado-painel.revelando .cerebro {
-  animation: cerebro-entra 1200ms var(--ease-saida) 250ms both;
+  animation: cerebro-entra var(--dur-pagina) var(--ease-saida) 100ms both;
 }
 
 /* Troca de tela (login <-> cadastro): só o formulário entra de novo. */
@@ -557,7 +591,7 @@ button:disabled {
 }
 
 .troca-tela {
-  animation: conteudo-entra 420ms var(--ease-saida) both;
+  animation: conteudo-entra var(--dur-media) var(--ease-saida) both;
 }
 
 /* Etapas do cadastro: desliza do lado para onde a pessoa está indo. */
@@ -571,24 +605,24 @@ button:disabled {
   to   { opacity: 1; transform: none; }
 }
 
-.etapa-conteudo.entra-avancar { animation: entra-da-direita 360ms var(--ease-saida) both; }
-.etapa-conteudo.entra-voltar  { animation: entra-da-esquerda 360ms var(--ease-saida) both; }
+.etapa-conteudo.entra-avancar { animation: entra-da-direita var(--dur-media) var(--ease-saida) both; }
+.etapa-conteudo.entra-voltar  { animation: entra-da-esquerda var(--dur-media) var(--ease-saida) both; }
 
 
 /* Barra de progresso das etapas */
 .progresso {
-  margin: 4px 0 24px;
+  margin: var(--esp-1) 0 var(--esp-5);
 }
 
 .progresso .etapa-rotulo {
   display: block;
-  margin: 8px 0 0;
+  margin: var(--esp-2) 0 0;
 }
 
 .progresso-trilho {
   display: block;
   height: 4px;
-  border-radius: 4px;
+  border-radius: var(--raio-pilula);
   background: #e6ebf2;
   overflow: hidden;
 }
@@ -599,7 +633,7 @@ button:disabled {
   border-radius: inherit;
   background: var(--cor-azul);
   transform-origin: left center;
-  transition: transform 520ms var(--ease-saida);
+  transition: transform var(--dur-media) var(--ease-saida);
 }
 
 /* Campos: o rótulo acompanha o foco */
@@ -626,17 +660,17 @@ button:disabled {
 }
 
 .campo-erro {
-  animation: erro-aparece 220ms var(--ease-saida) both;
+  animation: erro-aparece var(--dur-media) var(--ease-saida) both;
 }
 
 /* só campos de texto tremem; radios mostram o erro pela mensagem */
 .campo.campo-com-erro input {
-  animation: campo-treme 320ms var(--ease-padrao);
+  animation: campo-treme var(--dur-media) var(--ease-padrao);
 }
 
 /* Avisos (conta criada, erro geral) */
 .aviso {
-  animation: erro-aparece 320ms var(--ease-saida) both;
+  animation: erro-aparece var(--dur-media) var(--ease-saida) both;
 }
 
 /* Botões: resposta ao toque */
@@ -653,7 +687,7 @@ button:disabled {
 
 .botao-primario:hover:not(:disabled),
 .botao-azul:hover:not(:disabled) {
-  box-shadow: 0 6px 18px rgba(22, 45, 58, 0.18);
+  box-shadow: var(--sombra-1);
 }
 
 .botao-azul:hover:not(:disabled) {
@@ -680,7 +714,7 @@ button:disabled {
   display: inline-block;
   width: 16px;
   height: 16px;
-  margin-right: 10px;
+  margin-right: var(--esp-2);
   vertical-align: -3px;
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
@@ -711,9 +745,9 @@ button:disabled {
 
 /* Radios: marcador próprio, com o ponto central crescendo ao marcar */
 .opcao {
-  margin: 0 -10px;
-  padding: 9px 10px;
-  border-radius: 10px;
+  margin: 0 calc(-1 * var(--esp-2));
+  padding: var(--esp-2) var(--esp-2);
+  border-radius: var(--raio-1);
   transition: background-color var(--dur-rapida) var(--ease-padrao);
 }
 
@@ -739,7 +773,7 @@ button:disabled {
   border-radius: 50%;
   background: var(--cor-roxo);
   transform: scale(0);
-  transition: transform 220ms var(--ease-saida);
+  transition: transform var(--dur-rapida) var(--ease-saida);
 }
 
 .opcao input:checked {
@@ -811,7 +845,7 @@ button:disabled {
 
   .lado-form {
     flex: 1 1 54%;
-    padding: 28px clamp(32px, 5vw, 80px) 24px;
+    padding: var(--esp-5) clamp(var(--esp-6), 5vw, var(--esp-8)) var(--esp-5);
   }
 
   /* o painel acompanha a rolagem do cadastro, sempre na altura da janela */
@@ -827,15 +861,15 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--esp-4);
   }
 
   .marca {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-size: 16px;
-    font-weight: 700;
+    gap: var(--esp-2);
+    font-size: var(--tipo-sm);
+    font-weight: var(--peso-forte);
     color: var(--cor-titulo);
     letter-spacing: -0.01em;
   }
@@ -856,13 +890,13 @@ button:disabled {
   }
 
   .topo-ajuda {
-    font-size: 13px;
+    font-size: var(--tipo-xs);
     color: var(--cor-rodape);
   }
 
   .conteudo-form {
     max-width: 440px;
-    padding: 48px 0;
+    padding: var(--esp-7) 0;
   }
 
   .rodape {
@@ -875,12 +909,12 @@ button:disabled {
   }
 
   .painel-frase {
-    padding: 64px clamp(40px, 5vw, 88px);
+    padding: var(--esp-8) clamp(var(--esp-6), 5vw, var(--esp-9));
   }
 
   .painel-frase p {
     max-width: 520px;
-    font-size: clamp(22px, 2vw, 30px);
+    font-size: clamp(var(--tipo-md), 2vw, var(--tipo-xl));
   }
 
   /* Cadastro: mais largo, campos de acesso em duas colunas */
@@ -891,7 +925,7 @@ button:disabled {
   .etapa-conteudo {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 20px;
+    column-gap: var(--esp-4);
   }
 
   .etapa-conteudo .grupo-radio {
@@ -902,7 +936,7 @@ button:disabled {
   .grupo-radio {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--esp-2);
   }
 
   .grupo-radio legend {
@@ -912,7 +946,7 @@ button:disabled {
   .opcao {
     flex: 1 1 calc(50% - 5px);
     margin: 0;
-    padding: 12px 14px;
+    padding: var(--esp-3) var(--esp-3);
     border: 1px solid var(--cor-input-borda);
     background: #fff;
     transition:
@@ -936,7 +970,7 @@ button:disabled {
 .botao-secundario,
 .botao-social {
   border-radius: var(--raio-botao);
-  font-weight: 600;
+  font-weight: var(--peso-medio);
 }
 
 .botao-azul:hover:not(:disabled) {
@@ -956,7 +990,7 @@ button:disabled {
 .painel-frase p {
   text-transform: none;
   letter-spacing: 0;
-  font-weight: 700;
+  font-weight: var(--peso-forte);
   line-height: 1.3;
 }
 
@@ -965,6 +999,43 @@ button:disabled {
 }
 
 h1 {
-  font-weight: 700;
+  font-weight: var(--peso-forte);
   letter-spacing: -0.015em;
+}
+
+/* =========================================================
+   Base comum: títulos, foco, estados e área de toque
+   ========================================================= */
+h1,
+h2,
+h3 {
+  line-height: var(--altura-titulo);
+}
+
+/* foco de teclado visível em qualquer elemento interativo
+   (regras específicas acima continuam valendo onde existem) */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--cor-foco);
+  outline-offset: 3px;
+}
+
+/* estado ativo perceptível em botões e links que não têm um próprio */
+:where(button, a):not(:disabled):active {
+  transform: scale(0.97);
+}
+
+
+/* céu noturno: o foco usa o verde broto, que contrasta com o fundo escuro */
+:root[data-tema="ceu"] {
+  --cor-foco: var(--cor-broto);
+}
+
+/* celular: tudo que se toca tem pelo menos 44x44 px */
+@media (max-width: 860px) {
+  .troca a,
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }

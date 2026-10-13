@@ -36,8 +36,8 @@
   --home-linha: rgba(255, 255, 255, 0.12);
   --home-cabecalho: rgba(9, 34, 38, 0.72);
   --home-campo: rgba(255, 255, 255, 0.06);
-  --home-borda-campo: rgba(255, 255, 255, 0.22);
-  --home-borda-campo-hover: rgba(255, 255, 255, 0.4);
+  --home-borda-campo: rgba(255, 255, 255, 0.38);
+  --home-borda-campo-hover: rgba(255, 255, 255, 0.55);
   --home-hover: rgba(255, 255, 255, 0.07);
   --home-trilho: rgba(255, 255, 255, 0.14);
   --home-gaveta: #0f3438;
@@ -156,7 +156,7 @@
 
 /* a faixa continua o morro da frente */
 :root[data-tema="paisagem"] .home-trilha {
-  margin-top: clamp(70px, 8vw, 130px);
+  margin-top: clamp(var(--esp-8), 8vw, var(--esp-9));
   background: linear-gradient(180deg, #2c7a59 0%, #22695a 55%, #1b5c55 100%);
 }
 
@@ -210,7 +210,7 @@
   :root[data-tema="paisagem"] .home-trilha {
     width: 100%;
     max-width: none;
-    margin-top: 80px;
+    margin-top: var(--esp-8);
     border-radius: 0;
   }
 
@@ -278,7 +278,7 @@
   position: absolute;
   width: var(--comp);
   height: 2px;
-  border-radius: 2px;
+  border-radius: var(--raio-pilula);
   background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
   transform-origin: right center;
@@ -308,7 +308,7 @@
 
 /* as constelações aparecem devagar ao abrir a página */
 .constelacao {
-  animation: constelacao-surge 2.4s ease-out 0.6s both;
+  animation: constelacao-surge var(--dur-pagina) var(--ease-saida) 300ms both;
 }
 
 @keyframes constelacao-surge {
@@ -332,7 +332,7 @@
   --cor-rotulo: #dbe8e4;
   --cor-placeholder: #8fa8a1;
   --cor-input-fundo: rgba(255, 255, 255, 0.06);
-  --cor-input-borda: rgba(255, 255, 255, 0.18);
+  --cor-input-borda: rgba(255, 255, 255, 0.38); /* 3:1 contra o céu */
   --cor-link: var(--cor-broto);
   --cor-social-fundo: rgba(255, 255, 255, 0.07);
   --cor-divisor: rgba(255, 255, 255, 0.14);
