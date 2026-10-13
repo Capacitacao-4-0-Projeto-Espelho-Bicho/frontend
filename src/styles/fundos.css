@@ -95,9 +95,29 @@
 }
 
 :root[data-tema="ceu"] .home-logo {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: var(--cor-broto);
-  box-shadow: 0 0 0 6px rgba(143, 209, 106, 0.12), 0 0 40px rgba(143, 209, 106, 0.18);
+  /* o cérebro direto no céu, como no login: sem círculo branco */
+  width: clamp(88px, 7.4vw, 128px);
+  aspect-ratio: 867 / 816;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+:root[data-tema="ceu"] .home-logo:hover {
+  box-shadow: none;
+}
+
+:root[data-tema="ceu"] .home-logo img {
+  width: 100%;
+  filter: drop-shadow(0 0 18px rgba(143, 209, 106, 0.28));
+}
+
+@media (max-width: 860px) {
+  :root[data-tema="ceu"] .home-logo {
+    width: 72px;
+  }
 }
 
 :root[data-tema="ceu"] .gaveta-sair {
