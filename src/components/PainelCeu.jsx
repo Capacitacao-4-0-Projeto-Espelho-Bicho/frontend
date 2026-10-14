@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import cerebro from "../assets/cerebro.webp";
+import { LogoCerebro } from "./LogoCerebro";
 
 // Painel ilustrado do login: céu em degradê, estrelas e o cérebro do Figma.
 // As estrelas são geradas em código (nítidas em qualquer tela). A semente é
@@ -61,7 +61,7 @@ export function PainelCeu({ ativo }) {
           />
         ))}
       </div>
-      <img className="cerebro" src={cerebro} alt="" width="867" height="816" />
+      <LogoCerebro className="cerebro" vivo atrasoInicial={900} />
     </div>
   );
 }

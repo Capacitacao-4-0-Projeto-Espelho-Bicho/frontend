@@ -1070,3 +1070,41 @@ h3 {
     transform: rotate(-3deg) scale(1.04);
   }
 }
+
+/* Cérebro grande do login (LogoCerebro vivo): flutua devagar e, a cada
+   7 s, a pessoa levanta o braço com a seta quando a luz chega nela. */
+svg.cerebro {
+  aspect-ratio: 992 / 935;
+  overflow: visible;
+}
+
+.logo-flutua {
+  animation: logo-flutua 6s ease-in-out infinite alternate;
+}
+
+.logo-braco {
+  transform-box: view-box;
+  transform-origin: 640px 302px;
+  animation: logo-braco 7s var(--ease-saida) infinite both;
+}
+
+@keyframes logo-flutua {
+  from { transform: translateY(6px); }
+  to   { transform: translateY(-10px); }
+}
+
+@keyframes logo-braco {
+  0%, 12% { transform: rotate(0deg); }
+  18%     { transform: rotate(-11deg); }
+  23%     { transform: rotate(-5deg); }
+  28%     { transform: rotate(-10deg); }
+  38%     { transform: rotate(1.5deg); }
+  44%, 100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-flutua,
+  .logo-braco {
+    animation: none;
+  }
+}
