@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PainelCeu } from "./PainelCeu";
-import cerebro from "../assets/cerebro.webp";
 import { FundoCeu, useTema } from "./FundoHome";
+import { LogoCerebro } from "./LogoCerebro";
 import "../styles/fundos.css";
 import "../styles/moderno.css";
 
@@ -32,7 +32,7 @@ export function LayoutAuth() {
           <header className="topo-web">
             <span className="marca">
               <span className="marca-simbolo" aria-hidden="true">
-                <img src={cerebro} alt="" />
+                <LogoCerebro atrasoInicial={1200} />
               </span>
               Capacitação 4.0
             </span>

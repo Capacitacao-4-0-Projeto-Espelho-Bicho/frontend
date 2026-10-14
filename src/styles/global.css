@@ -1039,3 +1039,34 @@ h3 {
     min-height: 44px;
   }
 }
+
+/* logo da marca no topo do login: o cérebro direto no fundo, sem círculo branco */
+.marca-simbolo .logo-cerebro {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+:root[data-tema="ceu"] .marca-simbolo {
+  width: 44px;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+:root[data-tema="ceu"] .marca-simbolo .logo-cerebro {
+  filter: drop-shadow(0 0 8px rgba(143, 209, 106, 0.25));
+}
+
+/* o logo inclina de leve quando o mouse passa (a faixa de luz vem junto);
+   na Home quem inclina é o .home-logo */
+.marca-simbolo .logo-cerebro {
+  transition: transform var(--dur-media) var(--ease-saida);
+}
+
+@media (hover: hover) {
+  .marca-simbolo .logo-cerebro:hover {
+    transform: rotate(-3deg) scale(1.04);
+  }
+}

@@ -109,7 +109,7 @@
   box-shadow: none;
 }
 
-:root[data-tema="ceu"] .home-logo img {
+:root[data-tema="ceu"] .home-logo .logo-cerebro {
   width: 100%;
   filter: drop-shadow(0 0 18px rgba(143, 209, 106, 0.28));
 }

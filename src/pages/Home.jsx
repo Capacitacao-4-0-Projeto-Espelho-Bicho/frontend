@@ -6,7 +6,7 @@ import { Trilha } from "../components/Trilha";
 import { EtapaCartao, TrofeuCartao } from "../components/EtapaCartao";
 import { MISSAO_DEMO } from "../data/missaoDemo";
 import { FundoHome, useTema } from "../components/FundoHome";
-import cerebro from "../assets/cerebro.webp";
+import { LogoCerebro } from "../components/LogoCerebro";
 import {
   IconeAtividades,
   IconeNotificacoes,
@@ -159,7 +159,7 @@ export default function Home() {
           </div>
 
           <div className="home-logo">
-            <img src={cerebro} alt="Capacitação 4.0" />
+            <LogoCerebro titulo="Capacitação 4.0" atrasoInicial={700} />
           </div>
 
           <div className="home-direita">

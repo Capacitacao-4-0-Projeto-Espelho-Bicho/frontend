@@ -135,7 +135,8 @@
   box-shadow: 0 0 0 10px rgba(17, 76, 77, 0.08);
 }
 
-.home-logo img {
+.home-logo img,
+.home-logo .logo-cerebro {
   width: 78%;
   height: auto;
 }
