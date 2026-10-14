@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTransicao } from "../hooks/useTransicao";
-import { Trilha, ETAPAS } from "../components/Trilha";
+import { Trilha } from "../components/Trilha";
+import { EtapaCartao, TrofeuCartao } from "../components/EtapaCartao";
+import { MISSAO_DEMO } from "../data/missaoDemo";
 import { FundoHome, useTema } from "../components/FundoHome";
 import cerebro from "../assets/cerebro.webp";
 import {
@@ -18,10 +20,11 @@ import "../styles/home.css";
 import "../styles/fundos.css";
 import "../styles/moderno.css";
 
-// Home conforme o Figma "HOME PAGE" (SCRUM-78).
-// O backend ainda não tem rotas de atividades, notificações, histórico,
-// configurações, busca nem progresso; esses itens avisam "em breve" e a
-// trilha começa sempre na primeira etapa.
+// Home conforme o Figma "HOME PAGE" (SCRUM-78) e a "Especificação das
+// Missões e Etapas": a trilha mostra as 6 etapas da missão atual.
+// O backend ainda não tem rotas de missão, etapas, atividades, notificações,
+// histórico, configurações nem busca: a missão vem de dados fixos
+// (MISSAO_DEMO) e o progresso vive só na memória desta tela.
 
 const MENU = [
   { id: "atividades", rotulo: "Atividades", Icone: IconeAtividades },
@@ -31,8 +34,8 @@ const MENU = [
   { id: "configuracoes", rotulo: "Configurações", Icone: IconeConfiguracoes },
 ];
 
-const ETAPA_ATUAL = 0; // sem rota de progresso ainda
-const TOTAL = ETAPAS.length - 1; // a primeira é o ponto de partida
+const MISSAO = MISSAO_DEMO;
+const TOTAL = MISSAO.etapas.length;
 
 function ItemMenu({ item, onEmBreve }) {
   return (
@@ -62,7 +65,11 @@ export default function Home() {
   const [aviso, setAviso] = useState("");
   const [rolou, setRolou] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
+  const [etapaAtual, setEtapaAtual] = useState(0);
+  const [cartao, setCartao] = useState(null); // { indice, estado } | "trofeu"
+  const [recusas, setRecusas] = useState({}); // índice da etapa -> nº de recusas
   const timer = useRef();
+  const fecharCartao = useCallback(() => setCartao(null), []);
 
   // menu do celular fecha com Esc
   useEffect(() => {
@@ -94,12 +101,35 @@ export default function Home() {
   };
 
   function aoClicarEtapa(etapa, estado) {
-    if (estado === "atual") avisar("A primeira atividade ainda não está disponível.");
-    else if (estado === "bloqueada") avisar(`${etapa.rotulo}: conclua a etapa anterior para desbloquear.`);
+    setCartao({ indice: MISSAO.etapas.indexOf(etapa), estado });
   }
 
-  const proxima = ETAPAS[ETAPA_ATUAL + 1];
-  const progresso = ETAPA_ATUAL / TOTAL;
+  // As atividades das etapas ainda não existem: na demonstração, começar
+  // uma etapa já a marca como concluída para mostrar o avanço da trilha.
+  function aoComecar() {
+    const { indice } = cartao;
+    setCartao(null);
+    setEtapaAtual(indice + 1);
+    avisar(
+      indice + 1 < TOTAL
+        ? `Etapa ${indice + 1} concluída (simulação). Próxima: ${MISSAO.etapas[indice + 1].tipo}.`
+        : "Todas as etapas concluídas. Toque no troféu para fechar a missão."
+    );
+  }
+
+  function aoRecusar({ pular }) {
+    const { indice } = cartao;
+    if (pular) {
+      setCartao(null);
+      setEtapaAtual(indice + 1);
+      avisar("Etapa pulada por agora. O motivo fica registrado.");
+      return;
+    }
+    setRecusas((r) => ({ ...r, [indice]: (r[indice] || 0) + 1 }));
+  }
+
+  const concluida = etapaAtual >= TOTAL;
+  const progresso = etapaAtual / TOTAL;
 
   return (
     <div className="home">
@@ -204,42 +234,56 @@ export default function Home() {
           <div className="home-intro-texto">
             <h1>Sua jornada começa aqui.</h1>
             <p>
-              Explore a sua trilha de soft skills no seu próprio ritmo.
-              <span className="so-desktop">
-                {" "}
-                Cada nó representa um passo essencial no aprimoramento de habilidades como
-                comunicação, empatia, liderança e resolução de problemas.
-              </span>
+              A sua missão agora é <strong>{MISSAO.nome}</strong>: {MISSAO.habilidade.charAt(0).toLowerCase() + MISSAO.habilidade.slice(1)}.
             </p>
             <p>
-              Complete os desafios, acompanhe o seu progresso e desbloqueie os próximos níveis do
-              seu perfil profissional.
-              <span className="so-desktop"> Clique no nó ativo para começar a sua primeira atividade!</span>
+              São {TOTAL} etapas curtas, do ponto de partida ao desafio, e o troféu fecha a missão.
+              <span className="so-desktop"> Toque no nó ativo para ver a próxima etapa.</span>
             </p>
           </div>
 
         </section>
 
         {/* progresso em uma linha, logo acima da trilha */}
-        <div className="home-progresso" aria-label="Seu progresso">
+        <div className="home-progresso" aria-label="Seu progresso na missão">
           <span className="progresso-trilho-home" aria-hidden="true">
             <span style={{ transform: `scaleX(${Math.max(progresso, 0.02)})` }} />
           </span>
           <span className="progresso-texto">
-            <b>{ETAPA_ATUAL} de {TOTAL}</b> etapas concluídas. Próxima: {proxima.rotulo}
+            <b>{Math.min(etapaAtual, TOTAL)} de {TOTAL}</b> etapas concluídas.{" "}
+            {concluida
+              ? "Falta o fechamento no troféu."
+              : `Agora: ${MISSAO.etapas[etapaAtual].tipo}.`}
           </span>
         </div>
 
         <section className="home-trilha" aria-label="Trilha de soft skills">
           <Trilha
-            etapaAtual={ETAPA_ATUAL}
+            etapas={MISSAO.etapas}
+            etapaAtual={etapaAtual}
             onEtapa={aoClicarEtapa}
-            onTrofeu={() => avisar(`Conclua as ${TOTAL} etapas para conquistar o troféu!`)}
+            onTrofeu={() => setCartao("trofeu")}
           />
         </section>
 
         <footer className="home-rodape">© 2026 Capacitação 4.0</footer>
       </main>
+
+      {cartao === "trofeu" && (
+        <TrofeuCartao missao={MISSAO} concluida={concluida} aoFechar={fecharCartao} />
+      )}
+      {cartao && cartao !== "trofeu" && (
+        <EtapaCartao
+          key={`${cartao.indice}-${cartao.estado}`}
+          missao={MISSAO}
+          indice={cartao.indice}
+          estado={cartao.estado}
+          recusas={recusas[cartao.indice] || 0}
+          aoComecar={aoComecar}
+          aoRecusar={aoRecusar}
+          aoFechar={fecharCartao}
+        />
+      )}
 
       <p className={`home-aviso${aviso ? " visivel" : ""}`} role="status" aria-live="polite">
         {aviso}

@@ -10,19 +10,18 @@ import {
   IlustraOrganizacao,
 } from "./IconesHome";
 
-// Trilha de soft skills da Home (Figma SCRUM-78). Caminho, nós e troféu
-// são desenhados em SVG: nítidos em qualquer tela e cada etapa é um botão
-// de verdade. Os nomes das etapas foram tirados
-// dos ícones e precisam ser confirmados com o João / com o conteúdo.
-export const ETAPAS = [
-  { id: "inicio", rotulo: "Primeiros passos", Ilustracao: null },
-  { id: "comunicacao", rotulo: "Comunicação", Ilustracao: IlustraComunicacao },
-  { id: "equipe", rotulo: "Trabalho em equipe", Ilustracao: IlustraEquipe },
-  { id: "criatividade", rotulo: "Criatividade", Ilustracao: IlustraCriatividade },
-  { id: "problemas", rotulo: "Resolução de problemas", Ilustracao: IlustraProblemas },
-  { id: "colaboracao", rotulo: "Colaboração", Ilustracao: IlustraColaboracao },
-  { id: "organizacao", rotulo: "Organização", Ilustracao: IlustraOrganizacao },
-];
+// Trilha da Home (Figma SCRUM-78). Cada nó é uma etapa da missão atual
+// ("Especificação das Missões e Etapas", seção 5): sempre 6 etapas, na mesma
+// ordem, e o troféu no fim é o fechamento da missão. Caminho, nós e troféu
+// são SVG: nítidos em qualquer tela, e cada etapa é um botão de verdade.
+const ILUSTRACOES = {
+  partida: IlustraOrganizacao, // prancheta: autoavaliação
+  entender: IlustraCriatividade, // lâmpada: entender a habilidade
+  guiada: IlustraProblemas, // engrenagem: prática com roteiro
+  contexto: IlustraEquipe, // pessoas: situação real
+  desafio: IlustraColaboracao, // quebra-cabeça: o desafio
+  reflexao: IlustraComunicacao, // balão: reflexão
+};
 
 // Posições (centro de cada nó) no sistema de coordenadas de cada layout.
 // Desktop segue o Figma (1728 x 415); celular é a trilha em zigue-zague vertical.
@@ -33,7 +32,7 @@ const LAYOUTS = {
     no: 108,
     trofeu: { x: 1326, y: 168, w: 168 },
     pontos: [
-      [374, 208], [480, 312], [595, 222], [687, 106], [835, 166], [966, 260], [1116, 208],
+      [374, 208], [500, 312], [655, 170], [820, 132], [966, 260], [1116, 208],
     ],
     fimCaminho: [1262, 190],
   },
@@ -43,7 +42,7 @@ const LAYOUTS = {
     no: 84,
     trofeu: { x: 180, y: 78, w: 118 },
     pontos: [
-      [180, 572], [262, 504], [172, 436], [92, 368], [170, 300], [262, 232], [180, 164],
+      [180, 572], [262, 490], [166, 410], [94, 330], [176, 250], [232, 176],
     ],
     fimCaminho: [180, 120],
   },
@@ -81,7 +80,7 @@ function useLayout() {
 
 const pct = (v, total) => `${(v / total) * 100}%`;
 
-export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
+export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
   const nome = useLayout();
   const L = LAYOUTS[nome];
   // o caminho passa um pouco abaixo do centro dos nós, como na ilustração
@@ -91,7 +90,8 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
     [L, desloc]
   );
   const caminho = useMemo(() => curva(pts), [pts]);
-  const feito = useMemo(() => curva(pts, etapaAtual + 1), [pts, etapaAtual]);
+  // verde: o caminho já percorrido, do primeiro nó até a etapa atual (ou até o troféu)
+  const feito = useMemo(() => curva(pts, Math.min(etapaAtual, pts.length - 1)), [pts, etapaAtual]);
   const [estourou, setEstourou] = useState(false);
 
   function clicarTrofeu() {
@@ -113,7 +113,7 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
       </svg>
 
       <ol className="trilha-etapas">
-        {ETAPAS.map((etapa, i) => {
+        {etapas.map((etapa, i) => {
           const [x, y] = L.pontos[i];
           const estado = i < etapaAtual ? "feita" : i === etapaAtual ? "atual" : "bloqueada";
           return (
@@ -143,14 +143,15 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
                 type="button"
                 className="etapa-botao"
                 onClick={() => onEtapa?.(etapa, estado)}
-                aria-label={`${etapa.rotulo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (etapa atual)" : ""}`}
+                aria-label={`Etapa ${i + 1} de ${etapas.length}: ${etapa.tipo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (etapa atual)" : " (concluída)"}`}
               >
                 {estado === "atual" && <span className="etapa-pulso" aria-hidden="true" />}
-                <DiscoNo id={etapa.id} Ilustracao={etapa.Ilustracao} atual={estado === "atual"} />
+                <DiscoNo id={etapa.id} Ilustracao={ILUSTRACOES[etapa.id]} atual={estado === "atual"} />
               </button>
               <span className="etapa-dica" aria-hidden="true">
-                {etapa.rotulo}
+                {i + 1}. {etapa.tipo}
                 {estado === "bloqueada" && <small>Bloqueada</small>}
+                {estado === "feita" && <small>Concluída</small>}
               </span>
             </li>
           );
@@ -167,7 +168,7 @@ export function Trilha({ etapaAtual = 0, onEtapa, onTrofeu }) {
         onAnimationEnd={(e) => e.animationName === "trofeu-estouro" && setEstourou(false)}
       >
         <span className="trofeu-aura" aria-hidden="true" />
-        <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu da trilha">
+        <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu: fechamento da missão">
           <span className="trofeu-corpo">
             <Trofeu />
           </span>

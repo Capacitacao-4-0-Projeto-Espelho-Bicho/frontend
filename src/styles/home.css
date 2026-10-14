@@ -607,7 +607,7 @@
   display: none; /* o balão "Começar" já faz esse papel */
 }
 
-.etapa:focus-within .etapa-dica {
+.etapa:has(:focus-visible) .etapa-dica {
   opacity: 1;
   transform: translate(-50%, 0);
 }
@@ -1134,5 +1134,294 @@
   .etapa:hover .etapa-dica {
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+}
+
+/* =========================================================
+   Cartão da etapa e do troféu (Especificação, item 8.3)
+   Computador: janela central. Celular: folha que sobe do rodapé.
+   ========================================================= */
+.cartao-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: var(--esp-4);
+  background: rgba(4, 16, 18, 0.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: cartao-fundo-entra var(--dur-media) var(--ease-saida) both;
+}
+
+.cartao-etapa {
+  position: relative;
+  width: min(520px, 100%);
+  max-height: calc(100vh - 2 * var(--esp-4));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-6);
+  border-radius: var(--raio-3);
+  background: var(--home-gaveta, #fff);
+  color: var(--home-texto);
+  border: 1px solid var(--home-linha);
+  box-shadow: var(--sombra-3);
+  animation: cartao-entra var(--dur-media) var(--ease-saida) both;
+}
+
+@keyframes cartao-fundo-entra {
+  from { opacity: 0; }
+}
+
+@keyframes cartao-entra {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+
+.cartao-fechar {
+  position: absolute;
+  top: var(--esp-3);
+  right: var(--esp-3);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--raio-pilula);
+  background: none;
+  color: var(--home-suave);
+  cursor: pointer;
+  transition: background-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.cartao-fechar:hover {
+  background: var(--home-hover);
+}
+
+.cartao-fechar svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.cartao-topo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding-right: var(--esp-7);
+}
+
+.cartao-sobre {
+  margin: 0;
+  font-size: var(--tipo-xs);
+  font-weight: var(--peso-medio);
+  color: var(--home-verde);
+}
+
+.cartao-titulo {
+  margin: 0;
+  font-size: var(--tipo-lg);
+  font-weight: var(--peso-forte);
+  color: var(--home-tinta);
+  text-wrap: balance;
+}
+
+.cartao-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  font-size: var(--tipo-xs);
+  color: var(--home-suave);
+}
+
+.cartao-aviso {
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--raio-1);
+  background: rgba(143, 209, 106, 0.12);
+  color: var(--home-tinta);
+  font-size: var(--tipo-xs);
+}
+
+.cartao-atividade {
+  margin: 0;
+  font-size: var(--tipo-sm);
+  line-height: var(--altura-corpo);
+  max-width: 65ch;
+}
+
+.cartao-evidencia {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  font-size: var(--tipo-xs);
+  color: var(--home-texto);
+}
+
+.cartao-evidencia span {
+  color: var(--home-suave);
+}
+
+.cartao-estado,
+.cartao-nota {
+  margin: 0;
+  font-size: var(--tipo-xs);
+  color: var(--home-suave);
+}
+
+.cartao-estado.feita {
+  color: var(--home-verde);
+}
+
+.cartao-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-4);
+}
+
+.cartao-etapa .botao-primario,
+.cartao-etapa .botao-secundario {
+  min-height: 48px;
+  padding: 0 var(--esp-5);
+  border-radius: var(--raio-pilula);
+  font-weight: var(--peso-forte);
+}
+
+.cartao-etapa .botao-primario {
+  background: var(--cor-broto);
+  color: #0c3a3b;
+}
+
+/* :root na frente para vencer o hover do tema céu (fundos.css), que pinta
+   o botão de verde escuro e deixava o texto invisível */
+:root .cartao-etapa .botao-primario:hover:not(:disabled),
+:root[data-tema] .cartao-etapa .botao-primario:hover:not(:disabled) {
+  background: #a6e083;
+}
+
+.cartao-etapa .botao-secundario {
+  background: transparent;
+  color: var(--home-tinta);
+  border-color: var(--home-borda-campo);
+}
+
+.cartao-link {
+  min-height: 44px;
+  padding: 0 var(--esp-2);
+  border: 0;
+  background: none;
+  color: var(--home-texto);
+  font: inherit;
+  font-size: var(--tipo-xs);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.cartao-link:hover {
+  color: var(--home-tinta);
+}
+
+.cartao-recusa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cartao-recusa fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cartao-recusa legend {
+  margin-bottom: var(--esp-2);
+  font-size: var(--tipo-sm);
+  font-weight: var(--peso-medio);
+  color: var(--home-tinta);
+}
+
+.cartao-motivo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-3);
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-1);
+  font-size: var(--tipo-sm);
+  cursor: pointer;
+  transition: border-color var(--dur-rapida) var(--ease-padrao), background-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.cartao-motivo:hover {
+  background: var(--home-hover);
+}
+
+.cartao-motivo:has(input:checked) {
+  border-color: var(--home-verde);
+  background: rgba(143, 209, 106, 0.1);
+  color: var(--home-tinta);
+}
+
+.cartao-motivo input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  accent-color: var(--cor-broto);
+}
+
+.cartao-outro {
+  width: 100%;
+  padding: var(--esp-3);
+  border: 1px solid var(--home-borda-campo);
+  border-radius: var(--raio-1);
+  background: var(--home-campo);
+  color: var(--home-tinta);
+  font: inherit;
+  font-size: var(--tipo-sm);
+  resize: vertical;
+}
+
+@media (max-width: 860px) {
+  .cartao-fundo {
+    place-items: end stretch;
+    padding: 0;
+  }
+
+  .cartao-etapa {
+    width: 100%;
+    max-height: 88vh;
+    padding: var(--esp-5) var(--esp-4) calc(var(--esp-5) + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--raio-3) var(--raio-3) 0 0;
+    animation-name: cartao-sobe;
+  }
+
+  @keyframes cartao-sobe {
+    from { opacity: 0; transform: translateY(24px); }
+  }
+
+  .cartao-acoes .botao-primario {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cartao-fundo,
+  .cartao-etapa {
+    animation-name: cartao-fundo-entra;
   }
 }
