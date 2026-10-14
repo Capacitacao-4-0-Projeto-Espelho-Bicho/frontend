@@ -1426,3 +1426,119 @@
     animation-name: cartao-fundo-entra;
   }
 }
+
+/* ---------- Checagem objetiva ao terminar a etapa (reunião de 14/10) ---------- */
+.cartao-escala .escala-opcoes,
+.cartao-resultado .resultado-opcoes {
+  display: grid;
+  gap: var(--esp-2);
+}
+
+.cartao-escala .escala-opcoes {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.cartao-resultado .resultado-opcoes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.escala-opcao,
+.resultado-opcao {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-1);
+  font-size: var(--tipo-sm);
+  font-weight: var(--peso-medio);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--dur-rapida) var(--ease-padrao), background-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.escala-opcao:hover,
+.resultado-opcao:hover {
+  background: var(--home-hover);
+}
+
+/* o rádio fica invisível, mas continua acessível pelo teclado */
+.escala-opcao input,
+.resultado-opcao input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.escala-opcao:has(input:checked),
+.resultado-opcao:has(input:checked) {
+  border-color: var(--home-verde);
+  background: rgba(143, 209, 106, 0.16);
+  color: var(--home-tinta);
+}
+
+.escala-opcao:has(input:focus-visible),
+.resultado-opcao:has(input:focus-visible) {
+  outline: 2px solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+.escala-pontas {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--esp-1) 0 0;
+  font-size: var(--tipo-xs);
+  color: var(--home-suave);
+}
+
+/* ---------- Lembretes (sino) ---------- */
+.lembretes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lembretes-lista li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-1);
+}
+
+.lembretes-lista p {
+  margin: 0;
+  flex: 1 1 220px;
+  font-size: var(--tipo-sm);
+  line-height: var(--altura-corpo);
+}
+
+.home-sino {
+  position: relative;
+}
+
+.home-sino-contador {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-broto);
+  color: #0c3a3b;
+  font-size: 11px;
+  font-weight: var(--peso-forte);
+  line-height: 1;
+}

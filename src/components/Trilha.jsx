@@ -11,8 +11,7 @@ import {
 } from "./IconesHome";
 
 // Trilha da Home (Figma SCRUM-78). Cada nó é uma etapa da missão atual
-// ("Especificação das Missões e Etapas", seção 5): sempre 6 etapas, na mesma
-// ordem, e o troféu no fim é o fechamento da missão. Caminho, nós e troféu
+// ("Especificação das Missões e Etapas", seção 5), em ordem, e o troféu no fim é o fechamento da missão. Caminho, nós e troféu
 // são SVG: nítidos em qualquer tela, e cada etapa é um botão de verdade.
 const ILUSTRACOES = {
   partida: IlustraOrganizacao, // prancheta: autoavaliação
@@ -47,6 +46,48 @@ const LAYOUTS = {
     fimCaminho: [180, 120],
   },
 };
+
+const ILUSTRACOES_EM_ORDEM = Object.values(ILUSTRACOES);
+const ilustracaoDe = (etapa, i) => ILUSTRACOES[etapa.id] || ILUSTRACOES_EM_ORDEM[i % ILUSTRACOES_EM_ORDEM.length];
+
+// Ponto da curva de Bézier cúbica em t
+function bezier(p1, c1, c2, p2, t) {
+  const u = 1 - t;
+  return [0, 1].map(
+    (k) => u * u * u * p1[k] + 3 * u * u * t * c1[k] + 3 * u * t * t * c2[k] + t * t * t * p2[k]
+  );
+}
+
+// Os pontos dos layouts foram desenhados para 6 etapas. Com outra quantidade
+// (a reunião de 14/10 pediu menos etapas), os nós são redistribuídos em
+// distâncias iguais ao longo da mesma curva, então o desenho não muda.
+function distribuir(pts, n) {
+  if (n === pts.length || n < 1) return pts;
+  if (n === 1) return [pts[0]];
+  const denso = [pts[0]];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 4, p1[1] + (p2[1] - p0[1]) / 4];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 4, p2[1] - (p3[1] - p1[1]) / 4];
+    for (let k = 1; k <= 40; k++) denso.push(bezier(p1, c1, c2, p2, k / 40));
+  }
+  const acumulado = [0];
+  for (let i = 1; i < denso.length; i++) {
+    acumulado.push(acumulado[i - 1] + Math.hypot(denso[i][0] - denso[i - 1][0], denso[i][1] - denso[i - 1][1]));
+  }
+  const total = acumulado[acumulado.length - 1];
+  const saida = [];
+  let j = 0;
+  for (let k = 0; k < n; k++) {
+    const alvo = (total * k) / (n - 1);
+    while (j < acumulado.length - 1 && acumulado[j + 1] < alvo) j++;
+    saida.push(denso[j].map(Math.round));
+  }
+  return saida;
+}
 
 // Curva suave passando pelos pontos (Catmull-Rom convertida em Bézier).
 // `trechos` desenha só os primeiros trechos, mas usando os pontos vizinhos
@@ -83,11 +124,12 @@ const pct = (v, total) => `${(v / total) * 100}%`;
 export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
   const nome = useLayout();
   const L = LAYOUTS[nome];
+  const nos = useMemo(() => distribuir(L.pontos, etapas.length), [L, etapas.length]);
   // o caminho passa um pouco abaixo do centro dos nós, como na ilustração
   const desloc = nome === "desktop" ? 14 : 10;
   const pts = useMemo(
-    () => [...L.pontos.map(([x, y]) => [x, y + desloc]), L.fimCaminho],
-    [L, desloc]
+    () => [...nos.map(([x, y]) => [x, y + desloc]), L.fimCaminho],
+    [nos, L, desloc]
   );
   const caminho = useMemo(() => curva(pts), [pts]);
   // verde: o caminho já percorrido, do primeiro nó até a etapa atual (ou até o troféu)
@@ -114,7 +156,7 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
 
       <ol className="trilha-etapas">
         {etapas.map((etapa, i) => {
-          const [x, y] = L.pontos[i];
+          const [x, y] = nos[i];
           const estado = i < etapaAtual ? "feita" : i === etapaAtual ? "atual" : "bloqueada";
           return (
             <li
@@ -146,7 +188,7 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
                 aria-label={`Etapa ${i + 1} de ${etapas.length}: ${etapa.tipo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (etapa atual)" : " (concluída)"}`}
               >
                 {estado === "atual" && <span className="etapa-pulso" aria-hidden="true" />}
-                <DiscoNo id={etapa.id} Ilustracao={ILUSTRACOES[etapa.id]} atual={estado === "atual"} />
+                <DiscoNo id={etapa.id} Ilustracao={ilustracaoDe(etapa, i)} atual={estado === "atual"} />
               </button>
               <span className="etapa-dica" aria-hidden="true">
                 {i + 1}. {etapa.tipo}

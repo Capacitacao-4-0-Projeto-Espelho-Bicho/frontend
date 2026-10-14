@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTransicao } from "../hooks/useTransicao";
 import { Trilha } from "../components/Trilha";
-import { EtapaCartao, TrofeuCartao } from "../components/EtapaCartao";
-import { MISSAO_DEMO } from "../data/missaoDemo";
+import { EtapaCartao, LembretesCartao, TrofeuCartao } from "../components/EtapaCartao";
+import { MISSAO_DEMO, TEMPOS_DIA } from "../data/missaoDemo";
+import { registrarEvento } from "../services/rastreio";
 import { FundoHome, useTema } from "../components/FundoHome";
 import { LogoCerebro } from "../components/LogoCerebro";
 import {
@@ -25,6 +26,7 @@ import "../styles/moderno.css";
 // O backend ainda não tem rotas de missão, etapas, atividades, notificações,
 // histórico, configurações nem busca: a missão vem de dados fixos
 // (MISSAO_DEMO) e o progresso vive só na memória desta tela.
+// O sino (e "Notificações" no menu) abre os lembretes da missão.
 
 const MENU = [
   { id: "atividades", rotulo: "Atividades", Icone: IconeAtividades },
@@ -66,8 +68,9 @@ export default function Home() {
   const [rolou, setRolou] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
   const [etapaAtual, setEtapaAtual] = useState(0);
-  const [cartao, setCartao] = useState(null); // { indice, estado } | "trofeu"
+  const [cartao, setCartao] = useState(null); // { indice, estado } | "trofeu" | "lembretes"
   const [recusas, setRecusas] = useState({}); // índice da etapa -> nº de recusas
+  const [tempoDia, setTempoDia] = useState(""); // respondido no ponto de partida
   const timer = useRef();
   const fecharCartao = useCallback(() => setCartao(null), []);
 
@@ -97,17 +100,26 @@ export default function Home() {
 
   const emBreve = (rotulo) => {
     setMenuAberto(false);
+    if (rotulo === "Notificações") return abrirLembretes();
     if (rotulo) avisar(`${rotulo}: em breve.`);
   };
 
+  function abrirLembretes() {
+    setMenuAberto(false);
+    registrarEvento("lembretes_abertos", { quantidade: lembretes.length });
+    setCartao("lembretes");
+  }
+
   function aoClicarEtapa(etapa, estado) {
+    registrarEvento("etapa_aberta", { etapa: etapa.id, estado });
     setCartao({ indice: MISSAO.etapas.indexOf(etapa), estado });
   }
 
-  // As atividades das etapas ainda não existem: na demonstração, começar
-  // uma etapa já a marca como concluída para mostrar o avanço da trilha.
-  function aoComecar() {
+  // As atividades das etapas ainda não existem: na demonstração, a pessoa
+  // vai direto para a checagem objetiva e a etapa conta como concluída.
+  function aoConcluir({ tempo }) {
     const { indice } = cartao;
+    if (tempo) setTempoDia(tempo);
     setCartao(null);
     setEtapaAtual(indice + 1);
     avisar(
@@ -128,8 +140,54 @@ export default function Home() {
     setRecusas((r) => ({ ...r, [indice]: (r[indice] || 0) + 1 }));
   }
 
+  function aoRefazer({ contexto }) {
+    setCartao(null);
+    setEtapaAtual(0);
+    setRecusas({});
+    avisar(
+      contexto === "outro"
+        ? "Missão reiniciada. Desta vez, escolha outra situação do seu dia para praticar."
+        : "Missão reiniciada no mesmo contexto. As etapas já feitas ficam no histórico."
+    );
+  }
+
   const concluida = etapaAtual >= TOTAL;
   const progresso = etapaAtual / TOTAL;
+  const porSemana = TEMPOS_DIA.find((t) => t.id === tempoDia)?.lembretesPorSemana;
+
+  // Lembretes com frases genéricas (reunião de 14/10): a pessoa lê e
+  // contextualiza sozinha. Na demonstração eles saem do estado da trilha.
+  const lembretes = useMemo(() => {
+    if (concluida) {
+      return [{ id: "trofeu", texto: "Falta só o fechamento da missão. Leva poucos minutos.", acao: "Abrir o troféu" }];
+    }
+    const etapa = MISSAO.etapas[etapaAtual];
+    const lista = [
+      {
+        id: "proxima",
+        texto: `Lembra de fazer a etapa ${etapaAtual + 1}, ${etapa.tipo}. Leva cerca de ${etapa.duracao} minutos.`,
+        acao: "Abrir etapa",
+        indice: etapaAtual,
+      },
+    ];
+    if (recusas[etapaAtual]) {
+      lista.push({
+        id: "reduzida",
+        texto: `Sem tempo hoje? A versão menor desta etapa leva ${etapa.reduzida.duracao} minutos.`,
+        acao: "Ver versão menor",
+        indice: etapaAtual,
+      });
+    } else if (etapaAtual > 0) {
+      lista.push({ id: "ritmo", texto: "Está indo bem. Uma etapa por dia já é um bom ritmo." });
+    }
+    return lista;
+  }, [concluida, etapaAtual, recusas]);
+
+  function aoAbrirLembrete(l) {
+    registrarEvento("lembrete_usado", { lembrete: l.id });
+    if (l.id === "trofeu") return setCartao("trofeu");
+    setCartao({ indice: l.indice, estado: "atual" });
+  }
 
   return (
     <div className="home">
@@ -179,9 +237,10 @@ export default function Home() {
               type="button"
               className="home-sino so-mobile"
               aria-label="Notificações"
-              onClick={() => emBreve("Notificações")}
+              onClick={abrirLembretes}
             >
               <IconeNotificacoes className="home-sino-icone" />
+              {lembretes.length > 0 && <span className="home-sino-contador">{lembretes.length}</span>}
             </button>
           </div>
         </header>
@@ -270,16 +329,24 @@ export default function Home() {
       </main>
 
       {cartao === "trofeu" && (
-        <TrofeuCartao missao={MISSAO} concluida={concluida} aoFechar={fecharCartao} />
+        <TrofeuCartao missao={MISSAO} concluida={concluida} aoRefazer={aoRefazer} aoFechar={fecharCartao} />
       )}
-      {cartao && cartao !== "trofeu" && (
+      {cartao === "lembretes" && (
+        <LembretesCartao
+          lembretes={lembretes}
+          porSemana={porSemana}
+          aoAbrir={aoAbrirLembrete}
+          aoFechar={fecharCartao}
+        />
+      )}
+      {cartao && typeof cartao === "object" && (
         <EtapaCartao
           key={`${cartao.indice}-${cartao.estado}`}
           missao={MISSAO}
           indice={cartao.indice}
           estado={cartao.estado}
           recusas={recusas[cartao.indice] || 0}
-          aoComecar={aoComecar}
+          aoConcluir={aoConcluir}
           aoRecusar={aoRecusar}
           aoFechar={fecharCartao}
         />
