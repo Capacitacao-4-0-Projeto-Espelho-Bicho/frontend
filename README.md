@@ -23,11 +23,14 @@ src/
   components/            LayoutAuth, PainelCeu, Campo, IconesSociais, RotaProtegida
   assets/                imagens (cérebro do painel)
   constants/perfil.js    opções dos campos de perfil do cadastro
-  pages/                 Login, Cadastro, Home (placeholder)
+  pages/                 Login, Cadastro, Home
+  styles/home.css        estilo da Home (Figma "HOME PAGE", SCRUM-78)
+  components/Trilha.jsx  trilha da Home (caminho em SVG, nós e troféu clicáveis)
+  components/IconesHome.jsx  ícones, nós e troféu da Home em SVG
   styles/global.css      tokens de cor e estilo
 ```
 
 ## Pendências
 
 - **Opções do cadastro:** os valores enviados em `constants/perfil.js` seguem o Figma. Confirmar com a documentação das rotas (SCRUM-80).
-- **Home:** placeholder até o layout ser aprovado (SCRUM-78).
+- **Home:** montada a partir do Figma (SCRUM-78). Atividades, notificações, histórico, configurações e busca mostram "em breve" porque o backend ainda não tem essas rotas. O nome do usuário vem do JWT ou do e-mail do login, até existir uma rota de perfil.

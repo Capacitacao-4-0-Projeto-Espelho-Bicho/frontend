@@ -102,7 +102,7 @@ export default function Cadastro() {
         <span className="progresso-trilho" aria-hidden="true">
           <span className="progresso-barra" style={{ transform: `scaleX(${etapa / 2})` }} />
         </span>
-        <span className="etapa">Etapa {etapa} de 2</span>
+        <span className="etapa-rotulo">Etapa {etapa} de 2</span>
       </div>
 
       <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>
@@ -111,10 +111,10 @@ export default function Cadastro() {
         {etapa === 1 && (
           <>
             <Campo id="nome" rotulo="Nome de usuário" erro={erros.nome}>
-              <input id="nome" name="nome" autoComplete="name" placeholder="Como você quer ser chamado?" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
+              <input id="nome" name="nome" autoComplete="name" placeholder="Como você quer ser chamado…" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
             </Campo>
             <Campo id="email" rotulo="E-mail" erro={erros.email}>
-              <input id="email" name="email" type="email" autoComplete="email" placeholder="exemplo@email.com" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
+              <input id="email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="exemplo@email.com" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
             </Campo>
             <Campo id="senha" rotulo="Senha" erro={erros.senha}>
               <input id="senha" name="senha" type="password" autoComplete="new-password" placeholder={`Pelo menos ${SENHA_MIN} caracteres`} value={form.senha} onChange={atualizar} aria-invalid={Boolean(erros.senha)} />
@@ -148,7 +148,7 @@ export default function Cadastro() {
           )}
           <button type="submit" className="botao-azul" disabled={enviando} aria-busy={enviando}>
             {enviando && <span className="spinner" aria-hidden="true" />}
-            {etapa === 1 ? "Próximo" : enviando ? "Cadastrando..." : "Cadastrar"}
+            {etapa === 1 ? "Próximo" : enviando ? "Cadastrando…" : "Cadastrar"}
           </button>
         </div>
       </form>

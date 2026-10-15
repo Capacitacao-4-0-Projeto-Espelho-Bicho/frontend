@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PainelCeu } from "./PainelCeu";
+import { FundoCeu, useTema } from "./FundoHome";
+import { LogoCerebro } from "./LogoCerebro";
+import "../styles/fundos.css";
+import "../styles/moderno.css";
 
 // Moldura das telas de autenticação (Figma "Página de login"):
 // cartão com o formulário à esquerda e o painel verde à direita.
@@ -17,16 +21,28 @@ export function LayoutAuth() {
   // Depois a classe sai (ao fim da entrada do cérebro, a última), para que
   // nada (resize, troca de rota) a reinicie.
   const [revelando, setRevelando] = useState(true);
+  const tema = useTema();
 
   return (
     <main className="pagina-auth">
+      <a className="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+      {tema === "ceu" && <FundoCeu constelacoes={false} />}
       <div className="moldura">
         <section className="lado-form">
+          {/* Cabeçalho do layout web (some no celular, onde o banner faz esse papel) */}
+          <header className="topo-web">
+            <span className="marca">
+              <span className="marca-simbolo" aria-hidden="true">
+                <LogoCerebro atrasoInicial={1200} />
+              </span>
+              Capacitação 4.0
+            </span>
+          </header>
           {/* key = rota: o conteúdo remonta e anima só quando a tela muda */}
-          <div className="conteudo-form troca-tela" key={pathname}>
+          <div className="conteudo-form troca-tela" key={pathname} id="conteudo" tabIndex={-1}>
             <Outlet />
           </div>
-          <footer className="rodape">© 2026 ALL RIGHTS RESERVED</footer>
+          <footer className="rodape">© 2026 Capacitação 4.0</footer>
         </section>
 
         <aside
