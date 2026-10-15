@@ -25,6 +25,7 @@ export function LayoutAuth() {
 
   return (
     <main className="pagina-auth">
+      <a className="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
       {tema === "ceu" && <FundoCeu constelacoes={false} />}
       <div className="moldura">
         <section className="lado-form">
@@ -38,7 +39,7 @@ export function LayoutAuth() {
             </span>
           </header>
           {/* key = rota: o conteúdo remonta e anima só quando a tela muda */}
-          <div className="conteudo-form troca-tela" key={pathname}>
+          <div className="conteudo-form troca-tela" key={pathname} id="conteudo" tabIndex={-1}>
             <Outlet />
           </div>
           <footer className="rodape">© 2026 Capacitação 4.0</footer>

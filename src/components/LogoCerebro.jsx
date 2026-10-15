@@ -31,6 +31,8 @@ const RESTO = `M0 0 H992 V935 H0 Z ${BRACO.replace("M645 0 L645 322 L660 330", "
 // a cada CICLO a luz sobe pelo desenho e, quando chega na seta, a pessoa
 // levanta o braço (keyframes logo-braco em global.css, com a mesma duração)
 const CICLO = 7000;
+// quantas vezes o gesto se repete antes de parar (mesmo valor do CSS)
+const REPETICOES = 3;
 
 export function LogoCerebro({ className = "", titulo, atrasoInicial = 500, vivo = false, ...props }) {
   const uid = useId().replace(/:/g, "");
@@ -42,7 +44,12 @@ export function LogoCerebro({ className = "", titulo, atrasoInicial = 500, vivo 
     let intervalo;
     const t = setTimeout(() => {
       animacao.current?.beginElement?.();
-      if (vivo) intervalo = setInterval(() => animacao.current?.beginElement?.(), CICLO);
+      let vezes = 1;
+      if (vivo)
+        intervalo = setInterval(() => {
+          animacao.current?.beginElement?.();
+          if (++vezes >= REPETICOES) clearInterval(intervalo);
+        }, CICLO);
     }, atrasoInicial);
     return () => {
       clearTimeout(t);

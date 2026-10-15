@@ -73,6 +73,8 @@ export default function Login() {
             name="email"
             type="email"
             autoComplete="email"
+            autoCapitalize="none"
+            spellCheck={false}
             placeholder="exemplo@email.com"
             value={form.email}
             onChange={atualizar}
@@ -108,7 +110,7 @@ export default function Login() {
 
         <button type="submit" className="botao-primario" disabled={enviando} aria-busy={enviando}>
           {enviando && <span className="spinner" aria-hidden="true" />}
-          {enviando ? "Entrando..." : "Entrar"}
+          {enviando ? "Entrando…" : "Entrar"}
         </button>
       </form>
 

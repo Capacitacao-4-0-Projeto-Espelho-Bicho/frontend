@@ -95,6 +95,7 @@ body {
 /* ---------- Moldura (desktop: cartão 1102x727, raio 25) ---------- */
 .pagina-auth {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -838,6 +839,7 @@ button:disabled {
   .moldura {
     max-width: none;
     min-height: 100vh;
+    min-height: 100dvh;
     border-radius: 0;
     box-shadow: none;
     overflow: visible;
@@ -854,6 +856,7 @@ button:disabled {
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     align-self: flex-start;
   }
 
@@ -1078,14 +1081,16 @@ svg.cerebro {
   overflow: visible;
 }
 
+/* movimento automático para depois de cerca de 20 s, para não competir com
+   o formulário (Web Interface Guidelines: loops longos precisam parar) */
 .logo-flutua {
-  animation: logo-flutua 6s ease-in-out infinite alternate;
+  animation: logo-flutua 6s ease-in-out 4 alternate;
 }
 
 .logo-braco {
   transform-box: view-box;
   transform-origin: 640px 302px;
-  animation: logo-braco 7s var(--ease-saida) infinite both;
+  animation: logo-braco 7s var(--ease-saida) 3 both;
 }
 
 @keyframes logo-flutua {
@@ -1107,4 +1112,45 @@ svg.cerebro {
   .logo-braco {
     animation: none;
   }
+}
+
+/* ---------- Revisão de interface (Web Interface Guidelines) ---------- */
+/* tema céu é escuro: barras de rolagem e campos nativos seguem o tema */
+:root[data-tema="ceu"] {
+  color-scheme: dark;
+}
+
+/* sem atraso de toque duplo e sem o flash cinza do toque no celular;
+   o retorno do toque já vem do scale(.97) do :active */
+a,
+button,
+label,
+summary,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* link "Pular para o conteúdo": só aparece quando recebe foco pelo teclado */
+.pular-conteudo {
+  position: fixed;
+  top: var(--esp-3);
+  left: var(--esp-3);
+  z-index: 100;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--raio-1);
+  background: var(--cor-broto, #8fd16a);
+  color: #0c3a3b;
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--esp-4)));
+  transition: transform var(--dur-rapida) var(--ease-saida);
+}
+
+.pular-conteudo:focus-visible {
+  transform: none;
+}
+
+#conteudo:focus {
+  outline: none;
 }

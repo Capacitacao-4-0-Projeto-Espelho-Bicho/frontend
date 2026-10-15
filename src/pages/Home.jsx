@@ -64,7 +64,8 @@ export default function Home() {
       navigate("/login", { replace: true });
     }, "sair");
   const tema = useTema();
-  const [aviso, setAviso] = useState("");
+  const [aviso, setAviso] = useState(""); // texto do aviso no rodapé
+  const [desfazer, setDesfazer] = useState(null); // ação opcional do aviso
   const [rolou, setRolou] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
   const [etapaAtual, setEtapaAtual] = useState(0);
@@ -92,10 +93,15 @@ export default function Home() {
     };
   }, []);
 
-  function avisar(texto) {
+  // Com `aoDesfazer`, o aviso ganha o botão "Desfazer" e fica mais tempo na tela
+  function avisar(texto, aoDesfazer = null) {
     setAviso(texto);
+    setDesfazer(() => aoDesfazer);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => setAviso(""), 2800);
+    timer.current = setTimeout(() => {
+      setAviso("");
+      setDesfazer(null);
+    }, aoDesfazer ? 6000 : 2800);
   }
 
   const emBreve = (rotulo) => {
@@ -140,14 +146,23 @@ export default function Home() {
     setRecusas((r) => ({ ...r, [indice]: (r[indice] || 0) + 1 }));
   }
 
+  // Reiniciar apaga o progresso da trilha, então o aviso oferece desfazer
   function aoRefazer({ contexto }) {
+    const antes = { etapaAtual, recusas };
     setCartao(null);
     setEtapaAtual(0);
     setRecusas({});
+    registrarEvento("missao_refeita", { contexto });
     avisar(
       contexto === "outro"
         ? "Missão reiniciada. Desta vez, escolha outra situação do seu dia para praticar."
-        : "Missão reiniciada no mesmo contexto. As etapas já feitas ficam no histórico."
+        : "Missão reiniciada no mesmo contexto.",
+      () => {
+        setEtapaAtual(antes.etapaAtual);
+        setRecusas(antes.recusas);
+        registrarEvento("missao_refeita_desfeita", { contexto });
+        avisar("Progresso da missão restaurado.");
+      }
     );
   }
 
@@ -191,6 +206,7 @@ export default function Home() {
 
   return (
     <div className="home">
+      <a className="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
       <FundoHome tema={tema} />
       <div className={`home-cabecalho${rolou ? " rolou" : ""}`}>
         <header className="home-topo">
@@ -288,7 +304,7 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      <main className="home-conteudo">
+      <main className="home-conteudo" id="conteudo" tabIndex={-1}>
         <section className="home-intro">
           <div className="home-intro-texto">
             <h1>Sua jornada começa aqui.</h1>
@@ -352,9 +368,14 @@ export default function Home() {
         />
       )}
 
-      <p className={`home-aviso${aviso ? " visivel" : ""}`} role="status" aria-live="polite">
-        {aviso}
-      </p>
+      <div className={`home-aviso${aviso ? " visivel" : ""}`} role="status" aria-live="polite">
+        <span>{aviso}</span>
+        {desfazer && (
+          <button type="button" className="home-aviso-acao" onClick={desfazer}>
+            Desfazer
+          </button>
+        )}
+      </div>
     </div>
   );
 }

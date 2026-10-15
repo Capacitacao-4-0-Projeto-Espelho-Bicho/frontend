@@ -24,6 +24,7 @@
   --home-largura: min(1280px, calc(100% - 2 * clamp(16px, 7vw, 148px)));
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--home-fundo);
   isolation: isolate;
   color: var(--home-tinta);
@@ -1159,6 +1160,8 @@
   position: relative;
   width: min(520px, 100%);
   max-height: calc(100vh - 2 * var(--esp-4));
+  max-height: calc(100dvh - 2 * var(--esp-4));
+  overscroll-behavior: contain;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -1541,4 +1544,38 @@
   font-size: 11px;
   font-weight: var(--peso-forte);
   line-height: 1;
+}
+
+/* a gaveta do celular rola sozinha, sem arrastar a página atrás */
+.home-gaveta {
+  overscroll-behavior: contain;
+}
+
+/* aviso com ação (ex.: "Desfazer" depois de reiniciar a missão) */
+.home-aviso {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-3);
+}
+
+.home-aviso.visivel:has(.home-aviso-acao) {
+  pointer-events: auto;
+}
+
+.home-aviso-acao {
+  min-height: 36px;
+  padding: 0 var(--esp-3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--raio-pilula);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--peso-forte);
+  cursor: pointer;
+  transition: background-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.home-aviso-acao:hover {
+  background: rgba(255, 255, 255, 0.12);
 }

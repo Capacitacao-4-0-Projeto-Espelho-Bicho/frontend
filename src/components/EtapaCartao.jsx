@@ -303,7 +303,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoConcluir, aoRec
           <textarea
             className="cartao-outro"
             rows={3}
-            placeholder="Conte em poucas palavras (opcional para a equipe analisar)"
+            placeholder="Conte em poucas palavras…"
             value={outro}
             onChange={(e) => setOutro(e.target.value)}
             aria-label="Outro motivo"
