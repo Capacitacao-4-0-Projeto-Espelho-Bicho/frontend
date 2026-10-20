@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { useTransicao } from "../hooks/useTransicao";
 import { Trilha } from "../components/Trilha";
 import { EtapaCartao, LembretesCartao, TrofeuCartao } from "../components/EtapaCartao";
+import { TarefaFluxo } from "../components/TarefaFluxo";
+import { PainelAtividades } from "../components/PainelAtividades";
 import { MISSAO_DEMO, TEMPOS_DIA } from "../data/missaoDemo";
 import { registrarEvento } from "../services/rastreio";
 import { FundoHome, useTema } from "../components/FundoHome";
@@ -20,6 +22,7 @@ import {
 import "../styles/home.css";
 import "../styles/fundos.css";
 import "../styles/moderno.css";
+import "../styles/tarefa.css";
 
 // Home conforme o Figma "HOME PAGE" (SCRUM-78) e a "Especificação das
 // Missões e Etapas": a trilha mostra as 6 etapas da missão atual.
@@ -29,9 +32,9 @@ import "../styles/moderno.css";
 // O sino (e "Notificações" no menu) abre os lembretes da missão.
 
 const MENU = [
-  { id: "atividades", rotulo: "Atividades", Icone: IconeAtividades },
+  { id: "atividades", rotulo: "Atividades", Icone: IconeAtividades, visao: "atividades" },
   { id: "notificacoes", rotulo: "Notificações", Icone: IconeNotificacoes, soDesktop: true },
-  { id: "home", rotulo: "Home", Icone: IconeHome, atual: true },
+  { id: "home", rotulo: "Home", Icone: IconeHome, visao: "trilha" },
   { id: "historico", rotulo: "Histórico", Icone: IconeHistorico },
   { id: "configuracoes", rotulo: "Configurações", Icone: IconeConfiguracoes },
 ];
@@ -39,13 +42,13 @@ const MENU = [
 const MISSAO = MISSAO_DEMO;
 const TOTAL = MISSAO.etapas.length;
 
-function ItemMenu({ item, onEmBreve }) {
+function ItemMenu({ item, atual, onEmBreve }) {
   return (
     <button
       type="button"
-      className={`home-menu-item${item.atual ? " atual" : ""}${item.soDesktop ? " so-desktop" : ""}`}
-      aria-current={item.atual ? "page" : undefined}
-      onClick={() => onEmBreve(item.atual ? null : item.rotulo)}
+      className={`home-menu-item${atual ? " atual" : ""}${item.soDesktop ? " so-desktop" : ""}`}
+      aria-current={atual ? "page" : undefined}
+      onClick={() => onEmBreve(item)}
     >
       <item.Icone className="home-menu-icone" />
       <span>{item.rotulo}</span>
@@ -72,6 +75,10 @@ export default function Home() {
   const [cartao, setCartao] = useState(null); // { indice, estado } | "trofeu" | "lembretes"
   const [recusas, setRecusas] = useState({}); // índice da etapa -> nº de recusas
   const [tempoDia, setTempoDia] = useState(""); // respondido no ponto de partida
+  const [visao, setVisao] = useState("trilha"); // "trilha" | "atividades"
+  const [tarefa, setTarefa] = useState(null); // { indice, reduzida } da etapa aberta
+  const [introVista, setIntroVista] = useState(false); // explicação da tarefa só na 1ª vez
+  const fecharTarefa = useCallback(() => setTarefa(null), []);
   const timer = useRef();
   const fecharCartao = useCallback(() => setCartao(null), []);
 
@@ -104,8 +111,17 @@ export default function Home() {
     }, aoDesfazer ? 6000 : 2800);
   }
 
-  const emBreve = (rotulo) => {
+  // itens do menu: os que têm `visao` trocam a área principal; os outros
+  // ainda não existem ("em breve"), exceto Notificações, que abre os lembretes
+  const emBreve = (item) => {
+    const rotulo = typeof item === "string" ? item : item?.rotulo;
     setMenuAberto(false);
+    if (item?.visao) {
+      setTarefa(null);
+      setVisao(item.visao);
+      registrarEvento("menu", { destino: item.visao });
+      return;
+    }
     if (rotulo === "Notificações") return abrirLembretes();
     if (rotulo) avisar(`${rotulo}: em breve.`);
   };
@@ -121,18 +137,40 @@ export default function Home() {
     setCartao({ indice: MISSAO.etapas.indexOf(etapa), estado });
   }
 
-  // As atividades das etapas ainda não existem: na demonstração, a pessoa
-  // vai direto para a checagem objetiva e a etapa conta como concluída.
-  function aoConcluir({ tempo }) {
-    const { indice } = cartao;
-    if (tempo) setTempoDia(tempo);
+  // "Começar etapa" no cartão abre a tela de tarefa no lugar da trilha
+  function aoComecar({ reduzida }) {
+    setTarefa({ indice: cartao.indice, reduzida });
     setCartao(null);
+  }
+
+  function abrirEtapaAtual() {
+    if (concluida) return setCartao("trofeu");
+    setVisao("trilha");
+    setTarefa({ indice: etapaAtual, reduzida: false });
+  }
+
+  // fim da tela de tarefa: a etapa conta como concluída e a trilha avança
+  function aoConcluir({ tempo }) {
+    const { indice } = tarefa;
+    if (tempo) setTempoDia(tempo);
+    setTarefa(null);
+    setVisao("trilha");
     setEtapaAtual(indice + 1);
     avisar(
       indice + 1 < TOTAL
-        ? `Etapa ${indice + 1} concluída (simulação). Próxima: ${MISSAO.etapas[indice + 1].tipo}.`
+        ? `Etapa ${indice + 1} concluída. Próxima: ${MISSAO.etapas[indice + 1].tipo}.`
         : "Todas as etapas concluídas. Toque no troféu para fechar a missão."
     );
+  }
+
+  // "Não consegui fazer agora" na tela de tarefa: conta como recusa e volta
+  // ao cartão da etapa, que já abre oferecendo a versão menor
+  function aoNaoPosso() {
+    const { indice } = tarefa;
+    registrarEvento("etapa_nao_feita", { etapa: MISSAO.etapas[indice].id });
+    setTarefa(null);
+    setRecusas((r) => ({ ...r, [indice]: (r[indice] || 0) + 1 }));
+    setCartao({ indice, estado: "atual" });
   }
 
   function aoRecusar({ pular }) {
@@ -263,7 +301,7 @@ export default function Home() {
 
         <nav className="home-menu" aria-label="Principal">
           {MENU.map((item) => (
-            <ItemMenu key={item.id} item={item} onEmBreve={emBreve} />
+            <ItemMenu key={item.id} item={item} atual={item.visao === visao} onEmBreve={emBreve} />
           ))}
         </nav>
 
@@ -290,7 +328,7 @@ export default function Home() {
           </form>
           <nav className="gaveta-itens" aria-label="Principal (celular)">
             {MENU.map((item) => (
-              <ItemMenu key={item.id} item={{ ...item, soDesktop: false }} onEmBreve={emBreve} />
+              <ItemMenu key={item.id} item={{ ...item, soDesktop: false }} atual={item.visao === visao} onEmBreve={emBreve} />
             ))}
           </nav>
           <button type="button" className="gaveta-sair" onClick={sair}>
@@ -305,6 +343,27 @@ export default function Home() {
       />
 
       <main className="home-conteudo" id="conteudo" tabIndex={-1}>
+        {tarefa ? (
+          <TarefaFluxo
+            key={`${tarefa.indice}-${tarefa.reduzida}`}
+            missao={MISSAO}
+            indice={tarefa.indice}
+            reduzida={tarefa.reduzida}
+            mostrarIntro={!introVista}
+            aoIntroVista={() => setIntroVista(true)}
+            aoConcluir={aoConcluir}
+            aoNaoPosso={aoNaoPosso}
+            aoSair={fecharTarefa}
+          />
+        ) : visao === "atividades" ? (
+          <PainelAtividades
+            missao={MISSAO}
+            etapaAtual={etapaAtual}
+            aoRetomar={abrirEtapaAtual}
+            aoVerTrilha={() => setVisao("trilha")}
+          />
+        ) : (
+        <>
         <section className="home-intro">
           <div className="home-intro-texto">
             <h1>Sua jornada começa aqui.</h1>
@@ -340,6 +399,8 @@ export default function Home() {
             onTrofeu={() => setCartao("trofeu")}
           />
         </section>
+        </>
+        )}
 
         <footer className="home-rodape">© 2026 Capacitação 4.0</footer>
       </main>
@@ -362,7 +423,7 @@ export default function Home() {
           indice={cartao.indice}
           estado={cartao.estado}
           recusas={recusas[cartao.indice] || 0}
-          aoConcluir={aoConcluir}
+          aoComecar={aoComecar}
           aoRecusar={aoRecusar}
           aoFechar={fecharCartao}
         />

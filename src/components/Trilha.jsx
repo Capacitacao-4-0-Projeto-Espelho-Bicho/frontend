@@ -48,7 +48,7 @@ const LAYOUTS = {
 };
 
 const ILUSTRACOES_EM_ORDEM = Object.values(ILUSTRACOES);
-const ilustracaoDe = (etapa, i) => ILUSTRACOES[etapa.id] || ILUSTRACOES_EM_ORDEM[i % ILUSTRACOES_EM_ORDEM.length];
+export const ilustracaoDe = (etapa, i) => ILUSTRACOES[etapa.id] || ILUSTRACOES_EM_ORDEM[i % ILUSTRACOES_EM_ORDEM.length];
 
 // Ponto da curva de Bézier cúbica em t
 function bezier(p1, c1, c2, p2, t) {
@@ -121,7 +121,9 @@ function useLayout() {
 
 const pct = (v, total) => `${(v / total) * 100}%`;
 
-export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
+// `previa`: versão só para olhar (tela "Como funciona"), sem cliques, com
+// "Você está aqui" no nó atual e "Destino" no troféu (design do João, SCRUM-88)
+export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu, previa = false }) {
   const nome = useLayout();
   const L = LAYOUTS[nome];
   const nos = useMemo(() => distribuir(L.pontos, etapas.length), [L, etapas.length]);
@@ -144,9 +146,11 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
 
   return (
     <div
-      className={`trilha trilha-${nome}`}
+      className={`trilha trilha-${nome}${previa ? " trilha-previa" : ""}`}
       style={{ aspectRatio: `${L.w} / ${L.h}` }}
       key={nome}
+      inert={previa ? "" : undefined}
+      aria-hidden={previa ? "true" : undefined}
     >
       <svg className="trilha-caminho" viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true">
         <path className="caminho-sombra" d={caminho} pathLength="1" />
@@ -177,8 +181,14 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
                   tabIndex={-1}
                   aria-hidden="true"
                 >
-                  <span className="balao-play" />
-                  Começar
+                  {previa ? (
+                    "Você está aqui"
+                  ) : (
+                    <>
+                      <span className="balao-play" />
+                      Começar
+                    </>
+                  )}
                 </button>
               )}
               <button
@@ -210,6 +220,7 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu }) {
         onAnimationEnd={(e) => e.animationName === "trofeu-estouro" && setEstourou(false)}
       >
         <span className="trofeu-aura" aria-hidden="true" />
+        {previa && <span className="trofeu-rotulo">Destino</span>}
         <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu: fechamento da missão">
           <span className="trofeu-corpo">
             <Trofeu />

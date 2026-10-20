@@ -1431,8 +1431,7 @@
 }
 
 /* ---------- Checagem objetiva ao terminar a etapa (reunião de 14/10) ---------- */
-.cartao-escala .escala-opcoes,
-.cartao-resultado .resultado-opcoes {
+.cartao-escala .escala-opcoes {
   display: grid;
   gap: var(--esp-2);
 }
@@ -1441,12 +1440,7 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.cartao-resultado .resultado-opcoes {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.escala-opcao,
-.resultado-opcao {
+.escala-opcao {
   position: relative;
   display: grid;
   place-items: center;
@@ -1461,14 +1455,12 @@
   transition: border-color var(--dur-rapida) var(--ease-padrao), background-color var(--dur-rapida) var(--ease-padrao);
 }
 
-.escala-opcao:hover,
-.resultado-opcao:hover {
+.escala-opcao:hover {
   background: var(--home-hover);
 }
 
 /* o rádio fica invisível, mas continua acessível pelo teclado */
-.escala-opcao input,
-.resultado-opcao input {
+.escala-opcao input {
   position: absolute;
   inset: 0;
   margin: 0;
@@ -1476,15 +1468,13 @@
   cursor: pointer;
 }
 
-.escala-opcao:has(input:checked),
-.resultado-opcao:has(input:checked) {
+.escala-opcao:has(input:checked) {
   border-color: var(--home-verde);
   background: rgba(143, 209, 106, 0.16);
   color: var(--home-tinta);
 }
 
-.escala-opcao:has(input:focus-visible),
-.resultado-opcao:has(input:focus-visible) {
+.escala-opcao:has(input:focus-visible) {
   outline: 2px solid var(--cor-foco);
   outline-offset: 2px;
 }

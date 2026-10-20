@@ -6,10 +6,10 @@
 // (o troféu). A etapa "desafio" é a principal e não pode ser pulada.
 //
 // Reunião de 14/10: o sistema não avalia material descritivo (texto,
-// gravação). Toda etapa termina com uma checagem objetiva: "fiz / fiz em
-// parte / não fiz" e uma lista curta para marcar. O número de etapas vai
-// diminuir na revisão do documento; a trilha já aceita qualquer quantidade.
-// PROVISÓRIO: etapas e checklists até a nova versão da especificação.
+// gravação). Toda etapa termina com a autoavaliação de 1 a 5 da tela de
+// tarefa (design do João, SCRUM-88). O número de etapas vai diminuir na
+// revisão do documento; a trilha já aceita qualquer quantidade.
+// PROVISÓRIO: conteúdo das etapas até a nova versão da especificação.
 
 export const MISSAO_DEMO = {
   id: "comunicacao-2-3",
@@ -48,7 +48,6 @@ export const MISSAO_DEMO = {
       titulo: "O que é ser objetivo",
       atividade:
         "Compare duas explicações do mesmo assunto, uma longa e outra objetiva, e identifique a estrutura da versão objetiva: ideia, por quê, exemplo.",
-      checklist: ["Comparei as duas explicações", "Identifiquei ideia, por quê e exemplo na versão objetiva"],
       duracao: 5,
       reduzida: { duracao: 3, atividade: "Veja um único par de explicações e marque a mais clara." },
     },
@@ -58,7 +57,6 @@ export const MISSAO_DEMO = {
       titulo: "Reescreva para um leigo",
       atividade:
         "Reescreva um parágrafo técnico para alguém de fora da área, em até três frases, seguindo a estrutura ideia, por quê, exemplo.",
-      checklist: ["Reescrevi o parágrafo em até três frases", "Segui a ordem ideia, por quê, exemplo"],
       duracao: 10,
       reduzida: { duracao: 5, atividade: "Reescreva só a primeira frase do parágrafo." },
     },
@@ -67,7 +65,6 @@ export const MISSAO_DEMO = {
       tipo: "Prática no contexto",
       titulo: "Grave uma apresentação de 1 minuto",
       atividade: "Grave uma apresentação de 1 minuto sobre um tema do seu trabalho.",
-      checklist: ["Gravei a apresentação", "Ficou dentro de 1 minuto", "Usei um tema do meu trabalho"],
       duracao: 10,
       ajustada: "Esta etapa foi ajustada ao seu tempo disponível: a atividade original tem 5 minutos de fala.",
       reduzida: { duracao: 5, atividade: "Comece com 30 segundos de fala." },
@@ -77,8 +74,7 @@ export const MISSAO_DEMO = {
       tipo: "Desafio",
       titulo: "Duas versões da mesma mensagem",
       atividade:
-        "Escreva a mesma mensagem para um colega da área e para um leigo. Termine cada uma com uma pergunta que confira o entendimento. Depois marque o que você conseguiu fazer.",
-      checklist: ["Escrevi a versão para um colega da área", "Escrevi a versão para um leigo", "Terminei as duas com uma pergunta de entendimento"],
+        "Escreva a mesma mensagem para um colega da área e para um leigo. Termine cada uma com uma pergunta que confira o entendimento.",
       duracao: 15,
       obrigatoria: true,
       reduzida: { duracao: 10, atividade: "Escreva só a versão para o leigo, com a pergunta final." },
@@ -107,13 +103,6 @@ export const MOTIVOS_RECUSA = [
   { id: "utilidade", rotulo: "Não vejo utilidade" },
   { id: "recursos", rotulo: "Não tenho os recursos necessários" },
   { id: "outro", rotulo: "Outro" },
-];
-
-// Resultado objetivo de cada etapa (reunião de 14/10: nada descritivo)
-export const RESULTADOS_ETAPA = [
-  { id: "fiz", rotulo: "Fiz" },
-  { id: "parte", rotulo: "Fiz em parte" },
-  { id: "nao", rotulo: "Não fiz" },
 ];
 
 // Tempo por dia: calibra o tamanho das etapas e quantos lembretes a pessoa recebe

@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   MOTIVOS_RECUSA,
   MOTIVOS_NAO_ATINGIU,
-  RESULTADOS_ETAPA,
-  TEMPOS_DIA,
 } from "../data/missaoDemo";
 import { medirTempo, registrarEvento } from "../services/rastreio";
 
@@ -13,9 +11,8 @@ import { medirTempo, registrarEvento } from "../services/rastreio";
 // (lista fechada, item 9.2) e oferece a versão reduzida; uma segunda recusa
 // libera a etapa seguinte, exceto no desafio, que é obrigatório.
 //
-// Reunião de 14/10: o sistema não analisa texto nem gravação. Ao terminar,
-// a pessoa responde só coisas objetivas: escalas de 1 a 5, "fiz / fiz em
-// parte / não fiz" e uma lista curta para marcar.
+// "Começar etapa" abre a tela de tarefa (TarefaFluxo.jsx), que termina com
+// a autoavaliação de 1 a 5 (reunião de 14/10: nada de texto ou gravação).
 
 function useDialogo(aoFechar) {
   const ref = useRef(null);
@@ -58,7 +55,7 @@ function Moldura({ titulo, rotuloId, aoFechar, children }) {
 
 
 // Escala de 1 a 5 (Likert), como botões lado a lado
-function Escala({ nome, pergunta, valor, aoMudar, foco }) {
+export function Escala({ nome, pergunta, valor, aoMudar, foco, pontas = ["Nada", "Muito"] }) {
   return (
     <fieldset className="cartao-escala">
       <legend>{pergunta}</legend>
@@ -78,14 +75,14 @@ function Escala({ nome, pergunta, valor, aoMudar, foco }) {
         ))}
       </div>
       <p className="escala-pontas" aria-hidden="true">
-        <span>Nada</span>
-        <span>Muito</span>
+        <span>{pontas[0]}</span>
+        <span>{pontas[1]}</span>
       </p>
     </fieldset>
   );
 }
 
-function Opcoes({ legenda, nome, opcoes, valor, aoMudar, foco }) {
+export function Opcoes({ legenda, nome, opcoes, valor, aoMudar, foco }) {
   return (
     <fieldset>
       <legend>{legenda}</legend>
@@ -105,130 +102,13 @@ function Opcoes({ legenda, nome, opcoes, valor, aoMudar, foco }) {
   );
 }
 
-// O que a pessoa responde ao terminar a etapa. Depende do tipo:
-// ponto de partida = escalas + tempo por dia; reflexão = escolher uma ação;
-// as outras = "fiz / fiz em parte / não fiz" + lista para marcar.
-function Checagem({ etapa, reduzida, aoConcluir, aoNaoFez, aoVoltar }) {
-  const [escalas, setEscalas] = useState({});
-  const [tempo, setTempo] = useState("");
-  const [acao, setAcao] = useState("");
-  const [resultado, setResultado] = useState("");
-  const [marcados, setMarcados] = useState([]);
-
-  let pode;
-  let conteudo;
-  if (etapa.escalas) {
-    pode = etapa.escalas.every((e) => escalas[e.id]) && tempo;
-    conteudo = (
-      <>
-        {etapa.escalas.map((e, i) => (
-          <Escala
-            key={e.id}
-            nome={e.id}
-            pergunta={e.pergunta}
-            valor={escalas[e.id]}
-            aoMudar={(n) => setEscalas((v) => ({ ...v, [e.id]: n }))}
-            foco={i === 0}
-          />
-        ))}
-        <Opcoes
-          legenda="Quanto tempo por dia você tem para a missão?"
-          nome="tempo"
-          opcoes={TEMPOS_DIA}
-          valor={tempo}
-          aoMudar={setTempo}
-        />
-      </>
-    );
-  } else if (etapa.acoes) {
-    pode = acao;
-    conteudo = (
-      <Opcoes
-        legenda="Qual ação você vai tomar a partir daqui?"
-        nome="acao"
-        opcoes={etapa.acoes.map((rotulo, i) => ({ id: String(i), rotulo }))}
-        valor={acao}
-        aoMudar={setAcao}
-        foco
-      />
-    );
-  } else {
-    pode = resultado;
-    conteudo = (
-      <>
-        <fieldset className="cartao-resultado">
-          <legend>Como foi?</legend>
-          <div className="resultado-opcoes">
-            {RESULTADOS_ETAPA.map((r, i) => (
-              <label key={r.id} className="resultado-opcao">
-                <input
-                  type="radio"
-                  name="resultado"
-                  checked={resultado === r.id}
-                  onChange={() => setResultado(r.id)}
-                  data-foco={i === 0 ? "" : undefined}
-                />
-                <span>{r.rotulo}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        {resultado && resultado !== "nao" && etapa.checklist && (
-          <fieldset>
-            <legend>Marque o que você conseguiu fazer</legend>
-            {etapa.checklist.map((item) => (
-              <label key={item} className="cartao-motivo">
-                <input
-                  type="checkbox"
-                  checked={marcados.includes(item)}
-                  onChange={(e) =>
-                    setMarcados((m) => (e.target.checked ? [...m, item] : m.filter((x) => x !== item)))
-                  }
-                />
-                <span>{item}</span>
-              </label>
-            ))}
-          </fieldset>
-        )}
-      </>
-    );
-  }
-
-  const naoFez = resultado === "nao";
-  return (
-    <form
-      className="cartao-recusa"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!pode) return;
-        if (naoFez) return aoNaoFez();
-        aoConcluir({ reduzida, escalas, tempo, acao, resultado, marcados });
-      }}
-    >
-      {conteudo}
-      {naoFez && (
-        <p className="cartao-nota">Tudo bem. Você pode tentar uma versão menor desta etapa.</p>
-      )}
-      <div className="cartao-acoes">
-        <button type="submit" className="botao-primario" disabled={!pode}>
-          {naoFez ? "Ver versão menor" : "Concluir etapa"}
-        </button>
-        <button type="button" className="cartao-link" onClick={aoVoltar}>
-          Voltar
-        </button>
-      </div>
-    </form>
-  );
-}
-
-export function EtapaCartao({ missao, indice, estado, recusas, aoConcluir, aoRecusar, aoFechar }) {
+export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecusar, aoFechar }) {
   const etapa = missao.etapas[indice];
   const total = missao.etapas.length;
   const [tela, setTela] = useState(recusas > 0 && estado === "atual" ? "reduzida" : "detalhe");
   const [motivo, setMotivo] = useState("");
   const [outro, setOutro] = useState("");
-  const [reduzidaEscolhida, setReduzidaEscolhida] = useState(false);
-  const reduzida = tela === "reduzida" || (tela === "checagem" && reduzidaEscolhida);
+  const reduzida = tela === "reduzida";
   const duracao = reduzida ? etapa.reduzida.duracao : etapa.duracao;
 
   // ao trocar de tela dentro do cartão, o foco vai para o primeiro campo
@@ -257,26 +137,6 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoConcluir, aoRec
       {filhos}
     </Moldura>
   );
-
-  if (tela === "checagem") {
-    return moldura(
-      <Checagem
-        key="checagem"
-        etapa={etapa}
-        reduzida={reduzidaEscolhida}
-        aoConcluir={(dados) => {
-          registrarEvento("etapa_concluida", { etapa: etapa.id, ...dados });
-          aoConcluir(dados);
-        }}
-        aoNaoFez={() => {
-          registrarEvento("etapa_nao_feita", { etapa: etapa.id });
-          aoRecusar({ motivo: "nao_fez" });
-          setTela("reduzida");
-        }}
-        aoVoltar={() => setTela(reduzidaEscolhida ? "reduzida" : "detalhe")}
-      />
-    );
-  }
 
   if (tela === "recusa") {
     const pode = motivo && (motivo !== "outro" || outro.trim());
@@ -342,7 +202,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoConcluir, aoRec
           ? "Você responde duas escalas de 1 a 5 e o seu tempo disponível."
           : etapa.acoes
             ? "Você escolhe uma ação numa lista."
-            : "Você marca o que conseguiu fazer. Não precisa enviar texto nem gravação."}
+            : "Você avalia de 1 a 5 como se saiu e quanto foi difícil. Não precisa enviar texto nem gravação."}
       </p>
 
       {bloqueada && (
@@ -356,9 +216,8 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoConcluir, aoRec
             type="button"
             className="botao-primario"
             onClick={() => {
-              setReduzidaEscolhida(reduzida);
               registrarEvento("etapa_comecada", { etapa: etapa.id, reduzida });
-              setTela("checagem");
+              aoComecar({ reduzida });
             }}
             data-foco=""
           >
