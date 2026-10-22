@@ -20,6 +20,7 @@ export default function Login() {
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [demorando, setDemorando] = useState(false);
 
   function atualizar(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,7 +42,7 @@ export default function Login() {
 
     setEnviando(true);
     try {
-      await entrar({ email: form.email.trim(), senha: form.senha });
+      await entrar({ email: form.email.trim(), senha: form.senha }, { aoDemorar: () => setDemorando(true) });
       // o cérebro do painel voa até o logo da Home
       transicao(() => navigate("/", { replace: true }), "entrar");
     } catch (err) {
@@ -50,6 +51,7 @@ export default function Login() {
       else setErroGeral(err.message);
     } finally {
       setEnviando(false);
+      setDemorando(false);
     }
   }
 
@@ -105,6 +107,12 @@ export default function Login() {
         {erroGeral && (
           <p className="aviso aviso-erro" role="alert">
             {erroGeral}
+          </p>
+        )}
+
+        {enviando && demorando && (
+          <p className="aviso aviso-espera" role="status">
+            Conectando ao servidor. Se ele estava parado, pode levar até 1 minuto…
           </p>
         )}
 

@@ -1154,3 +1154,10 @@ summary,
 #conteudo:focus {
   outline: none;
 }
+
+/* aviso de espera enquanto o servidor do Render acorda (SCRUM-96) */
+.aviso-espera {
+  background: rgba(143, 209, 106, 0.12);
+  color: var(--cor-titulo);
+  border: 1px solid rgba(143, 209, 106, 0.3);
+}

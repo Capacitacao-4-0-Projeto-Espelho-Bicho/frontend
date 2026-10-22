@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { acordarServidor } from "../services/api";
 import { Outlet, useLocation } from "react-router-dom";
 import { PainelCeu } from "./PainelCeu";
 import { FundoCeu, useTema } from "./FundoHome";
@@ -22,6 +23,11 @@ export function LayoutAuth() {
   // nada (resize, troca de rota) a reinicie.
   const [revelando, setRevelando] = useState(true);
   const tema = useTema();
+
+  // acorda o servidor do Render enquanto a pessoa ainda está digitando
+  useEffect(() => {
+    acordarServidor();
+  }, []);
 
   return (
     <main className="pagina-auth">

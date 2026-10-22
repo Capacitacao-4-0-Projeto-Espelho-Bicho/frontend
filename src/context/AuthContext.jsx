@@ -4,6 +4,25 @@ import * as authService from "../services/auth";
 
 const AuthContext = createContext(null);
 const EMAIL_KEY = "usuario_email";
+const NOME_KEY = (email) => `usuario_nome:${email}`;
+
+// O login devolve só o token (com o id no "sub"), sem o nome. O cadastro
+// devolve o nome, então guardamos ele por e-mail para mostrar na Home.
+function lerNome(email) {
+  try {
+    return email ? localStorage.getItem(NOME_KEY(email)) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function lembrarNome(email, nome) {
+  try {
+    if (email && nome) localStorage.setItem(NOME_KEY(email), nome);
+  } catch {
+    // sem armazenamento: a Home usa o começo do e-mail
+  }
+}
 
 function lerEmail() {
   try {
@@ -36,6 +55,8 @@ function lerPayload(token) {
 }
 
 function nomeParaExibir(token, email) {
+  const salvo = lerNome(email);
+  if (salvo) return salvo.split(" ")[0];
   const p = lerPayload(token || "");
   const sub = typeof p.sub === "string" ? p.sub : "";
   const candidato = p.nome || p.name || p.email || (sub.includes("@") ? sub : "") || email || "";
@@ -47,8 +68,8 @@ export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(() => getToken());
   const [email, setEmail] = useState(() => lerEmail());
 
-  const entrar = useCallback(async (credenciais) => {
-    const dados = await authService.login(credenciais);
+  const entrar = useCallback(async (credenciais, opcoes) => {
+    const dados = await authService.login(credenciais, opcoes);
     setToken(dados.access_token);
     setTokenState(dados.access_token);
     gravarEmail(credenciais.email);

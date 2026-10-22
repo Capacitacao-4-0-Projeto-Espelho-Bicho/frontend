@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registrar } from "../services/auth";
+import { lembrarNome } from "../context/AuthContext";
 import { Campo, GrupoRadio } from "../components/Campo";
 import { PERGUNTAS_ETAPA_1, PERGUNTAS_ETAPA_2 } from "../constants/perfil";
 
@@ -35,6 +36,7 @@ export default function Cadastro() {
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [demorando, setDemorando] = useState(false);
 
   function atualizar(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,7 +80,11 @@ export default function Cadastro() {
     setEnviando(true);
     try {
       const { confirmarSenha, ...dados } = form;
-      await registrar({ ...dados, nome: dados.nome.trim(), email: dados.email.trim() });
+      const resposta = await registrar(
+        { ...dados, nome: dados.nome.trim(), email: dados.email.trim() },
+        { aoDemorar: () => setDemorando(true) }
+      );
+      lembrarNome(dados.email.trim(), resposta?.user?.nome || dados.nome.trim());
       navigate("/login", { state: { cadastroOk: true, email: dados.email.trim() } });
     } catch (err) {
       if (err.status === 409) {
@@ -90,6 +96,7 @@ export default function Cadastro() {
       }
     } finally {
       setEnviando(false);
+      setDemorando(false);
     }
   }
 
@@ -133,6 +140,12 @@ export default function Cadastro() {
         {erroGeral && (
           <p className="aviso aviso-erro" role="alert">
             {erroGeral}
+          </p>
+        )}
+
+        {enviando && demorando && (
+          <p className="aviso aviso-espera" role="status">
+            Conectando ao servidor. Se ele estava parado, pode levar até 1 minuto…
           </p>
         )}
 
