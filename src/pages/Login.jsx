@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTransicao } from "../hooks/useTransicao";
 import { Campo } from "../components/Campo";
 import { IconeGoogle, IconeFacebook } from "../components/IconesSociais";
 
@@ -9,6 +10,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function Login() {
   const { entrar } = useAuth();
   const navigate = useNavigate();
+  const transicao = useTransicao();
   const location = useLocation();
   // Aviso de "conta criada" some na primeira tentativa de login,
   // para não aparecer junto com uma mensagem de erro.
@@ -18,6 +20,7 @@ export default function Login() {
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [demorando, setDemorando] = useState(false);
 
   function atualizar(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -39,21 +42,23 @@ export default function Login() {
 
     setEnviando(true);
     try {
-      await entrar({ email: form.email.trim(), senha: form.senha });
-      navigate("/", { replace: true });
+      await entrar({ email: form.email.trim(), senha: form.senha }, { aoDemorar: () => setDemorando(true) });
+      // o cérebro do painel voa até o logo da Home
+      transicao(() => navigate("/", { replace: true }), "entrar");
     } catch (err) {
       // 401 = e-mail ou senha errados: mostra no campo de senha, como no Figma.
       if (err.status === 401) setErros({ senha: "E-mail ou senha incorretos." });
       else setErroGeral(err.message);
     } finally {
       setEnviando(false);
+      setDemorando(false);
     }
   }
 
   return (
     <>
       <h1>
-        Bem vindo <span aria-hidden="true">👋</span>
+        Bem-vindo
       </h1>
       <p className="subtitulo">Pronto para continuar desenvolvendo suas habilidades socioemocionais?</p>
       <p className="subtitulo">
@@ -70,6 +75,8 @@ export default function Login() {
             name="email"
             type="email"
             autoComplete="email"
+            autoCapitalize="none"
+            spellCheck={false}
             placeholder="exemplo@email.com"
             value={form.email}
             onChange={atualizar}
@@ -103,9 +110,15 @@ export default function Login() {
           </p>
         )}
 
+        {enviando && demorando && (
+          <p className="aviso aviso-espera" role="status">
+            Conectando ao servidor. Se ele estava parado, pode levar até 1 minuto…
+          </p>
+        )}
+
         <button type="submit" className="botao-primario" disabled={enviando} aria-busy={enviando}>
           {enviando && <span className="spinner" aria-hidden="true" />}
-          {enviando ? "Entrando..." : "Entrar"}
+          {enviando ? "Entrando…" : "Entrar"}
         </button>
       </form>
 

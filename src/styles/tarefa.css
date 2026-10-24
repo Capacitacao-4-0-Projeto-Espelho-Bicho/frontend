@@ -1,0 +1,566 @@
+/* =========================================================
+   Tela de tarefa e aba Atividades (design do João, SCRUM-88/89)
+   Mesmo céu da Home: painel de vidro escuro sobre o fundo animado.
+   ========================================================= */
+
+.tarefa,
+.atividades {
+  width: var(--home-largura);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+/* ---------- Topo do fluxo: voltar + pontos de progresso ---------- */
+.tarefa-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.tarefa-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: 0 var(--esp-3) 0 var(--esp-2);
+  border: 0;
+  border-radius: var(--raio-pilula);
+  background: none;
+  color: var(--home-texto);
+  font: inherit;
+  font-size: var(--tipo-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-rapida) var(--ease-padrao), color var(--dur-rapida) var(--ease-padrao);
+}
+
+.tarefa-voltar:hover {
+  background: var(--home-hover);
+  color: var(--home-tinta);
+}
+
+.tarefa-voltar svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tarefa-pontos {
+  display: flex;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarefa-pontos li {
+  width: 28px;
+  height: 6px;
+  border-radius: var(--raio-pilula);
+  background: var(--home-linha);
+  transition: background-color var(--dur-media) var(--ease-saida);
+}
+
+.tarefa-pontos li.feito {
+  background: rgba(143, 209, 106, 0.55);
+}
+
+.tarefa-pontos li.atual {
+  background: var(--cor-broto);
+}
+
+/* ---------- Painel ---------- */
+.tarefa-painel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  padding: clamp(var(--esp-5), 4vw, var(--esp-8));
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-3);
+  background: rgba(7, 29, 33, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--sombra-2);
+  animation: tarefa-entra var(--dur-pagina) var(--ease-saida) both;
+}
+
+@keyframes tarefa-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.tarefa-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(180px, 22vw, 300px);
+  align-items: center;
+  gap: clamp(var(--esp-5), 4vw, var(--esp-8));
+}
+
+.tarefa-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.tarefa-texto h1 {
+  margin: 0;
+  font-size: clamp(var(--tipo-lg), 2.2vw, var(--tipo-2xl));
+  font-weight: var(--peso-forte);
+  line-height: var(--altura-titulo);
+  letter-spacing: -0.01em;
+  color: var(--home-tinta);
+  text-wrap: balance;
+}
+
+.tarefa-texto h1:focus {
+  outline: none;
+}
+
+.tarefa-texto p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: clamp(var(--tipo-sm), 1.1vw, var(--tipo-md));
+  line-height: var(--altura-corpo);
+  color: var(--home-texto);
+  text-wrap: pretty;
+}
+
+.tarefa-sobre {
+  font-size: var(--tipo-xs) !important;
+  font-weight: var(--peso-medio);
+  color: var(--home-verde) !important;
+}
+
+.tarefa-atividade {
+  font-size: clamp(var(--tipo-md), 1.3vw, var(--tipo-lg)) !important;
+  color: var(--home-tinta) !important;
+}
+
+/* lista das etapas na apresentação: é uma sequência, então numerada */
+.tarefa-etapas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: etapa;
+}
+
+.tarefa-etapas li {
+  counter-increment: etapa;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 9rem) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--home-linha);
+  font-size: var(--tipo-sm);
+  color: var(--home-texto);
+}
+
+.tarefa-etapas li::before {
+  content: counter(etapa);
+  font-variant-numeric: tabular-nums;
+  color: var(--home-suave);
+}
+
+.tarefa-etapas li.atual {
+  color: var(--home-tinta);
+}
+
+.tarefa-etapas li.atual::before {
+  color: var(--cor-broto);
+  font-weight: var(--peso-forte);
+}
+
+.tarefa-etapa-tipo {
+  font-weight: var(--peso-medio);
+}
+
+.tarefa-etapa-min {
+  font-variant-numeric: tabular-nums;
+  color: var(--home-suave);
+}
+
+/* ilustração: o mesmo disco dos nós da trilha, maior */
+.tarefa-disco {
+  justify-self: center;
+  width: 100%;
+  max-width: 300px;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.35));
+}
+
+.tarefa-disco .disco {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* prévia da trilha em "Como funciona" */
+.tarefa-texto-largo p {
+  max-width: 70ch;
+}
+
+.tarefa-previa {
+  padding: var(--esp-4) var(--esp-2);
+  border-radius: var(--raio-2);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--home-linha);
+}
+
+.tarefa-previa .trilha {
+  margin: 0 auto;
+}
+
+.trilha-previa .etapa-balao {
+  cursor: default;
+  font-size: var(--tipo-xs);
+}
+
+.trofeu-rotulo {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translate(-50%, 100%);
+  padding: 2px var(--esp-3);
+  border-radius: var(--raio-1);
+  background: rgba(7, 29, 33, 0.9);
+  border: 1px solid var(--home-linha);
+  color: var(--home-tinta);
+  font-size: var(--tipo-xs);
+  font-weight: var(--peso-forte);
+  white-space: nowrap;
+}
+
+.tarefa-escala-exemplo {
+  display: flex;
+  gap: var(--esp-2);
+}
+
+.tarefa-escala-exemplo span {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--home-linha);
+  font-variant-numeric: tabular-nums;
+  color: var(--home-texto);
+}
+
+.tarefa-escala-exemplo span.marcado {
+  border-color: var(--home-verde);
+  background: rgba(143, 209, 106, 0.18);
+  color: var(--home-tinta);
+}
+
+/* respostas (escalas, opções) reaproveitam o visual do cartão */
+.tarefa-respostas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 560px;
+}
+
+.tarefa-respostas fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tarefa-respostas legend {
+  margin-bottom: var(--esp-2);
+  font-size: var(--tipo-sm);
+  font-weight: var(--peso-medio);
+  color: var(--home-tinta);
+}
+
+.tarefa-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-4);
+}
+
+.tarefa-acoes-fim {
+  justify-content: flex-end;
+}
+
+.tarefa .botao-primario,
+.atividades .botao-primario {
+  min-height: 48px;
+  padding: 0 var(--esp-6);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-broto);
+  color: #0c3a3b;
+  font-weight: var(--peso-forte);
+}
+
+:root .tarefa .botao-primario:hover:not(:disabled),
+:root[data-tema] .tarefa .botao-primario:hover:not(:disabled),
+:root .atividades .botao-primario:hover:not(:disabled),
+:root[data-tema] .atividades .botao-primario:hover:not(:disabled) {
+  background: #a6e083;
+}
+
+/* ---------- Aba Atividades ---------- */
+.atividades-resumo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(var(--esp-5), 4vw, var(--esp-8));
+  padding: clamp(var(--esp-5), 4vw, var(--esp-7));
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-3);
+  background: rgba(7, 29, 33, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--sombra-2);
+}
+
+.atividades-anel-caixa {
+  position: relative;
+  width: clamp(112px, 12vw, 160px);
+  aspect-ratio: 1;
+}
+
+.atividades-anel {
+  width: 100%;
+  height: 100%;
+}
+
+.anel-fundo,
+.anel-feito {
+  fill: none;
+  stroke-width: 10;
+}
+
+.anel-fundo {
+  stroke: var(--home-linha);
+}
+
+.anel-feito {
+  stroke: var(--cor-broto);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--dur-pagina) var(--ease-saida);
+}
+
+.atividades-pct {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(var(--tipo-lg), 2vw, var(--tipo-xl));
+  font-weight: var(--peso-forte);
+  font-variant-numeric: tabular-nums;
+  color: var(--home-tinta);
+}
+
+.atividades-resumo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  min-width: 0;
+}
+
+.atividades-resumo-texto h1 {
+  margin: 0;
+  font-size: clamp(var(--tipo-lg), 2.2vw, var(--tipo-2xl));
+  line-height: var(--altura-titulo);
+  color: var(--home-tinta);
+}
+
+.atividades-resumo-texto p {
+  margin: 0;
+  max-width: 60ch;
+  font-size: clamp(var(--tipo-sm), 1.1vw, var(--tipo-md));
+  color: var(--home-texto);
+}
+
+.atividades-subtitulo {
+  margin: var(--esp-3) 0 0;
+  font-size: var(--tipo-md);
+  font-weight: var(--peso-forte);
+  color: var(--home-tinta);
+}
+
+.atividades-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.atividade-cartao {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  padding: var(--esp-5);
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-2);
+  background: rgba(7, 29, 33, 0.6);
+  color: var(--home-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-rapida) var(--ease-padrao), transform var(--dur-media) var(--ease-saida);
+}
+
+button.atividade-cartao:hover {
+  border-color: rgba(143, 209, 106, 0.5);
+  transform: translateY(-2px);
+}
+
+.atividade-cartao.bloqueada {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.atividade-competencia {
+  font-size: var(--tipo-xs);
+  font-weight: var(--peso-medio);
+  color: var(--home-verde);
+}
+
+.atividade-ilustra {
+  width: 120px;
+  align-self: center;
+  margin: var(--esp-2) 0;
+}
+
+.atividade-ilustra .disco {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.atividade-nome {
+  font-size: var(--tipo-md);
+  font-weight: var(--peso-forte);
+  color: var(--home-tinta);
+}
+
+.atividade-barra {
+  width: 100%;
+  height: 6px;
+  border-radius: var(--raio-pilula);
+  background: var(--home-linha);
+  overflow: hidden;
+}
+
+.atividade-barra span {
+  display: block;
+  height: 100%;
+  background: var(--cor-broto);
+  transform-origin: left;
+  transition: transform var(--dur-pagina) var(--ease-saida);
+}
+
+.atividade-meta {
+  font-size: var(--tipo-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--home-suave);
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 860px) {
+  .tarefa,
+  .atividades {
+    width: calc(100% - 32px);
+  }
+
+  .tarefa-painel {
+    padding: var(--esp-5) var(--esp-4);
+    gap: var(--esp-4);
+  }
+
+  /* a ilustração sobe e fica menor, o texto vem logo abaixo */
+  .tarefa-grade {
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+  }
+
+  .tarefa-disco {
+    order: -1;
+    max-width: 160px;
+  }
+
+  .tarefa-etapas li {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    row-gap: 0;
+  }
+
+  .tarefa-etapas li > span:nth-child(2) {
+    grid-column: 2 / 3;
+    grid-row: 2;
+    color: var(--home-suave);
+  }
+
+  .tarefa-etapa-min {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .tarefa-previa .trilha {
+    max-width: 280px;
+  }
+
+  /* no celular o troféu fica no alto da trilha: o rótulo vai para o lado */
+  .trilha-previa .trofeu-rotulo {
+    left: 100%;
+    top: 50%;
+    bottom: auto;
+    transform: translate(4px, -50%);
+  }
+
+  .tarefa-pontos li {
+    width: 18px;
+  }
+
+  .tarefa-acoes .botao-primario {
+    width: 100%;
+  }
+
+  .tarefa-acoes-fim {
+    justify-content: stretch;
+  }
+
+  .atividades-resumo {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    padding: var(--esp-5) var(--esp-4);
+  }
+
+  .atividades-resumo-texto {
+    align-items: center;
+  }
+
+  .atividades .tarefa-acoes {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarefa-painel {
+    animation: none;
+  }
+}

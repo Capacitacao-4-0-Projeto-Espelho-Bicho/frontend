@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registrar } from "../services/auth";
+import { lembrarNome } from "../context/AuthContext";
 import { Campo, GrupoRadio } from "../components/Campo";
 import { PERGUNTAS_ETAPA_1, PERGUNTAS_ETAPA_2 } from "../constants/perfil";
 
@@ -35,6 +36,7 @@ export default function Cadastro() {
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [demorando, setDemorando] = useState(false);
 
   function atualizar(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,7 +80,11 @@ export default function Cadastro() {
     setEnviando(true);
     try {
       const { confirmarSenha, ...dados } = form;
-      await registrar({ ...dados, nome: dados.nome.trim(), email: dados.email.trim() });
+      const resposta = await registrar(
+        { ...dados, nome: dados.nome.trim(), email: dados.email.trim() },
+        { aoDemorar: () => setDemorando(true) }
+      );
+      lembrarNome(dados.email.trim(), resposta?.user?.nome || dados.nome.trim());
       navigate("/login", { state: { cadastroOk: true, email: dados.email.trim() } });
     } catch (err) {
       if (err.status === 409) {
@@ -90,6 +96,7 @@ export default function Cadastro() {
       }
     } finally {
       setEnviando(false);
+      setDemorando(false);
     }
   }
 
@@ -102,7 +109,7 @@ export default function Cadastro() {
         <span className="progresso-trilho" aria-hidden="true">
           <span className="progresso-barra" style={{ transform: `scaleX(${etapa / 2})` }} />
         </span>
-        <span className="etapa">Etapa {etapa} de 2</span>
+        <span className="etapa-rotulo">Etapa {etapa} de 2</span>
       </div>
 
       <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>
@@ -111,10 +118,10 @@ export default function Cadastro() {
         {etapa === 1 && (
           <>
             <Campo id="nome" rotulo="Nome de usuário" erro={erros.nome}>
-              <input id="nome" name="nome" autoComplete="name" placeholder="Como você quer ser chamado?" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
+              <input id="nome" name="nome" autoComplete="name" placeholder="Como você quer ser chamado…" value={form.nome} onChange={atualizar} aria-invalid={Boolean(erros.nome)} />
             </Campo>
             <Campo id="email" rotulo="E-mail" erro={erros.email}>
-              <input id="email" name="email" type="email" autoComplete="email" placeholder="exemplo@email.com" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
+              <input id="email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="exemplo@email.com" value={form.email} onChange={atualizar} aria-invalid={Boolean(erros.email)} />
             </Campo>
             <Campo id="senha" rotulo="Senha" erro={erros.senha}>
               <input id="senha" name="senha" type="password" autoComplete="new-password" placeholder={`Pelo menos ${SENHA_MIN} caracteres`} value={form.senha} onChange={atualizar} aria-invalid={Boolean(erros.senha)} />
@@ -136,6 +143,12 @@ export default function Cadastro() {
           </p>
         )}
 
+        {enviando && demorando && (
+          <p className="aviso aviso-espera" role="status">
+            Conectando ao servidor. Se ele estava parado, pode levar até 1 minuto…
+          </p>
+        )}
+
         <div className="acoes-etapa">
           {etapa === 1 ? (
             <Link to="/login" className="botao-secundario">
@@ -148,7 +161,7 @@ export default function Cadastro() {
           )}
           <button type="submit" className="botao-azul" disabled={enviando} aria-busy={enviando}>
             {enviando && <span className="spinner" aria-hidden="true" />}
-            {etapa === 1 ? "Próximo" : enviando ? "Cadastrando..." : "Cadastrar"}
+            {etapa === 1 ? "Próximo" : enviando ? "Cadastrando…" : "Cadastrar"}
           </button>
         </div>
       </form>
