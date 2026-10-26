@@ -27,6 +27,8 @@ function extrairMensagem(body, status) {
   if (status === 401) return "E-mail ou senha incorretos.";
   if (status === 409) return "Este e-mail já está cadastrado.";
   if (status === 400) return "Dados inválidos. Verifique os campos.";
+  if (status >= 500) return `O servidor encontrou um erro (código ${status}). Tente de novo mais tarde.`;
+  if (status) return `Não foi possível concluir (código ${status}). Tente novamente.`;
   return "Não foi possível concluir. Tente novamente.";
 }
 
