@@ -5,19 +5,23 @@
 // - "confirmado": valor que aparece em tests/test_auth.py, aceito pelo backend.
 // - sem marcação: valor provisório, CONFIRMAR com o backend antes do merge.
 //
-// Obs.: o teste usa ambiente = "individual", que não corresponde a nenhuma
-// opção de ambiente do Figma. Verificar com o backend qual é a lista real.
+// ambiente: lista completa confirmada pelo backend em 28/10.
+// interlocutores, tempo e recursos: só os valores marcados estão confirmados.
 
 export const PERGUNTAS_ETAPA_1 = [
   {
     campo: "ambiente",
-    titulo: "Ambiente de trabalho",
-    pergunta: "Qual é o seu formato de trabalho/estudo predominante no dia a dia?",
+    titulo: "Ambiente de prática",
+    // Valores confirmados pelo Pedro em 28/10 (CHECK do banco). Eles descrevem
+    // a situação em que a pessoa pratica, e não o formato de trabalho que o
+    // Figma perguntava (presencial/remoto/híbrido/campo). Pergunta e textos
+    // ajustados para bater com os valores; validar com o João/PO.
+    pergunta: "Em que situação você costuma ter tempo para praticar?",
     opcoes: [
-      { valor: "presencial", rotulo: "Presencial em escritório ou unidade operacional" },
-      { valor: "remoto", rotulo: "Remoto / Home Office" },
-      { valor: "hibrido", rotulo: "Híbrido" },
-      { valor: "campo", rotulo: "Atividades de campo ou externas" },
+      { valor: "individual", rotulo: "Sozinho, por conta própria" }, // confirmado
+      { valor: "em_aula", rotulo: "Em aula ou curso" }, // confirmado
+      { valor: "em_equipe", rotulo: "Junto com a minha equipe" }, // confirmado
+      { valor: "no_trabalho", rotulo: "No trabalho, durante a rotina" }, // confirmado
     ],
   },
   {
