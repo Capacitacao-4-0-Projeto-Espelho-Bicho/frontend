@@ -6,10 +6,17 @@
 // (o troféu). A etapa "desafio" é a principal e não pode ser pulada.
 //
 // Reunião de 14/10: o sistema não avalia material descritivo (texto,
-// gravação). Toda etapa termina com a autoavaliação de 1 a 5 da tela de
-// tarefa (design do João, SCRUM-88). O número de etapas vai diminuir na
-// revisão do documento; a trilha já aceita qualquer quantidade.
-// PROVISÓRIO: conteúdo das etapas até a nova versão da especificação.
+// gravação). Toda etapa termina com a autoavaliação da tela de tarefa
+// (design do João, SCRUM-88).
+//
+// Reunião de 28/10: cada competência é uma matriz habilidades x 4 níveis, e
+// cada célula (uma habilidade num nível) tem subatividades cadastradas pelo
+// admin. Esta missão corresponde a UMA célula: "comunicar de forma objetiva",
+// do nível 2 para o 3. O número de etapas é variável (por volta de 4 a 6) e
+// o desafio final não é obrigatório. Escalas em 4 pontos, como no "Exemplo
+// completo de trilha adaptativa" (SCRUM-87).
+// PROVISÓRIO: conteúdo das etapas até a nova versão do documento. As telas
+// leem tudo deste objeto, então trocar o conteúdo não exige mexer nelas.
 
 export const MISSAO_DEMO = {
   id: "comunicacao-2-3",
@@ -20,6 +27,8 @@ export const MISSAO_DEMO = {
   habilidadeCurta: "Comunicar de forma objetiva",
   nivelOrigem: 2,
   nivelAlvo: 3,
+  niveis: 4, // a matriz de cada competência tem 4 níveis
+  escala: 4, // pontos das escalas de autoavaliação
   duracaoTotal: "cerca de 50 minutos",
   proxima: "Trabalho em equipe", // provisório: quem decide é a seleção da seção 9.1
   // PROVISÓRIO: o documento não traz os descritores desta habilidade
@@ -34,12 +43,14 @@ export const MISSAO_DEMO = {
       tipo: "Ponto de partida",
       titulo: "De onde você parte",
       atividade:
-        "Responda quão importante e quão confiante você se sente nessa habilidade, de 1 a 5, e quanto tempo por dia você tem para a missão.",
+        "Pense em uma situação em que você precisou explicar uma ideia para outra pessoa. Foi fácil transmitir o que queria dizer? Como você percebeu se a pessoa entendeu? Responda as três perguntas de 1 a 4.",
       duracao: 5,
-      reduzida: { duracao: 3, atividade: "Responda só as duas escalas, de 1 a 5." },
+      reduzida: { duracao: 3, atividade: "Responda só as três escalas, de 1 a 4." },
+      // perguntas da Atividade 1 do exemplo da SCRUM-87
       escalas: [
-        { id: "importancia", pergunta: "Quão importante é isso para você agora?" },
-        { id: "confianca", pergunta: "Quão confiante você se sente nessa habilidade?" },
+        { id: "capacidade", pergunta: "Quão bem você consegue explicar ideias com clareza?", pontas: ["Com muita dificuldade", "Com facilidade"] },
+        { id: "importancia", pergunta: "Quão importante é para você melhorar essa habilidade?", pontas: ["Pouco importante", "Muito importante"] },
+        { id: "confianca", pergunta: "Quão confiante você está para fazer uma atividade de comunicação?", pontas: ["Pouco confiante", "Muito confiante"] },
       ],
     },
     {

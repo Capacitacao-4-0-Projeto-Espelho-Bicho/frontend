@@ -54,13 +54,13 @@ function Moldura({ titulo, rotuloId, aoFechar, children }) {
 }
 
 
-// Escala de 1 a 5 (Likert), como botões lado a lado
-export function Escala({ nome, pergunta, valor, aoMudar, foco, pontas = ["Nada", "Muito"] }) {
+// Escala Likert de 1 a N (padrão da missão: missao.escala), botões lado a lado
+export function Escala({ nome, pergunta, valor, aoMudar, foco, pontos = 5, pontas = ["Nada", "Muito"] }) {
   return (
     <fieldset className="cartao-escala">
       <legend>{pergunta}</legend>
-      <div className="escala-opcoes">
-        {[1, 2, 3, 4, 5].map((n) => (
+      <div className="escala-opcoes" style={{ "--pontos": pontos }}>
+        {Array.from({ length: pontos }, (_, i) => i + 1).map((n) => (
           <label key={n} className="escala-opcao">
             <input
               type="radio"
@@ -199,10 +199,10 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
       <p className="cartao-evidencia">
         <span>Ao terminar</span>
         {etapa.escalas
-          ? "Você responde duas escalas de 1 a 5 e o seu tempo disponível."
+          ? `Você responde ${etapa.escalas.length} escalas de 1 a ${missao.escala} e o seu tempo disponível.`
           : etapa.acoes
             ? "Você escolhe uma ação numa lista."
-            : "Você avalia de 1 a 5 como se saiu e quanto foi difícil. Não precisa enviar texto nem gravação."}
+            : `Você avalia de 1 a ${missao.escala} como se saiu e quanto foi difícil. Não precisa enviar texto nem gravação.`}
       </p>
 
       {bloqueada && (

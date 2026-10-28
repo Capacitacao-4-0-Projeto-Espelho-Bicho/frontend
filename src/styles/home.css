@@ -1437,7 +1437,7 @@
 }
 
 .cartao-escala .escala-opcoes {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--pontos, 5), minmax(0, 1fr));
 }
 
 .escala-opcao {

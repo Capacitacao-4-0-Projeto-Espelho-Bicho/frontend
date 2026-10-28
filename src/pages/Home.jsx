@@ -25,7 +25,7 @@ import "../styles/moderno.css";
 import "../styles/tarefa.css";
 
 // Home conforme o Figma "HOME PAGE" (SCRUM-78) e a "Especificação das
-// Missões e Etapas": a trilha mostra as 6 etapas da missão atual.
+// Missões e Etapas": a trilha mostra as etapas da missão atual.
 // O backend ainda não tem rotas de missão, etapas, atividades, notificações,
 // histórico, configurações nem busca: a missão vem de dados fixos
 // (MISSAO_DEMO) e o progresso vive só na memória desta tela.
@@ -371,7 +371,9 @@ export default function Home() {
               A sua missão agora é <strong>{MISSAO.nome}</strong>: {MISSAO.habilidade.charAt(0).toLowerCase() + MISSAO.habilidade.slice(1)}.
             </p>
             <p>
-              São {TOTAL} etapas curtas, do ponto de partida ao desafio, e o troféu fecha a missão.
+              Competência {MISSAO.competencia}, do nível {MISSAO.nivelOrigem} para o {MISSAO.nivelAlvo} (de {MISSAO.niveis}). São{" "}
+              {TOTAL}{" "}
+              etapas curtas, e o troféu fecha a missão.
               <span className="so-desktop"> Toque no nó ativo para ver a próxima etapa.</span>
             </p>
           </div>

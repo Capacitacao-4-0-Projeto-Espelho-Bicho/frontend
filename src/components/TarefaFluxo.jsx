@@ -8,7 +8,7 @@ import { medirTempo, registrarEvento } from "../services/rastreio";
 // Tela de tarefa (design do João, SCRUM-88; implementação SCRUM-89).
 // Abre quando a pessoa começa uma etapa da trilha. Na primeira vez mostra
 // antes duas telas de explicação: o que a missão treina e como a trilha
-// funciona. Depois vêm a etapa em si e a autoavaliação de 1 a 5 (como se
+// funciona. Depois vêm a etapa em si e a autoavaliação de 1 a N (como se
 // saiu e quanto foi difícil), que é o feedback objetivo pedido na reunião
 // de 14/10. Ponto de partida e reflexão já são respostas, então não pedem
 // a autoavaliação extra.
@@ -125,12 +125,12 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
           <Trilha etapas={missao.etapas} etapaAtual={indice} previa />
         </div>
         <p>
-          Ao terminar cada etapa, você avalia de 1 a 5 como se saiu e quanto ela foi difícil. Não
+          Ao terminar cada etapa, você avalia de 1 a {missao.escala} como se saiu e quanto ela foi difícil. Não
           precisa escrever nada nem enviar arquivo.
         </p>
         <div className="tarefa-escala-exemplo" aria-hidden="true">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <span key={n} className={n === 4 ? "marcado" : ""}>
+          {Array.from({ length: missao.escala }, (_, i) => i + 1).map((n) => (
+            <span key={n} className={n === missao.escala - 1 ? "marcado" : ""}>
               {n}
             </span>
           ))}
@@ -161,6 +161,8 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
                 <Escala
                   key={e.id}
                   nome={e.id}
+                  pontos={missao.escala}
+                  pontas={e.pontas}
                   pergunta={e.pergunta}
                   valor={escalas[e.id]}
                   aoMudar={(n) => setEscalas((v) => ({ ...v, [e.id]: n }))}
@@ -216,6 +218,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
         <div className="tarefa-respostas tarefa-avaliacao">
           <Escala
             nome="saiu"
+            pontos={missao.escala}
             pergunta="Como você se saiu nesta etapa?"
             valor={saiu}
             aoMudar={setSaiu}
@@ -223,6 +226,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
           />
           <Escala
             nome="dificuldade"
+            pontos={missao.escala}
             pergunta="Quanto esta etapa foi difícil para você?"
             valor={dificuldade}
             aoMudar={setDificuldade}
