@@ -200,10 +200,16 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu, previa = fal
                 {estado === "atual" && <span className="etapa-pulso" aria-hidden="true" />}
                 <DiscoNo id={etapa.id} Ilustracao={ilustracaoDe(etapa, i)} atual={estado === "atual"} />
               </button>
+              {/* dica do hover (computador): o que é a etapa antes de clicar */}
               <span className="etapa-dica" aria-hidden="true">
-                {i + 1}. {etapa.tipo}
-                {estado === "bloqueada" && <small>Bloqueada</small>}
-                {estado === "feita" && <small>Concluída</small>}
+                <span className="dica-tipo">
+                  {i + 1}. {etapa.tipo}
+                </span>
+                {etapa.titulo && <span className="dica-titulo">{etapa.titulo}</span>}
+                <small>
+                  {estado === "bloqueada" ? "Bloqueada · " : estado === "feita" ? "Concluída · " : ""}
+                  {etapa.duracao} min
+                </small>
               </span>
             </li>
           );

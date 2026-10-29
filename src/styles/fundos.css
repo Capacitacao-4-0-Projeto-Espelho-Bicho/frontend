@@ -494,3 +494,77 @@
 :root[data-tema="ceu"] .pagina-auth button:disabled {
   opacity: 0.78;
 }
+
+/* ---------- Holofote nos botões (tema céu) ----------
+   A luz segue o cursor (--mx e --my vêm de efeitos/holofote.js), como um
+   ponto de luz no céu. No principal é um brilho claro; no secundário, que é
+   transparente, a luz verde aparece no fundo e acende a borda perto do
+   cursor. Sem mouse, os botões ficam como antes. */
+:root[data-tema="ceu"] .botao-primario,
+:root[data-tema="ceu"] .botao-azul,
+:root[data-tema="ceu"] .botao-secundario {
+  position: relative;
+  isolation: isolate;
+}
+
+:root[data-tema="ceu"] .botao-primario::before,
+:root[data-tema="ceu"] .botao-azul::before,
+:root[data-tema="ceu"] .botao-secundario::before,
+:root[data-tema="ceu"] .botao-secundario::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-media) var(--ease-padrao);
+}
+
+:root[data-tema="ceu"] .botao-primario::before,
+:root[data-tema="ceu"] .botao-azul::before {
+  z-index: -1;
+  background: radial-gradient(
+    110px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+:root[data-tema="ceu"] .botao-secundario::before {
+  z-index: -1;
+  background: radial-gradient(
+    140px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(143, 209, 106, 0.22),
+    rgba(143, 209, 106, 0) 70%
+  );
+}
+
+/* borda acesa perto do cursor: o mesmo gradiente, recortado num anel de
+   1px que fica exatamente em cima da borda do botão */
+:root[data-tema="ceu"] .botao-secundario::after {
+  inset: -1px;
+  padding: 1px;
+  background: radial-gradient(
+    90px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(166, 224, 131, 0.95),
+    rgba(166, 224, 131, 0) 70%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root[data-tema="ceu"] .botao-primario:hover:not(:disabled)::before,
+  :root[data-tema="ceu"] .botao-azul:hover:not(:disabled)::before,
+  :root[data-tema="ceu"] .botao-secundario:hover::before,
+  :root[data-tema="ceu"] .botao-secundario:hover::after {
+    opacity: 1;
+  }
+
+  /* no secundário a borda própria fica discreta e quem acende é o anel */
+  :root[data-tema="ceu"] .botao-secundario:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #eef5f2;
+  }
+}

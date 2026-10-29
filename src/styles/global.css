@@ -1161,3 +1161,15 @@ summary,
   color: var(--cor-titulo);
   border: 1px solid rgba(143, 209, 106, 0.3);
 }
+
+/* opções do cadastro: afundam de leve ao tocar (funciona no celular) */
+.opcao:active {
+  transform: scale(0.98);
+  transition: transform 60ms var(--ease-padrao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opcao:active {
+    transform: none;
+  }
+}

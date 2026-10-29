@@ -585,7 +585,8 @@
   font-weight: var(--peso-medio);
   line-height: 1.25;
   text-align: center;
-  white-space: nowrap;
+  width: max-content;
+  max-width: 200px;
   opacity: 0;
   transform: translate(-50%, 4px);
   transition: opacity var(--dur-rapida) var(--ease-padrao), transform var(--dur-rapida) var(--ease-saida);
@@ -593,8 +594,20 @@
   z-index: 2;
 }
 
+.etapa-dica .dica-tipo {
+  display: block;
+  color: var(--cor-broto);
+}
+
+.etapa-dica .dica-titulo {
+  display: block;
+  margin-top: 2px;
+  font-weight: var(--peso-normal);
+}
+
 .etapa-dica small {
   display: block;
+  margin-top: 2px;
   font-size: var(--tipo-xs);
   font-weight: var(--peso-medio);
   opacity: 0.75;
@@ -1568,4 +1581,48 @@
 
 .home-aviso-acao:hover {
   background: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   Pressionar: retorno imediato ao toque ou clique. Diferente do
+   hover, funciona no celular. Afunda de leve e volta rápido.
+   ========================================================= */
+.escala-opcao,
+.cartao-motivo,
+.atividade-cartao,
+.tarefa-voltar,
+.cartao-link,
+.cartao-fechar {
+  transition-property: border-color, background-color, color, box-shadow, transform;
+}
+
+.escala-opcao:active,
+.cartao-motivo:active,
+button.atividade-cartao:active,
+.tarefa-voltar:active,
+.cartao-fechar:active {
+  transform: scale(0.97);
+  transition-duration: 60ms;
+}
+
+.cartao-link:active {
+  transform: translateY(1px);
+  transition-duration: 60ms;
+}
+
+.trofeu-botao:active {
+  transform: scale(0.94);
+  transition-duration: 60ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .escala-opcao:active,
+  .cartao-motivo:active,
+  button.atividade-cartao:active,
+    .tarefa-voltar:active,
+  .cartao-fechar:active,
+  .cartao-link:active,
+  .trofeu-botao:active {
+    transform: none;
+  }
 }
