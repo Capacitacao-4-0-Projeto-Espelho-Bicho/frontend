@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { registrar } from "../services/auth";
 import { lembrarNome } from "../context/AuthContext";
 import { Campo, GrupoRadio } from "../components/Campo";
-import { PERGUNTAS_ETAPA_1, PERGUNTAS_ETAPA_2 } from "../constants/perfil";
+import { PERGUNTAS_PERFIL } from "../constants/perfil";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SENHA_MIN = 8; // conforme o Figma ("pelo menos 8 caracteres")
@@ -19,11 +19,11 @@ const INICIAL = {
   interlocutores: "",
 };
 
-// Cadastro em 2 etapas, como no Figma.
-// Etapa 1: dados de acesso + ambiente, interlocutores e tempo.
-// Etapa 2: recursos materiais.
-// O Figma não tem campos de e-mail e senha no cadastro, mas o backend exige,
-// então eles entram na etapa 1.
+// Cadastro em 2 etapas (SCRUM-112: conta separada do perfil).
+// Etapa 1: dados da conta (nome, e-mail, senha).
+// Etapa 2: perfil de prática (ambiente, interlocutores, tempo, recursos).
+// O back-end ainda recebe tudo num único POST /api/auth/register, então a
+// separação é só de tela: o envio acontece no fim da etapa 2.
 // A autoavaliação de soft skills (níveis 1 a 4) do Figma ficou de fora:
 // o backend ainda não recebe esses dados no registro.
 export default function Cadastro() {
@@ -49,14 +49,13 @@ export default function Cadastro() {
     if (form.senha.length < SENHA_MIN) n.senha = `A senha deve ter pelo menos ${SENHA_MIN} caracteres.`;
     if (!form.confirmarSenha) n.confirmarSenha = "Confirme a senha.";
     else if (form.confirmarSenha !== form.senha) n.confirmarSenha = "As senhas não conferem.";
-    for (const p of PERGUNTAS_ETAPA_1) if (!form[p.campo]) n[p.campo] = "Selecione uma opção.";
     setErros(n);
     return Object.keys(n).length === 0;
   }
 
   function validarEtapa2() {
     const n = {};
-    for (const p of PERGUNTAS_ETAPA_2) if (!form[p.campo]) n[p.campo] = "Selecione uma opção.";
+    for (const p of PERGUNTAS_PERFIL) if (!form[p.campo]) n[p.campo] = "Selecione uma opção.";
     setErros(n);
     return Object.keys(n).length === 0;
   }
@@ -100,7 +99,6 @@ export default function Cadastro() {
     }
   }
 
-  const perguntas = etapa === 1 ? PERGUNTAS_ETAPA_1 : PERGUNTAS_ETAPA_2;
 
   return (
     <>
@@ -109,7 +107,7 @@ export default function Cadastro() {
         <span className="progresso-trilho" aria-hidden="true">
           <span className="progresso-barra" style={{ transform: `scaleX(${etapa / 2})` }} />
         </span>
-        <span className="etapa-rotulo">Etapa {etapa} de 2</span>
+        <span className="etapa-rotulo">Etapa {etapa} de 2: {etapa === 1 ? "sua conta" : "seu perfil de prática"}</span>
       </div>
 
       <form onSubmit={etapa === 1 ? avancar : enviar} noValidate>
@@ -132,9 +130,16 @@ export default function Cadastro() {
           </>
         )}
 
-        {perguntas.map((p) => (
-          <GrupoRadio key={p.campo} {...p} valor={form[p.campo]} onChange={atualizar} erro={erros[p.campo]} />
-        ))}
+        {etapa === 2 && (
+          <>
+            <p className="etapa-intro">
+              Estas respostas ajudam a escolher atividades que cabem na sua rotina.
+            </p>
+            {PERGUNTAS_PERFIL.map((p) => (
+              <GrupoRadio key={p.campo} {...p} valor={form[p.campo]} onChange={atualizar} erro={erros[p.campo]} />
+            ))}
+          </>
+        )}
         </div>
 
         {erroGeral && (

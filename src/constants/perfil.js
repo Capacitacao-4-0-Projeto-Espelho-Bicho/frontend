@@ -59,3 +59,6 @@ export const PERGUNTAS_ETAPA_2 = [
     ],
   },
 ];
+
+// SCRUM-112: o perfil fica numa etapa só, separado dos dados da conta.
+export const PERGUNTAS_PERFIL = [...PERGUNTAS_ETAPA_1, ...PERGUNTAS_ETAPA_2];

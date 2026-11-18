@@ -157,3 +157,103 @@
     opacity: 1;
   }
 }
+
+/* ---------- 4. Barra única no topo (SCRUM-110) ----------
+   No computador, logo, menu, busca e usuário ficam numa linha só, numa
+   barra de ponta a ponta. No celular nada muda: já é uma barra só, com o
+   menu no hambúrguer. */
+@media (min-width: 861px) {
+  :root[data-tema] .home-cabecalho {
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  :root[data-tema="ceu"] .home-cabecalho {
+    background: rgba(8, 30, 34, 0.6);
+  }
+
+  :root[data-tema="ceu"] .home-cabecalho.rolou {
+    background: rgba(8, 30, 34, 0.82);
+    border-bottom-color: rgba(143, 209, 106, 0.16);
+    box-shadow: var(--sombra-2);
+  }
+
+  :root[data-tema] .home-topo {
+    width: var(--home-largura);
+    margin: 0 auto;
+    padding: var(--esp-2) 0;
+    grid-template-columns: auto 1fr auto auto;
+    gap: clamp(var(--esp-3), 2vw, var(--esp-6));
+  }
+
+  :root[data-tema] .home-logo {
+    order: 1;
+    width: 52px;
+  }
+
+  :root[data-tema] .home-menu {
+    order: 2;
+    width: auto;
+    margin: 0;
+    border: 0;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(2px, 0.6vw, var(--esp-3));
+  }
+
+  :root[data-tema] .home-menu-item {
+    padding: var(--esp-2) clamp(var(--esp-2), 0.8vw, var(--esp-3));
+    white-space: nowrap;
+  }
+
+  /* a barrinha do item atual encosta na borda de baixo da barra */
+  :root[data-tema] .home-menu .home-menu-item::after {
+    bottom: calc(-1 * var(--esp-2) - 1px);
+  }
+
+  :root[data-tema] .home-direita {
+    order: 3;
+  }
+
+  :root[data-tema] .home-busca {
+    width: clamp(150px, 12vw, 220px);
+    height: 38px;
+  }
+
+  :root[data-tema] .home-usuario {
+    order: 4;
+    gap: var(--esp-2);
+  }
+
+  :root[data-tema] .home-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  :root[data-tema] .home-nome {
+    font-size: var(--tipo-sm);
+  }
+}
+
+/* telas médias: o menu fica só com os ícones para caber tudo numa linha */
+@media (min-width: 861px) and (max-width: 1180px) {
+  :root[data-tema] .home-menu-item > span:not(.home-menu-icone) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  :root[data-tema] .home-menu .home-menu-item::after {
+    left: 6px;
+    right: 6px;
+  }
+}

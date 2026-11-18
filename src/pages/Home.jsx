@@ -48,6 +48,7 @@ function ItemMenu({ item, atual, onEmBreve }) {
       type="button"
       className={`home-menu-item${atual ? " atual" : ""}${item.soDesktop ? " so-desktop" : ""}`}
       aria-current={atual ? "page" : undefined}
+      title={item.rotulo}
       onClick={() => onEmBreve(item)}
     >
       <item.Icone className="home-menu-icone" />
@@ -274,6 +275,13 @@ export default function Home() {
             <LogoCerebro titulo="Capacitação 4.0" atrasoInicial={700} />
           </div>
 
+          {/* SCRUM-110: no computador o menu fica na mesma barra do logo */}
+          <nav className="home-menu" aria-label="Principal">
+            {MENU.map((item) => (
+              <ItemMenu key={item.id} item={item} atual={item.visao === visao} onEmBreve={emBreve} />
+            ))}
+          </nav>
+
           <div className="home-direita">
             <form
             className="home-busca so-desktop-flex"
@@ -298,12 +306,6 @@ export default function Home() {
             </button>
           </div>
         </header>
-
-        <nav className="home-menu" aria-label="Principal">
-          {MENU.map((item) => (
-            <ItemMenu key={item.id} item={item} atual={item.visao === visao} onEmBreve={emBreve} />
-          ))}
-        </nav>
 
         {/* Celular: menu hambúrguer que desce do topo */}
         <div

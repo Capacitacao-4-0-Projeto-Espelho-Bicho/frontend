@@ -1173,3 +1173,12 @@ summary,
     transform: none;
   }
 }
+
+/* SCRUM-112: frase de abertura da etapa de perfil do cadastro */
+.etapa-intro {
+  margin: 0 0 var(--esp-3);
+  max-width: 60ch;
+  color: var(--cor-texto);
+  font-size: var(--tipo-sm);
+  line-height: 1.5;
+}
