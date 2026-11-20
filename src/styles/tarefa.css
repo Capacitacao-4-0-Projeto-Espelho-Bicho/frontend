@@ -564,3 +564,11 @@ button.atividade-cartao:hover {
     animation: none;
   }
 }
+
+/* SCRUM-110: frase que explica o que é uma sub-trilha, na aba Atividades */
+.atividades-explica {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--home-suave);
+  font-size: var(--tipo-sm);
+}

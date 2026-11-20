@@ -7,11 +7,11 @@ import { medirTempo, registrarEvento } from "../services/rastreio";
 
 // Cartão que abre ao tocar num nó da trilha (Especificação, item 8.3).
 // Mostra a etapa, a habilidade e a duração, com duas saídas:
-// "Começar etapa" e "Não posso realizar agora". A recusa pede um motivo
+// "Começar tarefa" e "Não posso realizar agora". A recusa pede um motivo
 // (lista fechada, item 9.2) e oferece a versão reduzida; uma segunda recusa
 // libera a etapa seguinte, exceto no desafio, que é obrigatório.
 //
-// "Começar etapa" abre a tela de tarefa (TarefaFluxo.jsx), que termina com
+// "Começar tarefa" abre a tela de tarefa (TarefaFluxo.jsx), que termina com
 // a autoavaliação de 1 a 5 (reunião de 14/10: nada de texto ou gravação).
 
 function useDialogo(aoFechar) {
@@ -122,7 +122,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
   const cabecalho = (
     <header className="cartao-topo">
       <p className="cartao-sobre" id={`etapa-${etapa.id}-rotulo`}>
-        Etapa {indice + 1} de {total}: {etapa.tipo}
+        Tarefa {indice + 1} de {total}: {etapa.tipo}
       </p>
       <h2 className="cartao-titulo">{etapa.titulo}</h2>
       <p className="cartao-meta">
@@ -152,7 +152,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
         }}
       >
         <Opcoes
-          legenda="O que impede você de fazer esta etapa agora?"
+          legenda="O que impede você de fazer esta tarefa agora?"
           nome="motivo"
           opcoes={MOTIVOS_RECUSA}
           valor={motivo}
@@ -189,7 +189,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
     <>
       {reduzida ? (
         <p className="cartao-aviso">
-          Preparamos uma versão menor desta etapa. O objetivo continua o mesmo.
+          Preparamos uma versão menor desta tarefa. O objetivo continua o mesmo.
         </p>
       ) : (
         etapa.ajustada && <p className="cartao-aviso">{etapa.ajustada}</p>
@@ -208,7 +208,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
       {bloqueada && (
         <p className="cartao-estado">Conclua a etapa {indice} para desbloquear esta.</p>
       )}
-      {feita && <p className="cartao-estado feita">Etapa concluída.</p>}
+      {feita && <p className="cartao-estado feita">Tarefa concluída.</p>}
 
       {estado === "atual" && (
         <div className="cartao-acoes">
@@ -221,7 +221,7 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
             }}
             data-foco=""
           >
-            {reduzida ? "Começar versão reduzida" : "Começar etapa"}
+            {reduzida ? "Começar versão reduzida" : "Começar tarefa"}
           </button>
           {!reduzida && (
             <button type="button" className="cartao-link" onClick={() => setTela("recusa")}>
@@ -230,14 +230,14 @@ export function EtapaCartao({ missao, indice, estado, recusas, aoComecar, aoRecu
           )}
           {segundaRecusa && !etapa.obrigatoria && (
             <button type="button" className="cartao-link" onClick={() => aoRecusar({ pular: true })}>
-              Pular esta etapa por agora
+              Pular esta tarefa por agora
             </button>
           )}
         </div>
       )}
       {segundaRecusa && etapa.obrigatoria && (
         <p className="cartao-nota">
-          Esta é a etapa principal da missão: sem ela o troféu não consegue atualizar o seu nível.
+          Esta é a tarefa principal da sub-trilha: sem ela o troféu não consegue atualizar o seu nível.
         </p>
       )}
       {estado !== "atual" && (
@@ -260,7 +260,7 @@ export function TrofeuCartao({ missao, concluida, aoRefazer, aoFechar }) {
   const titulo = (
     <header className="cartao-topo">
       <p className="cartao-sobre" id="trofeu-rotulo">
-        Fechamento da missão
+        Fechamento da sub-trilha
       </p>
       <h2 className="cartao-titulo">{missao.nome}</h2>
       <p className="cartao-meta">
@@ -278,7 +278,7 @@ export function TrofeuCartao({ missao, concluida, aoRefazer, aoFechar }) {
     conteudo = (
       <>
         <p className="cartao-atividade">
-          Conclua as {missao.etapas.length} etapas para abrir o fechamento. Nele você relê o seu desafio,
+          Conclua as {missao.etapas.length} tarefas para abrir o fechamento. Nele você relê o seu desafio,
           compara com o ponto de partida e o seu nível é atualizado.
         </p>
         <div className="cartao-acoes">
@@ -311,13 +311,13 @@ export function TrofeuCartao({ missao, concluida, aoRefazer, aoFechar }) {
   } else if (escolha >= missao.nivelAlvo) {
     conteudo = (
       <>
-        <p className="cartao-aviso">Nível estimado: {missao.nivelAlvo}. Você atingiu a meta desta missão.</p>
+        <p className="cartao-aviso">Nível estimado: {missao.nivelAlvo}. Você atingiu a meta desta sub-trilha.</p>
         <p className="cartao-atividade">
-          O nível oficial é confirmado na próxima avaliação do ciclo. Próxima missão: {missao.proxima}.
+          O nível oficial é confirmado na próxima avaliação do ciclo. Próxima sub-trilha: {missao.proxima}.
         </p>
         <div className="cartao-acoes">
           <button type="button" className="botao-primario" onClick={aoFechar} data-foco="">
-            Concluir missão
+            Concluir sub-trilha
           </button>
         </div>
       </>
@@ -326,10 +326,10 @@ export function TrofeuCartao({ missao, concluida, aoRefazer, aoFechar }) {
     conteudo = (
       <div className="cartao-recusa">
         <p className="cartao-aviso">
-          Nível estimado: {missao.nivelOrigem}. Isso acontece, e refazer a missão costuma funcionar.
+          Nível estimado: {missao.nivelOrigem}. Isso acontece, e refazer a sub-trilha costuma funcionar.
         </p>
         <Opcoes
-          legenda="O que mais pesou nesta missão?"
+          legenda="O que mais pesou nesta sub-trilha?"
           nome="nao-atingiu"
           opcoes={MOTIVOS_NAO_ATINGIU}
           valor={motivo}
@@ -343,7 +343,7 @@ export function TrofeuCartao({ missao, concluida, aoRefazer, aoFechar }) {
             disabled={!motivo}
             onClick={() => aoRefazer({ contexto: motivo === "contexto" ? "outro" : "mesmo", motivo })}
           >
-            {motivo === "contexto" ? "Refazer em outro contexto" : "Refazer a missão"}
+            {motivo === "contexto" ? "Refazer em outro contexto" : "Refazer a sub-trilha"}
           </button>
           {motivo && (
             <button
@@ -374,7 +374,7 @@ export function LembretesCartao({ lembretes, porSemana, aoAbrir, aoFechar }) {
       <p className="cartao-sobre" id="lembretes-rotulo">
         Notificações
       </p>
-      <h2 className="cartao-titulo">Lembretes da missão</h2>
+      <h2 className="cartao-titulo">Lembretes da sub-trilha</h2>
     </header>
   );
   return (

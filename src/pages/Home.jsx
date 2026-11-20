@@ -159,8 +159,8 @@ export default function Home() {
     setEtapaAtual(indice + 1);
     avisar(
       indice + 1 < TOTAL
-        ? `Etapa ${indice + 1} concluída. Próxima: ${MISSAO.etapas[indice + 1].tipo}.`
-        : "Todas as etapas concluídas. Toque no troféu para fechar a missão."
+        ? `Tarefa ${indice + 1} concluída. Próxima: ${MISSAO.etapas[indice + 1].tipo}.`
+        : "Todas as tarefas concluídas. Toque no troféu para fechar a sub-trilha."
     );
   }
 
@@ -179,7 +179,7 @@ export default function Home() {
     if (pular) {
       setCartao(null);
       setEtapaAtual(indice + 1);
-      avisar("Etapa pulada por agora. O motivo fica registrado.");
+      avisar("Tarefa pulada por agora. O motivo fica registrado.");
       return;
     }
     setRecusas((r) => ({ ...r, [indice]: (r[indice] || 0) + 1 }));
@@ -194,13 +194,13 @@ export default function Home() {
     registrarEvento("missao_refeita", { contexto });
     avisar(
       contexto === "outro"
-        ? "Missão reiniciada. Desta vez, escolha outra situação do seu dia para praticar."
-        : "Missão reiniciada no mesmo contexto.",
+        ? "Sub-trilha reiniciada. Desta vez, escolha outra situação do seu dia para praticar."
+        : "Sub-trilha reiniciada no mesmo contexto.",
       () => {
         setEtapaAtual(antes.etapaAtual);
         setRecusas(antes.recusas);
         registrarEvento("missao_refeita_desfeita", { contexto });
-        avisar("Progresso da missão restaurado.");
+        avisar("Progresso da sub-trilha restaurado.");
       }
     );
   }
@@ -213,26 +213,26 @@ export default function Home() {
   // contextualiza sozinha. Na demonstração eles saem do estado da trilha.
   const lembretes = useMemo(() => {
     if (concluida) {
-      return [{ id: "trofeu", texto: "Falta só o fechamento da missão. Leva poucos minutos.", acao: "Abrir o troféu" }];
+      return [{ id: "trofeu", texto: "Falta só o fechamento da sub-trilha. Leva poucos minutos.", acao: "Abrir o troféu" }];
     }
     const etapa = MISSAO.etapas[etapaAtual];
     const lista = [
       {
         id: "proxima",
-        texto: `Lembra de fazer a etapa ${etapaAtual + 1}, ${etapa.tipo}. Leva cerca de ${etapa.duracao} minutos.`,
-        acao: "Abrir etapa",
+        texto: `Lembra de fazer a tarefa ${etapaAtual + 1}, ${etapa.tipo}. Leva cerca de ${etapa.duracao} minutos.`,
+        acao: "Abrir tarefa",
         indice: etapaAtual,
       },
     ];
     if (recusas[etapaAtual]) {
       lista.push({
         id: "reduzida",
-        texto: `Sem tempo hoje? A versão menor desta etapa leva ${etapa.reduzida.duracao} minutos.`,
+        texto: `Sem tempo hoje? A versão menor desta tarefa leva ${etapa.reduzida.duracao} minutos.`,
         acao: "Ver versão menor",
         indice: etapaAtual,
       });
     } else if (etapaAtual > 0) {
-      lista.push({ id: "ritmo", texto: "Está indo bem. Uma etapa por dia já é um bom ritmo." });
+      lista.push({ id: "ritmo", texto: "Está indo bem. Uma tarefa por dia já é um bom ritmo." });
     }
     return lista;
   }, [concluida, etapaAtual, recusas]);
@@ -370,25 +370,26 @@ export default function Home() {
           <div className="home-intro-texto">
             <h1>Sua jornada começa aqui.</h1>
             <p>
-              A sua missão agora é <strong>{MISSAO.nome}</strong>: {MISSAO.habilidade.charAt(0).toLowerCase() + MISSAO.habilidade.slice(1)}.
+              Competência <strong>{MISSAO.competencia}</strong>, sub-trilha <strong>{MISSAO.nome}</strong>:{" "}
+              {MISSAO.habilidade.charAt(0).toLowerCase() + MISSAO.habilidade.slice(1)}.
             </p>
             <p>
-              Competência {MISSAO.competencia}, do nível {MISSAO.nivelOrigem} para o {MISSAO.nivelAlvo} (de {MISSAO.niveis}). São{" "}
+              Do nível {MISSAO.nivelOrigem} para o {MISSAO.nivelAlvo} (de {MISSAO.niveis}). São{" "}
               {TOTAL}{" "}
-              etapas curtas, e o troféu fecha a missão.
-              <span className="so-desktop"> Toque no nó ativo para ver a próxima etapa.</span>
+              tarefas curtas, e o troféu fecha a sub-trilha.
+              <span className="so-desktop"> Toque no nó ativo para ver a próxima tarefa.</span>
             </p>
           </div>
 
         </section>
 
         {/* progresso em uma linha, logo acima da trilha */}
-        <div className="home-progresso" aria-label="Seu progresso na missão">
+        <div className="home-progresso" aria-label="Seu progresso na sub-trilha">
           <span className="progresso-trilho-home" aria-hidden="true">
             <span style={{ transform: `scaleX(${Math.max(progresso, 0.02)})` }} />
           </span>
           <span className="progresso-texto">
-            <b>{Math.min(etapaAtual, TOTAL)} de {TOTAL}</b> etapas concluídas.{" "}
+            <b>{Math.min(etapaAtual, TOTAL)} de {TOTAL}</b> tarefas concluídas.{" "}
             {concluida
               ? "Falta o fechamento no troféu."
               : `Agora: ${MISSAO.etapas[etapaAtual].tipo}.`}

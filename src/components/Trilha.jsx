@@ -195,7 +195,7 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu, previa = fal
                 type="button"
                 className="etapa-botao"
                 onClick={() => onEtapa?.(etapa, estado)}
-                aria-label={`Etapa ${i + 1} de ${etapas.length}: ${etapa.tipo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (etapa atual)" : " (concluída)"}`}
+                aria-label={`Tarefa ${i + 1} de ${etapas.length}: ${etapa.tipo}${estado === "bloqueada" ? " (bloqueada)" : estado === "atual" ? " (tarefa atual)" : " (concluída)"}`}
               >
                 {estado === "atual" && <span className="etapa-pulso" aria-hidden="true" />}
                 <DiscoNo id={etapa.id} Ilustracao={ilustracaoDe(etapa, i)} atual={estado === "atual"} />
@@ -227,7 +227,7 @@ export function Trilha({ etapas, etapaAtual = 0, onEtapa, onTrofeu, previa = fal
       >
         <span className="trofeu-aura" aria-hidden="true" />
         {previa && <span className="trofeu-rotulo">Destino</span>}
-        <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu: fechamento da missão">
+        <button type="button" className="trofeu-botao" onClick={clicarTrofeu} aria-label="Troféu: fechamento da sub-trilha">
           <span className="trofeu-corpo">
             <Trofeu />
           </span>

@@ -17,10 +17,15 @@
 // completo de trilha adaptativa" (SCRUM-87).
 // PROVISÓRIO: conteúdo das etapas até a nova versão do documento. As telas
 // leem tudo deste objeto, então trocar o conteúdo não exige mexer nelas.
+//
+// SCRUM-110: na tela os nomes seguem os documentos e o banco do Pedro:
+//   competência -> sub-trilha (= habilidade no banco) -> tarefas.
+// No código o objeto continua se chamando "missão" e os nós "etapas" para
+// não espalhar a troca de nomes por todo o projeto.
 
 export const MISSAO_DEMO = {
   id: "comunicacao-2-3",
-  nome: "Uma ideia, um minuto",
+  nome: "Comunicar de forma objetiva", // nome da sub-trilha = nome da habilidade
   competencia: "Comunicação",
   habilidade:
     "Comunicar de forma objetiva, simples e clara, adequando a linguagem a diferentes públicos e checando o entendimento",
@@ -30,7 +35,11 @@ export const MISSAO_DEMO = {
   niveis: 4, // a matriz de cada competência tem 4 níveis
   escala: 4, // pontos das escalas de autoavaliação
   duracaoTotal: "cerca de 50 minutos",
-  proxima: "Trabalho em equipe", // provisório: quem decide é a seleção da seção 9.1
+  // PROVISÓRIO: as outras sub-trilhas (habilidades) da competência. Os nomes
+  // reais vêm de GET /api/competencias/{id}/habilidades quando o front for
+  // ligado ao back-end; a primeira é a atual.
+  subtrilhas: ["Comunicar de forma objetiva", "Escutar com atenção", "Dar e receber feedback"],
+  proxima: "Escutar com atenção",
   // PROVISÓRIO: o documento não traz os descritores desta habilidade
   // (ponto em aberto 11). Trocar pelos da Rubrica SENAI completa.
   descritores: {
@@ -77,7 +86,7 @@ export const MISSAO_DEMO = {
       titulo: "Grave uma apresentação de 1 minuto",
       atividade: "Grave uma apresentação de 1 minuto sobre um tema do seu trabalho.",
       duracao: 10,
-      ajustada: "Esta etapa foi ajustada ao seu tempo disponível: a atividade original tem 5 minutos de fala.",
+      ajustada: "Esta tarefa foi ajustada ao seu tempo disponível: a atividade original tem 5 minutos de fala.",
       reduzida: { duracao: 5, atividade: "Comece com 30 segundos de fala." },
     },
     {
@@ -93,7 +102,7 @@ export const MISSAO_DEMO = {
     {
       id: "reflexao",
       tipo: "Reflexão",
-      titulo: "O que fica desta missão",
+      titulo: "O que fica desta sub-trilha",
       atividade: "Pense no que aconteceu nas práticas e escolha qual ação você vai tomar a partir daqui.",
       // reflexão sem texto livre: a pessoa escolhe uma ação
       acoes: [

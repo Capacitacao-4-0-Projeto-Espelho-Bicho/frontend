@@ -41,7 +41,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
   // a lista de passos é decidida ao abrir e não muda no meio do fluxo
   const [passos] = useState(() => [
     ...(mostrarIntro ? PASSOS_INTRO : []),
-    "etapa",
+    "tarefa",
     ...(precisaAvaliar ? ["avaliacao"] : []),
   ]);
   const [passo, setPasso] = useState(0);
@@ -92,13 +92,13 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
     conteudo = (
       <div className="tarefa-grade">
         <div className="tarefa-texto">
-          <p className="tarefa-sobre">Missão: {missao.nome}</p>
+          <p className="tarefa-sobre">Sub-trilha: {missao.nome}</p>
           <h1 ref={titulo} tabIndex={-1}>
-            Esta missão treina {missao.competencia.toLowerCase()}
+            Esta sub-trilha treina {missao.competencia.toLowerCase()}
           </h1>
           <p>{missao.habilidade}.</p>
           <p>
-            Ela foi dividida em {total} etapas curtas para você praticar aos poucos, cerca de{" "}
+            Ela foi dividida em {total} tarefas curtas para você praticar aos poucos, cerca de{" "}
             {missao.duracaoTotal.replace("cerca de ", "")} no total:
           </p>
           <ol className="tarefa-etapas">
@@ -119,7 +119,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
       <div className="tarefa-texto tarefa-texto-largo">
         <p className="tarefa-sobre">Como funciona</p>
         <h1 ref={titulo} tabIndex={-1}>
-          Cada etapa é um passo na sua trilha até o troféu
+          Cada tarefa é um passo na sua trilha até o troféu
         </h1>
         <div className="tarefa-previa">
           <Trilha etapas={missao.etapas} etapaAtual={indice} previa />
@@ -143,13 +143,13 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
       <div className="tarefa-grade">
         <div className="tarefa-texto">
           <p className="tarefa-sobre">
-            Etapa {indice + 1} de {total}: {etapa.tipo} · {reduzida ? etapa.reduzida.duracao : etapa.duracao} minutos
+            Tarefa {indice + 1} de {total}: {etapa.tipo} · {reduzida ? etapa.reduzida.duracao : etapa.duracao} minutos
           </p>
           <h1 ref={titulo} tabIndex={-1}>
             {etapa.titulo}
           </h1>
           {reduzida ? (
-            <p className="cartao-aviso">Versão menor desta etapa. O objetivo continua o mesmo.</p>
+            <p className="cartao-aviso">Versão menor desta tarefa. O objetivo continua o mesmo.</p>
           ) : (
             etapa.ajustada && <p className="cartao-aviso">{etapa.ajustada}</p>
           )}
@@ -169,7 +169,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
                 />
               ))}
               <Opcoes
-                legenda="Quanto tempo por dia você tem para a missão?"
+                legenda="Quanto tempo por dia você tem para a sub-trilha?"
                 nome="tempo"
                 opcoes={TEMPOS_DIA}
                 valor={tempo}
@@ -196,7 +196,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
               disabled={!pode}
               onClick={() => (precisaAvaliar ? avancar() : concluir())}
             >
-              {precisaAvaliar ? "Etapa concluída" : "Concluir etapa"}
+              {precisaAvaliar ? "Tarefa concluída" : "Concluir tarefa"}
             </button>
             <button type="button" className="cartao-link" onClick={aoNaoPosso}>
               Não consegui fazer agora
@@ -210,16 +210,16 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
     conteudo = (
       <div className="tarefa-texto">
         <p className="tarefa-sobre">
-          Etapa {indice + 1} de {total}: {etapa.tipo}
+          Tarefa {indice + 1} de {total}: {etapa.tipo}
         </p>
         <h1 ref={titulo} tabIndex={-1}>
-          Como foi esta etapa?
+          Como foi esta tarefa?
         </h1>
         <div className="tarefa-respostas tarefa-avaliacao">
           <Escala
             nome="saiu"
             pontos={missao.escala}
-            pergunta="Como você se saiu nesta etapa?"
+            pergunta="Como você se saiu nesta tarefa?"
             valor={saiu}
             aoMudar={setSaiu}
             pontas={["Muito mal", "Muito bem"]}
@@ -227,7 +227,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
           <Escala
             nome="dificuldade"
             pontos={missao.escala}
-            pergunta="Quanto esta etapa foi difícil para você?"
+            pergunta="Quanto esta tarefa foi difícil para você?"
             valor={dificuldade}
             aoMudar={setDificuldade}
             pontas={["Muito fácil", "Muito difícil"]}
@@ -244,7 +244,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
 
   const ultimoIntro = PASSOS_INTRO.includes(tela);
   return (
-    <section className="tarefa" aria-label={`Etapa ${indice + 1}: ${etapa.titulo}`}>
+    <section className="tarefa" aria-label={`Tarefa ${indice + 1}: ${etapa.titulo}`}>
       <header className="tarefa-topo">
         <button type="button" className="tarefa-voltar" onClick={voltar}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -260,7 +260,7 @@ export function TarefaFluxo({ missao, indice, reduzida = false, mostrarIntro, ao
         {ultimoIntro && (
           <div className="tarefa-acoes tarefa-acoes-fim">
             <button type="button" className="botao-primario" onClick={avancar}>
-              {tela === "funciona" ? "Ir para a etapa" : "Próximo"}
+              {tela === "funciona" ? "Ir para a tarefa" : "Próximo"}
             </button>
           </div>
         )}
