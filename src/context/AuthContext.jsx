@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback, useMemo } from "react";
-import { getToken, setToken } from "../services/api";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from "react";
+import { getToken, setToken, SESSAO_EXPIRADA } from "../services/api";
 import * as authService from "../services/auth";
 
 const AuthContext = createContext(null);
@@ -67,6 +67,8 @@ function nomeParaExibir(token, email) {
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(() => getToken());
   const [email, setEmail] = useState(() => lerEmail());
+  // true quando uma chamada autenticada perdeu a sessão; a tela de login avisa
+  const [sessaoExpirada, setSessaoExpirada] = useState(false);
 
   const entrar = useCallback(async (credenciais, opcoes) => {
     const dados = await authService.login(credenciais, opcoes);
@@ -74,6 +76,7 @@ export function AuthProvider({ children }) {
     setTokenState(dados.access_token);
     gravarEmail(credenciais.email);
     setEmail(credenciais.email);
+    setSessaoExpirada(false);
     return dados;
   }, []);
 
@@ -84,10 +87,24 @@ export function AuthProvider({ children }) {
     setEmail(null);
   }, []);
 
+  // api.js já apagou o token; aqui o estado acompanha e RotaProtegida leva ao login
+  useEffect(() => {
+    const aoExpirar = () => {
+      sair();
+      setSessaoExpirada(true);
+    };
+    window.addEventListener(SESSAO_EXPIRADA, aoExpirar);
+    return () => window.removeEventListener(SESSAO_EXPIRADA, aoExpirar);
+  }, [sair]);
+
   const nome = useMemo(() => nomeParaExibir(token, email), [token, email]);
+  // nome completo guardado no cadastro; sem ele, cai no nome curto
+  const nomeCompleto = useMemo(() => lerNome(email) || nome, [email, nome]);
 
   return (
-    <AuthContext.Provider value={{ token, autenticado: Boolean(token), nome, entrar, sair }}>
+    <AuthContext.Provider
+      value={{ token, autenticado: Boolean(token), nome, nomeCompleto, sessaoExpirada, entrar, sair }}
+    >
       {children}
     </AuthContext.Provider>
   );

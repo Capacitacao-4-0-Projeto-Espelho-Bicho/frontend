@@ -8,7 +8,7 @@ import { IconeGoogle, IconeFacebook } from "../components/IconesSociais";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login() {
-  const { entrar } = useAuth();
+  const { entrar, sessaoExpirada } = useAuth();
   const navigate = useNavigate();
   const transicao = useTransicao();
   const location = useLocation();
@@ -67,6 +67,11 @@ export default function Login() {
       </p>
 
       {cadastroOk && <p className="aviso aviso-ok">Conta criada. Faça login para continuar.</p>}
+      {sessaoExpirada && !cadastroOk && (
+        <p className="aviso aviso-erro" role="status">
+          Sua sessão expirou. Entre novamente.
+        </p>
+      )}
 
       <form onSubmit={enviar} noValidate>
         <Campo id="email" rotulo="E-mail" erro={erros.email}>

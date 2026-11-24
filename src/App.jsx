@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Home from "./pages/Home";
+import Admin from "./pages/Admin";
 import { RotaProtegida } from "./components/RotaProtegida";
 import { LayoutAuth } from "./components/LayoutAuth";
 
@@ -19,6 +20,15 @@ export default function App() {
         element={
           <RotaProtegida>
             <Home />
+          </RotaProtegida>
+        }
+      />
+      {/* Painel admin (mockup "Painel de Controle e Gestão"): ainda sem checagem de papel no front */}
+      <Route
+        path="/admin"
+        element={
+          <RotaProtegida>
+            <Admin />
           </RotaProtegida>
         }
       />

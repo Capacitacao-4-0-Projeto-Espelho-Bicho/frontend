@@ -2,6 +2,10 @@
 const API_BASE = import.meta.env.VITE_API_BASE ?? "";
 const TOKEN_KEY = "access_token";
 
+// Disparado no window quando uma chamada autenticada volta 401/422 (token
+// vencido, ausente ou inválido). O AuthContext escuta e leva para o login.
+export const SESSAO_EXPIRADA = "sessao-expirada";
+
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -27,6 +31,8 @@ function extrairMensagem(body, status) {
   if (status === 401) return "E-mail ou senha incorretos.";
   if (status === 409) return "Este e-mail já está cadastrado.";
   if (status === 400) return "Dados inválidos. Verifique os campos.";
+  if (status === 403) return "Seu perfil não tem permissão para esta ação.";
+  if (status === 404) return "Não encontramos o que você procurou.";
   if (status >= 500) return `O servidor encontrou um erro (código ${status}). Tente de novo mais tarde.`;
   if (status) return `Não foi possível concluir (código ${status}). Tente novamente.`;
   return "Não foi possível concluir. Tente novamente.";
@@ -75,6 +81,14 @@ export async function request(path, { method = "GET", body, auth = false, aoDemo
 
       const dados = await resposta.json().catch(() => null);
       if (!resposta.ok) {
+        // Em rota autenticada, 401 (vencido/ausente) e 422 (token inválido, é o
+        // que o Flask-JWT devolve) significam sessão perdida, não "senha errada".
+        // Esse caso vem antes da mensagem do corpo, que o Flask-JWT manda em inglês.
+        if (auth && (resposta.status === 401 || resposta.status === 422)) {
+          setToken(null);
+          window.dispatchEvent(new Event(SESSAO_EXPIRADA));
+          throw new ApiError("Sua sessão expirou. Entre novamente.", resposta.status, dados);
+        }
         throw new ApiError(extrairMensagem(dados, resposta.status), resposta.status, dados);
       }
       return dados;

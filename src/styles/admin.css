@@ -1,0 +1,385 @@
+/* Painel admin (mockup "Painel de Controle e Gestão").
+   Roda sobre o tema escuro da Home: a página usa `.home admin`, então herda as
+   variáveis --home-* de fundos.css (tema "ceu"). Tudo aqui é escopado em
+   `.admin`, para não mexer no login, no cadastro nem na Home. */
+
+.admin {
+  color-scheme: dark; /* lista aberta dos selects também em escuro */
+}
+
+.admin-pagina {
+  width: var(--home-largura);
+  margin: 0 auto;
+  padding-top: clamp(var(--esp-4), 2vw, var(--esp-5));
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+/* ---------- Cartões ---------- */
+.admin-cartao {
+  padding: clamp(var(--esp-4), 2.4vw, var(--esp-5));
+  border: 1px solid var(--home-linha);
+  border-radius: var(--raio-2);
+  background: rgba(7, 29, 33, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--sombra-2);
+}
+
+.admin-cartao-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0 0 var(--esp-4);
+  font-size: var(--tipo-md);
+  font-weight: var(--peso-forte);
+  line-height: var(--altura-titulo);
+  color: var(--cor-broto);
+}
+
+.admin-icone {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+/* ---------- Cabeçalho (ilha com usuário e selo) ---------- */
+.admin-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-5);
+  border-radius: var(--raio-3);
+  padding-block: var(--esp-3);
+}
+
+.admin-usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-width: 0;
+}
+
+.admin-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--cor-broto);
+  border-radius: 50%;
+  background: rgba(143, 209, 106, 0.1);
+  color: var(--cor-broto);
+  font-weight: var(--peso-forte);
+  font-size: var(--tipo-sm);
+}
+
+.admin-nome,
+.admin-papel {
+  margin: 0;
+}
+
+.admin-nome {
+  font-size: var(--tipo-sm);
+  font-weight: var(--peso-forte);
+  color: var(--home-tinta);
+  overflow-wrap: anywhere;
+}
+
+.admin-papel {
+  font-size: var(--tipo-xs);
+  color: var(--home-suave);
+}
+
+.admin-topo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+}
+
+.admin-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--esp-2);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--tipo-xs);
+  color: var(--cor-broto);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.admin-link:hover {
+  color: #a6e083;
+}
+
+.admin-selo {
+  padding: var(--esp-2) var(--esp-3);
+  border: 1px solid rgba(143, 209, 106, 0.4);
+  border-radius: var(--raio-1);
+  background: rgba(143, 209, 106, 0.12);
+  color: var(--cor-broto);
+  font-size: var(--tipo-xs);
+  font-weight: var(--peso-forte);
+}
+
+/* ---------- Título da página ---------- */
+.admin-titulo {
+  padding-bottom: var(--esp-4);
+  border-bottom: 1px solid var(--home-linha);
+}
+
+.admin-titulo h1 {
+  margin: 0 0 var(--esp-2);
+  font-family: "Montserrat", "Figtree", system-ui, sans-serif;
+  font-weight: var(--peso-forte);
+  font-size: clamp(var(--tipo-lg), 2.4vw, var(--tipo-2xl));
+  line-height: var(--altura-titulo);
+  color: var(--home-tinta);
+}
+
+.admin-titulo p {
+  margin: 0;
+  max-width: 70ch;
+  font-size: var(--tipo-sm);
+  color: var(--home-texto);
+}
+
+/* ---------- Avisos no escuro (os globais são claros) ---------- */
+.admin .aviso {
+  margin: 0;
+}
+
+.admin .aviso-erro {
+  border: 1px solid rgba(255, 157, 143, 0.4);
+  background: rgba(255, 157, 143, 0.12);
+  color: #ffc2b8;
+}
+
+.admin .aviso-espera {
+  color: var(--home-tinta);
+}
+
+.admin-aviso-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.admin-formulario .aviso {
+  margin: 0 0 var(--esp-4);
+}
+
+/* ---------- Grade: formulário à esquerda, lista à direita ---------- */
+.admin-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-5);
+  align-items: start;
+}
+
+@media (min-width: 861px) {
+  .admin-grade {
+    grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+  }
+}
+
+/* ---------- Formulário ---------- */
+.admin-grupo {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.admin .campo label {
+  color: var(--home-tinta);
+  font-weight: var(--peso-medio);
+}
+
+.admin .campo:focus-within label {
+  color: var(--cor-broto);
+}
+
+.admin .campo :is(input, select, textarea) {
+  width: 100%;
+  padding: 0 var(--esp-4);
+  font: inherit;
+  font-size: var(--tipo-sm);
+  color: var(--home-tinta);
+  background: var(--home-campo);
+  border: 1px solid var(--home-borda-campo);
+  border-radius: var(--raio-input);
+  outline: none;
+  transition: border-color var(--dur-rapida) var(--ease-padrao);
+}
+
+.admin .campo :is(input, select) {
+  height: 48px;
+}
+
+.admin .campo textarea {
+  min-height: 120px;
+  padding-block: var(--esp-3);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.admin .campo :is(input, textarea)::placeholder {
+  color: var(--home-suave);
+}
+
+.admin .campo :is(input, select, textarea):hover:not(:disabled) {
+  border-color: var(--home-borda-campo-hover);
+}
+
+.admin .campo :is(input, select, textarea):focus {
+  border-color: var(--cor-broto);
+  box-shadow: 0 0 0 3px rgba(143, 209, 106, 0.25);
+}
+
+.admin .campo.campo-com-erro :is(input, select, textarea) {
+  border-color: #ff9d8f;
+}
+
+.admin .campo-erro {
+  color: #ff9d8f;
+}
+
+.admin .campo :is(input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: var(--opacidade-desabilitado);
+}
+
+/* seta própria dos selects (a nativa some com appearance: none) */
+.admin .campo select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: var(--esp-6);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c7d8d3' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--esp-3) center;
+  background-size: 18px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.admin .campo select option {
+  background: #0f3438;
+  color: var(--home-tinta);
+}
+
+/* botão de envio: o mesmo verde da tela de tarefa */
+.admin .botao-primario {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--esp-6);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-broto);
+  color: #0c3a3b;
+  font-weight: var(--peso-forte);
+}
+
+:root .admin .botao-primario:hover:not(:disabled),
+:root[data-tema] .admin .botao-primario:hover:not(:disabled) {
+  background: #a6e083;
+}
+
+.admin .botao-primario .spinner {
+  border-color: rgba(12, 58, 59, 0.3);
+  border-top-color: #0c3a3b;
+}
+
+/* ---------- Lista ---------- */
+.admin-tabela-rolagem {
+  overflow-x: auto;
+  border-radius: var(--raio-1);
+}
+
+.admin-tabela {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: var(--tipo-xs);
+  color: var(--home-texto);
+}
+
+.admin-tabela th,
+.admin-tabela td {
+  padding: var(--esp-3);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-tabela thead th {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--home-tinta);
+  font-weight: var(--peso-medio);
+  white-space: nowrap;
+}
+
+.admin-tabela tbody tr {
+  border-bottom: 1px solid var(--home-linha);
+}
+
+.admin-tabela tbody th {
+  color: var(--home-tinta);
+  font-weight: var(--peso-forte);
+}
+
+.admin-nivel {
+  display: inline-block;
+  padding: 2px var(--esp-3);
+  border: 1px solid rgba(143, 209, 106, 0.4);
+  border-radius: var(--raio-pilula);
+  background: rgba(143, 209, 106, 0.12);
+  color: var(--cor-broto);
+  font-weight: var(--peso-forte);
+  white-space: nowrap;
+}
+
+.admin-vazio {
+  margin: 0;
+  padding: var(--esp-6) var(--esp-4);
+  text-align: center;
+  font-size: var(--tipo-sm);
+  color: var(--home-suave);
+}
+
+.admin-vazio p {
+  margin: 0 0 var(--esp-2);
+}
+
+/* texto só para leitor de tela */
+.admin .so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 860px) {
+  .admin-topo-acoes {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin .campo :is(input, select, textarea) {
+    transition: none;
+  }
+}
